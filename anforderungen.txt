@@ -1,0 +1,49 @@
+Anforderungen:
+=============
+
+Programmiersprache:
+- Ablauf- vs. Event-Basiert
+- Möglichst einfach, z.B. nur eine Anweisung pro Zeile, keine Arithmetik, ...
+- Werden Kontrollstrukturen (Loop, If, ...) überhaupt gebraucht?
+- VV-Flugplan: Position, Geschwindigkeit, Richtung, Beschleunigung, ... ?
+- Festlegung der benötigten Sensoren (required, optional), evtl. Ersatzstrategien
+- Sensoren aktivieren / deaktivieren
+  - aufgrund von Ort (Punkt / Fläche) oder Zeit (Zeitpunkt / Zeitbereich) ?
+  - Aufzeichnung als Stream
+  - Aufzeichnung als Snapshot, auch Serien davon, z.B. ein Bild pro Minute
+  - Aufzeichnung immer mit Zeit und Ort (z.B. Filename bei Snapshots?)
+  - Ablage der Daten auf remote System und/oder sammeln der Daten (online vs. offline)
+  - Ablage der Daten auf mehreren Systemen?
+- Sensoren sind abstrahiert, z.B. Co2Sensor, NOxSensor, BellyMountedCamera, ...
+
+
+
+Engine:
+- Läuft am Heli
+- Kennt seine Nachbarn?
+- Kann nur eine begrenzte Anzahl von VVs aufnehmen.
+  - Hitchhiker müssen nicht unbedingt mitgenommen werden.
+- Entscheidet über Migrationen Aufgrund der bekannten Nachbarn, deren Sensor-Ausstattungen und Auslastung.
+- Optimiert VV-Flugpläne zum RV-Flugplan, vorerst nur fixer RV-Kurs
+- Adaptiert RV-Flugplan aufgrund von vereinbarten Dienstleistungen (Premium- vs. Best-Effort-Kunden).
+- Idee: macht den Flug sicher / vermindert Risiken
+  - festgelegte Kurse, evtl. mit gewissen Bandbreiten (Korridore für Position und Zeit).
+  - Ausweichen von Hindernissen
+  - Kollisionsvermeidung
+- Zuordnung der Sensoren zu VVs
+  - Mapping abstrahierter Sensor -> /dev/..., http://..., etc.
+  - Resource-Scheduling / Resource-Multicasting
+- Führt ein Log der VVs
+  - Migrationen
+  - Zuordnung von Sensoren zu VVs
+- Soll die Engine alle Flugpläne vorher kennen?
+  - Hilft eher nicht wegen, z.B. "spontaner" Migrationen.
+
+
+
+Fragen:
+- Wie kommt ein VV-Programm zur ersten Engine?
+- Was passiert nach dem Programmende?
+- ...
+
+

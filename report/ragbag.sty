@@ -1,0 +1,132 @@
+% Page layout
+
+\oddsidemargin 0.5cm
+\evensidemargin 0.5cm
+\marginparwidth 40pt \marginparsep 0pt
+%\topmargin -1cm \headsep .5cm \headheight 14pt
+\topmargin -1cm \headsep 1.5cm \headheight 14pt
+\textheight 24cm \textwidth 15.5cm
+\parskip 7pt plus 2pt minus 2pt
+\if@twoside\else\flushbottom\fi
+\brokenpenalty=10000
+
+\renewenvironment{itemize}{
+   \begin{list}{$\bullet$}
+    { \setlength{\itemsep}{0pt}
+      \setlength{\parsep}{3pt}
+      \setlength{\topsep}{-2pt}
+      } }
+    {
+    \end{list}  }
+
+\newcommand{\HRule}{\rule{\linewidth}{1mm}}
+
+% Some changes to meet my preferences for sectioning
+
+\def\@makechapterhead#1{{ \parindent 0pt \raggedright \huge\bf \thechapter. \space #1 }}
+
+
+%\def\chapter{\clearpage
+%   \thispagestyle{plain}
+%   \global\@topnum\z@
+%   \@afterindenttrue
+%   \secdef\@chapter\@schapter}
+%\def\sections{\@startsection {section}{2}{\z@}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}{\huge\bf}}
+%\def\section{\@startsection {section}{2}{\z@}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}{\Large\bf}}
+%\def\subsection{\@startsection{subsection}{3}{\z@}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}{\large\bf}}
+%\def\paragraph{\@startsection{paragraph}{5}{\z@}{3.25ex plus 1ex minus.2ex}{-1em}{\normalsize\bf}}
+
+
+
+% The following section is copied and \uppercase is changed to \sl to
+% modify running head on pages (other that all uppercase).
+% It also draws a line after the head
+
+\if@twoside         % If two-sided printing.
+\def\ps@headings{\let\@mkboth\markboth
+\def\@oddfoot{}\def\@evenfoot{}         % No feet.
+\def\@evenhead{\vbox{\hbox to \textwidth{\rm\thepage\hfil\rm\leftmark}
+        \break\smallskip\hrule}}        %  Left heading.
+\def\@oddhead{\vbox{\hbox to \textwidth{\rm\rightmark\hfil\rm\thepage}
+        \break\smallskip\hrule}}        % Right heading.
+\def\chaptermark##1{\markboth {\rm{\ifnum \c@secnumdepth >\m@ne
+      \thechapter. \ \fi ##1}}{}}
+\def\sectionmark##1{\markright {\rm{\ifnum \c@secnumdepth >\z@
+   \thesection. \ \fi ##1}}}}
+\else               % If one-sided printing.
+\def\ps@headings{\let\@mkboth\markboth
+\def\@oddfoot{}\def\@evenfoot{}         % No feet.
+%\def\@oddhead{\hbox{}\sl\rightmark \hfil\rm\thepage}
+\def\@oddhead{\vbox{\hbox to \textwidth{\rm\rightmark\hfil\rm\thepage}
+                \break\smallskip\hrule}} %% Heading.
+\def\chaptermark##1{\markright{\rm{\ifnum \c@secnumdepth >\m@ne
+        \thechapter. \ \fi ##1}}}}
+\fi
+
+
+
+\pagestyle{headings}
+
+\lstdefinelanguage{PseudoCode}{
+  keywords={if,then,else,endif,return,function,procedure,select,from,add,to,
+  			true,false,and,or,remove,record,end,for,do,endfor,while,endwhile},
+  sensitive=false,
+  morecomment=[l]{//},
+  morestring=[d]{'}
+}
+
+\def\indexpage{%
+        \chapter*{Index\markboth{Index}{Index}}
+        \addcontentsline{toc}{chapter}{Index}
+        \thispagestyle{plain}
+        \printindex
+\vfill\newpage}
+
+\def\chapter{\clearpage
+   \thispagestyle{plain}
+   \global\@topnum\z@
+   \@afterindenttrue
+   \secdef\@chapter\@schapter}
+%\def\sections{\@startsection {section}{2}{\z@}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}{\huge\bf}}
+\def\section{\@startsection {section}{2}{\z@}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}{\Large\bf}}
+\def\subsection{\@startsection{subsection}{3}{\z@}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}{\large\bf}}
+%\def\paragraph{\@startsection{paragraph}{5}{\z@}{3.25ex plus 1ex minus.2ex}{-1em}{\normalsize\bf}}
+
+% Bibliography style used by University of Waterloo (Thanks Todd!)
+\def\thebibliography#1{
+%  \chapter*{References\@mkboth {References}{References}}
+   \chapter*{References\markboth {References}{References}}
+   \addcontentsline{toc}{chapter}{References}
+
+   \list
+      {[\arabic{enumi}]}{
+         \settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+         \advance\leftmargin\labelsep
+         \usecounter{enumi}}
+         \def\newblock{\hskip .11em plus .33em minus .07em}
+         \sloppy\clubpenalty4000\widowpenalty4000
+         \sfcode`\.=1000\relax}
+
+\let\endthebibliography=\endlist
+
+
+% neuer Befehl: \includegraphicstotab[..]{..}
+% Verwendung analog wie \includegraphics
+\newlength{\myx} % Variable zum Speichern der Bildbreite
+\newlength{\myy} % Variable zum Speichern der Bildhöhe
+\newcommand\includegraphicstotab[2][\relax]{%
+% Abspeichern der Bildabmessungen
+\settowidth{\myx}{\includegraphics[{#1}]{#2}}%
+\settoheight{\myy}{\includegraphics[{#1}]{#2}}%
+% das eigentliche Einfügen
+\parbox[c][1.1\myy][c]{\myx}{%
+\includegraphics[{#1}]{#2}}%
+}% Ende neuer Befehl
+
+
+\newcommand{\filter}[1]{
+	\begin{array}{|c|}
+	\hline #1\\
+	\hline
+	\end{array}
+}

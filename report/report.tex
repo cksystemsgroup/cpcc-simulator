@@ -18,7 +18,7 @@
 \righthyphenmin=3
 \usepackage{afterpage}
 \usepackage{csplus}
-%\usepackage{amsmath}
+\usepackage{amsmath}
 \usepackage{latexsym}
 % \usepackage{thesis}
 %\usepackage{pictex}
@@ -29,7 +29,7 @@
 % \usepackage{dsfont}
 % \usepackage{MnSymbol}
 \usepackage{listings}
-\usepackage{krc}
+\usepackage{ragbag}
 % \usepackage{enumerate}
 \raggedbottom
 
@@ -37,6 +37,7 @@
 \csplusAuthor{M. Kleber, C. Krainer, A. Schr\"ock, B. Zechmeister}
 \csplusDate{\today}
 \csplusReport{WS 2011/2012}
+%\csplusURL{http://www.cs.uni-salzburg.at}
 \csplusURL{}
 \raggedbottom
 \makeindex
@@ -62,6 +63,9 @@ to be done \ldots
 \parindent 0pt
 
 \include{introduction}
+Text acronyms \ac{RV} and again \ac{RV}.
+Test citation \cite{APRES08} and \cite{DATE08} and \cite{JTRES09}.
+
 \include{implementation}
 \include{results}
 \include{conclusion}
@@ -70,6 +74,7 @@ to be done \ldots
 
 \bibliographystyle{references}
 \bibliography{references}
+\vfill\newpage
 
 \chapter*{List of abbreviations\markboth{List of abbreviations}{List of abbreviations}}
 \addcontentsline{toc}{chapter}{List of abbreviations}

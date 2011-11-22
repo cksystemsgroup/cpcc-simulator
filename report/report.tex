@@ -1,0 +1,81 @@
+
+\documentclass[a4paper,12pt]{report}
+%\usepackage[x11names, rgb]{xcolor}
+\usepackage[utf8]{inputenc}
+
+\usepackage{makeidx}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{babelbib}
+\usepackage{verbatim}
+\usepackage{verbatimfiles}
+\usepackage{alltt}
+\usepackage[printonlyused]{acronym}
+\usepackage[pdftex,plainpages=false,pdfpagelabels,hyperfootnotes=false]{hyperref}
+\usepackage{setspace}
+\lefthyphenmin=2
+\righthyphenmin=3
+\usepackage{afterpage}
+\usepackage{csplus}
+%\usepackage{amsmath}
+\usepackage{latexsym}
+% \usepackage{thesis}
+%\usepackage{pictex}
+%\usepackage{specialwords}
+\usepackage[binary,squaren]{SIunits}
+%\usepackage{hhline}
+\usepackage{url}
+% \usepackage{dsfont}
+% \usepackage{MnSymbol}
+\usepackage{listings}
+\usepackage{krc}
+% \usepackage{enumerate}
+\raggedbottom
+
+\csplusTitle{ESE Project}
+\csplusAuthor{M. Kleber, C. Krainer, A. Schr\"ock, B. Zechmeister}
+\csplusDate{\today}
+\csplusReport{WS 2011/2012}
+\csplusURL{}
+\raggedbottom
+\makeindex
+\makeglossary
+
+
+\begin{document}
+
+\setcounter{tocdepth}{3}
+\csplusMaketitle
+%\onehalfspacing
+\begin{abstract}
+to be done \ldots
+\end{abstract}
+
+
+\tableofcontents
+\setcounter{tocdepth}{5}
+\clearpage
+\phantomsection
+\newpage
+
+\parindent 0pt
+
+\include{introduction}
+\include{implementation}
+\include{results}
+\include{conclusion}
+
+
+
+\bibliographystyle{references}
+\bibliography{references}
+
+\chapter*{List of abbreviations\markboth{List of abbreviations}{List of abbreviations}}
+\addcontentsline{toc}{chapter}{List of abbreviations}
+\thispagestyle{plain}
+\input{abbreviations}
+\vfill\newpage
+
+
+\end{document}

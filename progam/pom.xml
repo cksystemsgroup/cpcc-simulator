@@ -67,6 +67,7 @@
 	<modules>
 		<module>engine</module>
 		<module>mapper</module>
+		<module>utils</module>
 	</modules>
 
 	<scm>

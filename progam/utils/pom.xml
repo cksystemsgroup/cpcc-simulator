@@ -9,12 +9,11 @@
                 <relativePath>../pom.xml</relativePath>
         </parent>
 
-	<groupId>at.uni-salzburg.cs.cpcc.mapper</groupId>
-	<artifactId>mapper</artifactId>
-	<packaging>war</packaging>
+	<groupId>at.uni-salzburg.cs.cpcc.utils</groupId>
+	<artifactId>utils</artifactId>
 
-	<name>VV Mapper Module</name>
-	<description>Cybe Physical Cloud Computing - Virtual Vehicle Mapper Module</description>
+	<name>Utilities Module</name>
+	<description>Cybe Physical Cloud Computing - Utilities Module</description>
 
 	<dependencies>
 		<dependency>
@@ -36,9 +35,8 @@
 			<artifactId>velocity</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>at.uni-salzburg.cs.cpcc.utils</groupId>
-			<artifactId>utils</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>at.uni-salzburg.cs.ckgroup.jnavigator</groupId>
+			<artifactId>jnavigator-course</artifactId>
 		</dependency>
 	</dependencies>
 </project>

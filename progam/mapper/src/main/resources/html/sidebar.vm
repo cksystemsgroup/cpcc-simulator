@@ -1,0 +1,18 @@
+		<div id="sidebar">
+<!--
+			<ul>
+				<li>
+					<h2>Tasks</h2>
+					<ul>
+						<li><a href="$contextPath/status.tpl">System Status</a></li>
+						<li><a href="$contextPath/sensor.tpl">Sensor Overview</a></li>
+						<li><a href="$contextPath/config.tpl">Configuration Upload</a></li>
+						<li><a href="$contextPath/course.tpl">Course Upload</a></li>
+						<li><a href="snoop">Snoop</a></li>
+					</ul>
+				</li>
+			</ul>
+-->
+		</div>
+		<!-- end #sidebar -->
+		<div style="clear: both;">&nbsp;</div>

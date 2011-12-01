@@ -9,7 +9,7 @@
                 <relativePath>../pom.xml</relativePath>
         </parent>
 
-	<groupId>at.uni-salzburg.cs.cpcc</groupId>
+	<groupId>at.uni-salzburg.cs.cpcc.engine</groupId>
 	<artifactId>engine</artifactId>
 	<packaging>war</packaging>
 
@@ -38,6 +38,11 @@
 		<dependency>
 			<groupId>at.uni-salzburg.cs.ckgroup.jnavigator</groupId>
 			<artifactId>jnavigator-course</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>at.uni-salzburg.cs.cpcc.utils</groupId>
+			<artifactId>utils</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -68,7 +68,8 @@
 		<module>engine</module>
 		<module>mapper</module>
 		<module>utils</module>
-	</modules>
+    <module>google-map-viewer</module>
+  </modules>
 
 	<scm>
 		<connection>scm:svn:https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/progam</connection>
@@ -84,8 +85,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpcore</artifactId>
-				<version>4.1.3</version>
+				<artifactId>httpclient</artifactId>
+				<version>4.1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
@@ -401,4 +402,3 @@
 -->
 	</repositories>
 </project>
-

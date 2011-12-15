@@ -20,67 +20,49 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class PositionQuery implements IJsonQuery {
 
-	public String execute(IServletConfig config, String[] parameters) {
+	Logger LOG = Logger.getLogger(PositionQuery.class);
+	
+	public String execute(IServletConfig config, String[] parameters) throws IOException {
 
-//		PolarCoordinate pos = config.getVehicleBuilder().getPositionProvider().getCurrentPosition();
-//		Double courseOverGround = config.getVehicleBuilder().getPositionProvider().getCourseOverGround();
-//		Double speedOverGround = config.getVehicleBuilder().getPositionProvider().getSpeedOverGround();
-//		Double altitudeOverGround = config.getVehicleBuilder().getAutoPilot().getAltitudeOverGround();
-//		
-//		Map<String, Object> obj=new LinkedHashMap<String, Object>();
-//		obj.put("latitude", pos.getLatitude());
-//		obj.put("longitude", pos.getLongitude());
-//		obj.put("altitude", pos.getAltitude());
-//		obj.put("courseOverGround", courseOverGround);
-//		obj.put("speedOverGround", speedOverGround);
-//		obj.put("altitudeOverGround", altitudeOverGround);
-//		
-//		return JSONValue.toJSONString(obj);
+		Properties props = config.getProperties();
 		
-		try {
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpGet httpget = new HttpGet("http://localhost:8080/pilot/sensor/position");
-			HttpResponse response;
-
-			response = httpclient.execute(httpget);
-			ByteArrayOutputStream bo = new ByteArrayOutputStream();
-
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				int l;
-				byte[] tmp = new byte[2048];
-				while ((l = instream.read(tmp)) != -1) {
-					bo.write(tmp, 0, l);
-				}
+		String pilotListString = props.getProperty(IJsonQuery.PROP_PILOT_LIST);
+		String[] pilotList = pilotListString.trim().split("\\s*,\\s*");
+		JSONParser parser = new JSONParser();
+		
+		Map<String, Object> pilotPositions = new LinkedHashMap<String, Object>();
+		for (String pilot : pilotList) {
+			String position = null;
+			try {
+				String pilotName = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_NAME);
+				String pilotPosURL = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_POSITION_URL);
+				position = HttpQueryUtils.simpleQuery(pilotPosURL);
+				Map<String, Object> p = new LinkedHashMap<String, Object>();
+				p.put("name", pilotName);				
+				p.put("position", parser.parse(position));
+				pilotPositions.put(pilot, p);
+			} catch (Exception e) {
+				LOG.info("Can not query pilot " + pilot + ": " + position);
 			}
-			
-			System.out.println ("result="+bo.toString());
-			
-
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		return null;
+
+		return JSONValue.toJSONString(pilotPositions);
 	}
+	
+
 
 }

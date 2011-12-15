@@ -20,11 +20,19 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
+import java.io.IOException;
+
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 
 public interface IJsonQuery {
-	
-	public String execute (IServletConfig config, String[] parameters);
+
+	public static final String PROP_PILOT_PREFIX = "pilot.";
+	public static final String PROP_PILOT_LIST = PROP_PILOT_PREFIX + "list";
+	public static final String PROP_PILOT_NAME = ".name";
+	public static final String PROP_PILOT_POSITION_URL = ".position.url";
+	public static final String PROP_PILOT_WAYPOINTS_URL = ".waypoints.url";
+
+	public String execute (IServletConfig config, String[] parameters) throws IOException;
 
 }

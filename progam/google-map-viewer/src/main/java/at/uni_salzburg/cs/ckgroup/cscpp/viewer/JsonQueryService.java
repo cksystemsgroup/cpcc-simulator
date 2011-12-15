@@ -29,7 +29,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -71,15 +70,22 @@ public class JsonQueryService extends DefaultService {
 			return;
 		}
 		
-		String[] newCmds = (String[])ArrayUtils.subarray(cmd, 2, cmd.length-1);
+//		String[] newCmds = (String[])ArrayUtils.subarray(cmd, 2, cmd.length);
+		IJsonQuery action = null;
 		
-		IJsonQuery action = actions.get(newCmds[0]);
+		try {
+			action = actions.get(cmd[2]);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+			System.out.println("len=" + cmd.length);
+		}
+		
 		if (action == null) {
 			emit404(request, response);
 			return;
 		}
 		
-		String result = action.execute(servletConfig, newCmds);
+		String result = action.execute(servletConfig, cmd);
 		if (result == null)
 			emit200(request, response);
 		

@@ -187,6 +187,7 @@ public class DefaultService implements IService
 	
 	protected void emit200 (HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setStatus(200);
+		response.setHeader("Cache-Control", "no-cache");
 		response.setContentType("text/html");
 		response.getWriter().print(
 			"<html><head><title>OK - " + request.getRequestURI() + "</title></head>" +
@@ -220,6 +221,7 @@ public class DefaultService implements IService
 	
 	protected void emitPlainText (HttpServletResponse response, String text) throws IOException {
 		response.setStatus(200);
+		response.setHeader("Cache-Control", "no-cache");
 		response.setContentType("text/plain");
 		if (text != null)
 			response.getWriter().print(text);
@@ -227,6 +229,7 @@ public class DefaultService implements IService
 	
 	protected void emitByteArray (HttpServletResponse response, String contentType, byte[] bytes) throws IOException {
 		response.setStatus(200);
+		response.setHeader("Cache-Control", "no-cache");
 		response.setContentType(contentType);
 		response.getOutputStream().write(bytes);
 	}

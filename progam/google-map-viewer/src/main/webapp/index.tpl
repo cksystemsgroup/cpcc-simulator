@@ -10,8 +10,8 @@
 	<!-- end #page -->
 </div>
 
-#include( "html/epilogue.vm" )
-
 <script type="text/javascript">
 onLoad(); Event.observe(window, 'unload', GUnload());
 </script>
+
+#include( "html/epilogue.vm" )

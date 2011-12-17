@@ -44,6 +44,7 @@ public class PositionQuery implements IJsonQuery {
 		String[] pilotList = pilotListString.trim().split("\\s*,\\s*");
 		JSONParser parser = new JSONParser();
 		
+		// TODO do this in parallel
 		Map<String, Object> pilotPositions = new LinkedHashMap<String, Object>();
 		for (String pilot : pilotList) {
 			String position = null;

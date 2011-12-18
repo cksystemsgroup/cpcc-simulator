@@ -9,6 +9,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>google-map-viewer</artifactId>
+	<packaging>war</packaging>
 	<name>google-map-viewer</name>
 	<url>http://maven.apache.org</url>
 	<properties>

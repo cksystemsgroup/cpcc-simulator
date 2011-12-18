@@ -370,16 +370,16 @@
 		<site>
 			<url>scp://${site.host}/${site.basedir}</url>
 		</site>
-		<repository>
-			<id>${site.id}</id>
-			<name>Inhouse Repository</name>
-			<url>http://${site.id}/archiva/repository/inhouse/</url>
-		</repository>
-		<snapshotRepository>
-			<id>${site.id}</id>
-			<name>Inhouse Snapshot Repository</name>
-			<url>http://${site.id}/archiva/repository/inhouse_snapshot/</url>
-		</snapshotRepository>
+                <repository>
+                        <id>${site.id}</id>
+                        <name>Inhouse Repository</name>
+                        <url>${inhouse.maven.repository}</url>
+                </repository>
+                <snapshotRepository>
+                        <id>${site.id}</id>
+                        <name>Snapshot Repository</name>
+                        <url>${inhouse_snapshot.maven.repository}</url>
+                </snapshotRepository>
 	</distributionManagement>
 	<repositories>
 		<repository>

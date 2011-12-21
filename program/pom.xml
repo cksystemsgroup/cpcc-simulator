@@ -72,8 +72,8 @@
   </modules>
 
 	<scm>
-		<connection>scm:svn:https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/progam</connection>
-		<developerConnection>scm:svn:https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/progam</developerConnection>
+		<connection>scm:svn:https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/program</connection>
+		<developerConnection>scm:svn:https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/program</developerConnection>
 	</scm>
 
 	<dependencyManagement>

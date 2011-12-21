@@ -1,0 +1,25 @@
+##
+## @(#) set course trajectory 1
+##
+go auto
+takeoff 1 for 5s
+fly to(47.82204197,13.04092571,1.00)abs precision 1m 1mps
+fly to(47.82205998,13.04093242,29.80)abs precision 1m 4.4mps
+fly to(47.82212751,13.04087877,30.00)abs precision 1m 4.7mps
+fly to(47.82331971,13.04129720,25.00)abs precision 1m 4.7mps
+fly to(47.82330531,13.04195166,29.70)abs precision 1m 4.8mps
+fly to(47.81992673,13.04291725,25.00)abs precision 1m 4.7mps
+fly to(47.82324768,13.04449439,29.30)abs precision 1m 4.6mps
+fly to(47.81987631,13.04643631,24.90)abs precision 1m 4.6mps
+fly to(47.82319725,13.04804564,28.90)abs precision 1m 4.4mps
+fly to(47.81971782,13.05019140,24.90)abs precision 1m 4.6mps
+fly to(47.82303157,13.05141449,28.80)abs precision 1m 4.5mps
+fly to(47.81968180,13.05304527,24.80)abs precision 1m 4.8mps
+fly to(47.82299555,13.05396795,29.00)abs precision 1m 4.7mps
+fly to(47.82124505,13.05406451,24.80)abs precision 1m 4.8mps
+fly to(47.82187899,13.04096460,28.60)abs precision 1m 4.8mps
+fly to(47.82200685,13.04091498,25.00)abs precision 1m 4.9mps
+fly to(47.82203026,13.04094315,1.00)abs precision 1m 1mps
+hover for 20s
+land
+go manual

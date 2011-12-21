@@ -20,8 +20,14 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -32,10 +38,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.Configuration;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.SnoopService;
 
 
 @SuppressWarnings("serial")
@@ -47,11 +56,13 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
+	private VirtualVehicleBuilder vehicleBuilder = new VirtualVehicleBuilder();
+	private Configuration configuration = new Configuration();
+	private List<IVirtualVehicle> vehicleList = new ArrayList<IVirtualVehicle>();
+	private SensorProxy sensorProxy = new SensorProxy();
 	
 	private ServiceEntry[] services = {
-		new ServiceEntry("/snoop.*", new SnoopService(this)),
-//		new ServiceEntry("/admin/.*", new AdminService(this)),
-//		new ServiceEntry("/sensor/.*", new SensorService(this)),
+		new ServiceEntry("/vehicle/.*", new VehicleService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};
 
@@ -71,9 +82,40 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		try {
 			props.load(propStream);
 					
-//			servletConfig.getServletContext().setAttribute("aviator", aviator);
+			vehicleBuilder.setSensorProxy(sensorProxy);
 			
-//			File contexTempDir = (File)servletConfig.getServletContext().getAttribute(AdminService.CONTEXT_TEMP_DIR);
+			servletConfig.getServletContext().setAttribute("vehicleBuilder", vehicleBuilder);
+			servletConfig.getServletContext().setAttribute("configuration", configuration);
+			servletConfig.getServletContext().setAttribute("vehicleList", vehicleList);
+			servletConfig.getServletContext().setAttribute("sensorProxy", sensorProxy);
+			
+			File contexTempDir = (File)servletConfig.getServletContext().getAttribute(VehicleService.CONTEXT_TEMP_DIR);
+			configuration.setWorkDir (contexTempDir);
+			
+			File confFile = new File (contexTempDir, props.getProperty(VehicleService.PROP_CONFIG_FILE));
+			if (confFile.exists()) {
+				configuration.loadConfig(new FileInputStream(confFile));
+				LOG.info("Loading existing configuration from " + confFile);
+			}
+			
+			URI pilotSensorUrl = configuration.getPilotSensorUrl();
+			if (pilotSensorUrl != null)
+				sensorProxy.setSensorUrl(pilotSensorUrl.toASCIIString());
+			
+			FileFilter vehicleFilter = new FileFilter() {
+				@Override
+				public boolean accept(File pathname) {
+					return pathname.isDirectory() && pathname.getName().matches("vehicle\\d+");
+				}
+			};
+			
+			for (File vehicleDir : contexTempDir.listFiles(vehicleFilter)) {
+				IVirtualVehicle vehicle = vehicleBuilder.build(vehicleDir);
+				vehicleList.add(vehicle);				
+				vehicle.resume();
+			}
+			
+			sensorProxy.start();
 		
 		} catch (IOException e) {
 			throw new ServletException (e);
@@ -101,9 +143,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	}
 	
     public void destroy () {
-//    	backGroundTimer.cancel();
-//    	backGroundTimerTask.finish();
-//    	aviator.destroy();
+    	sensorProxy.terminate();
+    	// TODO check
     }
 
 	public Properties getProperties() {

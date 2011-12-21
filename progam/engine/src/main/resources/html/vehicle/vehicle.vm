@@ -1,0 +1,48 @@
+<div id="content">
+	<div class="post">
+		<h2 class="title"><a href="#">Current Loaded Vehicles</a></h2>
+		<div style="font-size: 90%; line-height: 130%">
+#set( $vehicleList = $servletConfig.getServletContext().getAttribute("vehicleList") )
+			<table class="sensors">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>status</th>
+						<th>name</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+#set( $x = 0 )
+#foreach( $vehicle in $vehicleList )
+#set( $name = $vehicle.getWorkDir().getName() )
+#set( $x = $x + 1 )
+					<tr>
+						<td>$x</td>
+#if( $vehicle.isComplete() )
+						<td><span style="color: blue;">completed</span></td>
+#else	
+#if( $vehicle.isActive() )
+						<td><span style="color: green;">active</span></td>
+#else
+						<td><span style="color: grey;">suspended</span></td>
+#end
+#end
+						<td>$name</td>
+#if( $vehicle.isComplete() )
+						<td><img src="$contextPath/img/icon_success_sml.gif" alt="completed" /></td>
+#else						
+#if( $vehicle.isActive() )
+						<td><a href="$contextPath/vehicle/html/suspend/$name"><img src="$contextPath/img/suspend.gif" alt="suspend" /></a></td>
+#else
+						<td><a href="$contextPath/vehicle/html/resume/$name"><img src="$contextPath/img/resume.gif" alt="resume" /></a></td>
+#end
+#end										
+					</tr>
+#end
+				<tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<!-- end #content -->

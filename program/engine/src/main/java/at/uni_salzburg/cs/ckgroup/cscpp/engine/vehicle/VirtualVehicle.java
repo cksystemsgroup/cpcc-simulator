@@ -41,6 +41,8 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 */
 	public VirtualVehicle (File workDir) throws IOException {
 		super(workDir);
+		
+		//TODO: implement file parsing, program verification, set programCorrupted flag
 	}
 
 	/* (non-Javadoc)

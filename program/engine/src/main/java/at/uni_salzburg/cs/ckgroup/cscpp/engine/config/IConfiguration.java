@@ -29,5 +29,9 @@ public interface IConfiguration {
 	 */
 	public URI getPilotSensorUrl();
 
-
+	/**
+	 * @return the URL of the central mapper registry.
+	 */
+	public abstract URI getMapperRegistryUrl();
+	
 }

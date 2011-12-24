@@ -43,15 +43,6 @@ public class Configuration implements IConfiguration {
 	private Properties conf = new Properties();
 	
 	/**
-	 * The errors in the configuration as a map. Key is the configuration
-	 * parameter and value is the according error message. This map contains
-	 * only messages of erroneous configuration parameters.
-	 */
-	private Map<String,String> configErrors = new HashMap<String,String>() {{
-		put(PROP_PILOT_SENSOR_URL,ERROR_MESSAGE_MISSING_VALUE);
-	}};
-	
-	/**
 	 * The directory to be used for temporary files. 
 	 */
 	private File workDir;
@@ -62,7 +53,8 @@ public class Configuration implements IConfiguration {
 	public static final String ERROR_MESSAGE_UNKNOWN_SENSOR_TYPE = "# unknown sensor type!";
 
 	public static final String PROP_PILOT_SENSOR_URL = "pilot.sensor.url";
-
+	public static final String PROP_MAPPER_REGISTRY_URL = "mapper.registry.url";
+	
 	/**
 	 * The prefix of the sensor properties. 
 	 */
@@ -74,7 +66,19 @@ public class Configuration implements IConfiguration {
 	 */
 	public String [][] parameters = {
 		{ PROP_PILOT_SENSOR_URL },
+		{ PROP_MAPPER_REGISTRY_URL },
 	};
+	
+	/**
+	 * The errors in the configuration as a map. Key is the configuration
+	 * parameter and value is the according error message. This map contains
+	 * only messages of erroneous configuration parameters.
+	 */
+	@SuppressWarnings("serial")
+	private Map<String,String> configErrors = new HashMap<String,String>() {{
+		put(PROP_PILOT_SENSOR_URL,ERROR_MESSAGE_MISSING_VALUE);
+		put(PROP_MAPPER_REGISTRY_URL,ERROR_MESSAGE_MISSING_VALUE);
+	}};
 	
 	/**
 	 * This variable is set to true, if and only if the configuration is OK.
@@ -86,7 +90,7 @@ public class Configuration implements IConfiguration {
 	 */
 	private URI pilotSensorUrl;
 	
-
+	private URI mapperRegistryUrl;
 	
 	/**
 	 * Load a vehicle configuration from an <code>InputStream</code> and build it.
@@ -113,6 +117,7 @@ public class Configuration implements IConfiguration {
 		}
 		
 		pilotSensorUrl = parseURI(PROP_PILOT_SENSOR_URL);
+		mapperRegistryUrl = parseURI(PROP_MAPPER_REGISTRY_URL);
 	}
 
 	/**
@@ -196,10 +201,19 @@ public class Configuration implements IConfiguration {
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration#getPilotSensorUrl()
 	 */
+	@Override
 	public URI getPilotSensorUrl() {
 		return pilotSensorUrl;
 	}
 
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.AbstractConfiguration#getMapperRegistryUrl()
+	 */
+	@Override
+	public URI getMapperRegistryUrl() {
+		return mapperRegistryUrl;
+	}
+	
 	/**
 	 * @return the current configuration as a list of strings.
 	 */
@@ -239,10 +253,18 @@ public class Configuration implements IConfiguration {
 	}
 	
 	/**
+	 * @return the directory to be used for temporary files.
+	 */
+	public File getWorkDir() {
+		return workDir;
+	}
+
+	/**
 	 * @param key the system property key of interest.
 	 * @return the value of the required property.
 	 */
 	public String getSystemProperty(String key) {
 		return System.getProperty(key);
 	}
+
 }

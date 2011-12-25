@@ -23,6 +23,7 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Properties;
 
 public interface IVirtualVehicle {
 
@@ -53,9 +54,13 @@ public interface IVirtualVehicle {
 	
 	/**
 	 * @return the working directory of this virtual vehicle. It contains the
-	 *         virtual vehicle program, a log of events, and a sub-directory
-	 *         containing all collected sensor data.
+	 *         virtual vehicle program, a set of properties, a log of events,
+	 *         and a sub-directory containing all collected sensor data.
 	 */
 	public File getWorkDir();
 
+	/**
+	 * @return the properties of this virtual vehicle.
+	 */
+	public Properties getProperties();
 }

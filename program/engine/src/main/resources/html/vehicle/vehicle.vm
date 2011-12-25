@@ -2,26 +2,29 @@
 	<div class="post">
 		<h2 class="title"><a href="#">Current Loaded Vehicles</a></h2>
 		<div style="font-size: 90%; line-height: 130%">
-#set( $vehicleList = $servletConfig.getServletContext().getAttribute("vehicleList") )
 			<table class="sensors">
 				<thead>
 					<tr>
 						<th>#</th>
 						<th>status</th>
 						<th>name</th>
+						<th>unique identification</th>
+						<th></th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 #set( $x = 0 )
-#foreach( $vehicle in $vehicleList )
+#set( $vehicleMap = $servletConfig.getServletContext().getAttribute("vehicleMap") )
+#foreach( $vehicle in $vehicleMap )
 #set( $name = $vehicle.getWorkDir().getName() )
+#set( $id = $vehicle.getProperties().getProperty("vehicle.id") )
 #set( $x = $x + 1 )
 					<tr>
 						<td>$x</td>
 #if( $vehicle.isComplete() )
 						<td><span style="color: blue;">completed</span></td>
-#else	
+#else
 #if( $vehicle.isActive() )
 						<td><span style="color: green;">active</span></td>
 #else
@@ -29,6 +32,8 @@
 #end
 #end
 						<td>$name</td>
+						<td>$id</td>
+						<td><a href="$contextPath/vehicle/html/vehicleDownload/$name"><img src="$contextPath/img/download-small.gif" alt="download vehicle" /></a></td>
 #if( $vehicle.isComplete() )
 						<td><img src="$contextPath/img/icon_success_sml.gif" alt="completed" /></td>
 #else						

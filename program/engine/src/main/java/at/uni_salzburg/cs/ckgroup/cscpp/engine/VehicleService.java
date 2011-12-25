@@ -21,6 +21,7 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -52,6 +53,7 @@ public class VehicleService extends DefaultService {
 	
 	public final static String ACTION_CONFIG_UPLOAD = "configUpload";
 	public final static String ACTION_VEHICLE_UPLOAD = "vehicleUpload";
+	public final static String ACTION_VEHICLE_DOWNLOAD = "vehicleDownload";
 	public final static String ACTION_VEHICLE_MIGRATION = "vehicleMigration";
 	
 	public final static String ACTION_VEHICLE_SUSPEND = "suspend";
@@ -136,9 +138,9 @@ public class VehicleService extends DefaultService {
 				
 				IVirtualVehicle vehicle = vehicleBuilder.build(workDir, new ByteArrayInputStream(uploadedFile.getBody()));
 				
-				Object vhl = config.getServletContext().getAttribute("vehicleList");
-				List<IVirtualVehicle> vehicleList = (List<IVirtualVehicle>)vhl;
-				vehicleList.add(vehicle);
+				Object vhl = config.getServletContext().getAttribute("vehicleMap");
+				Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
+				vehicleMap.put(workDir.getName(), vehicle);
 				vehicle.resume();
 				
 			} else {
@@ -146,10 +148,29 @@ public class VehicleService extends DefaultService {
 				return;
 			}
 			
+		} else if (ACTION_VEHICLE_DOWNLOAD.equals(action)) {
+
+			if (cmd.length > 4) {
+				IVirtualVehicle v = getVehicle(config, cmd[4]);
+				ByteArrayOutputStream bo = new ByteArrayOutputStream();
+				v.serialize(bo);
+				emitByteArray(response, "application/zip", bo.toByteArray());
+				return;
+//				nextPage = request.getContextPath() + "/vehicle.tpl";
+			} else {
+				emit422(request, response);
+				return;
+			}
+			
+			
 		} else if (ACTION_VEHICLE_MIGRATION.equals(action)) {
 			LOG.error("Virtual Vehicle migration not implemented yet.");
 			
-			
+			// * get upload-URL
+			// * suspend vehicle
+			// * zip vehicle to file
+			// * upload file to remote machine
+			// * destroy local copy if upload was successful
 			
 			
 			nextPage = request.getContextPath() + "/vehicle.tpl";
@@ -197,22 +218,20 @@ public class VehicleService extends DefaultService {
 	}
 
 	private void changeVehicleState (ServletConfig config, String vehicle, String state) throws IOException {
-		
-		Object vhl = config.getServletContext().getAttribute("vehicleList");
-		List<IVirtualVehicle> vehicleList = (List<IVirtualVehicle>)vhl;
-		
-		for (IVirtualVehicle v : vehicleList) {
-			if (v.getWorkDir().getName().equals(vehicle)) {
-				LOG.info("Vehicle " + vehicle + ", action=" + state);
-				if (ACTION_VEHICLE_RESUME.equals(state))
-					v.resume();
-				else if (ACTION_VEHICLE_SUSPEND.equals(state))
-					v.suspend();
-				break;
-			}
+		IVirtualVehicle v = getVehicle(config, vehicle);
+//		LOG.info("Vehicle " + vehicle + ", action=" + state);
+		if (v != null) { 
+			if (ACTION_VEHICLE_RESUME.equals(state))
+				v.resume();
+			else if (ACTION_VEHICLE_SUSPEND.equals(state))
+				v.suspend();
 		}
 	}
 	
-	
+	private IVirtualVehicle getVehicle (ServletConfig config, String vehicle) {
+		Object vhl = config.getServletContext().getAttribute("vehicleMap");
+		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
+		return vehicleMap.get(vehicle);
+	}
 
 }

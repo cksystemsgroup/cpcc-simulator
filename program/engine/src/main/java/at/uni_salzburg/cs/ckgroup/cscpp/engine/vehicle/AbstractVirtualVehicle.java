@@ -21,11 +21,16 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 
@@ -38,9 +43,12 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	
 	public static final String PROGRAM_PATH = "vehicle.prg";
 	public static final String LOG_PATH = "vehicle.log";
+	public static final String PROPERTY_PATH = "vehicle.properties";
 	public static final String DATA_SUBDIR = "data";
 	public static final long timerDelay = 500;
 	public static final long timerPeriod = 5000;
+	
+	public static final String PROP_VEHICLE_ID = "vehicle.id";
 	
 	/**
 	 * The working directory of this virtual vehicle. It contains the virtual
@@ -58,6 +66,11 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 * The virtual vehicle program to be executed.
 	 */
 	protected File program;
+	
+	/**
+	 * The properties of the virtual vehicle.
+	 */
+	protected Properties properties;
 	
 	/**
 	 * The sub-directory containing all collected sensor data.
@@ -104,6 +117,16 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		program = new File(workDir, PROGRAM_PATH);
 		if (!program.exists())
 			throw new IOException("Program file not found " + program);
+		
+		properties = new Properties();
+		File propsFile = new File(workDir, PROPERTY_PATH);
+		if (propsFile.exists())
+			properties.load(new FileInputStream(propsFile));
+		
+		if (properties.getProperty(PROP_VEHICLE_ID) == null) {
+			properties.setProperty(PROP_VEHICLE_ID, UUID.randomUUID().toString());
+			properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -111,6 +134,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 */
 	@Override
 	public void suspend() throws IOException {
+		LOG.info("Suspending vehicle " + workDir.getName());
 		backGroundTimer.cancel();
 		backGroundTimer = null;
 		backGroundTimerTask.cancel();
@@ -125,6 +149,8 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 			vehicleLog.close();
 			vehicleLog = null;
 		}
+		
+		properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
 	}
 
 	/* (non-Javadoc)
@@ -132,6 +158,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 */
 	@Override
 	public void resume() throws IOException {
+		LOG.info("Resuming vehicle " + workDir.getName());
 		if (vehicleLog == null) {
 			vehicleLog = new FileWriter(new File(workDir, LOG_PATH), true);
 		}
@@ -161,9 +188,19 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#serialize(java.io.OutputStream)
 	 */
 	@Override
-	public void serialize(OutputStream out) {
-		// TODO Auto-generated method stub
-		LOG.error("serialize not iplemented yet.");
+	public void serialize(OutputStream out) throws IOException {
+		LOG.info("serializing vehicle " + workDir.getName() + " to stream.");
+		
+		boolean active = isActive();
+		if (active)
+			suspend();
+		
+		ZipOutputStream zOut = new ZipOutputStream(out);
+		FileUtils.zipToStream(workDir, ".", zOut);
+		zOut.close();
+		
+		if (active)
+			resume();
 	}
 
 	/**
@@ -199,6 +236,14 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		return workDir;
 	}
 	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getProperties()
+	 */
+	public Properties getProperties() {
+		return properties;
+	}
+
+
 	private static class MyTimerTask extends TimerTask {
 
 		private Runnable runnable;

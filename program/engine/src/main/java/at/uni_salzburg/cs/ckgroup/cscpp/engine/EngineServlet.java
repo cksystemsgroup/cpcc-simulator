@@ -26,8 +26,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -58,7 +58,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	private Properties props = new Properties ();
 	private VirtualVehicleBuilder vehicleBuilder = new VirtualVehicleBuilder();
 	private Configuration configuration = new Configuration();
-	private List<IVirtualVehicle> vehicleList = new ArrayList<IVirtualVehicle>();
+	private Map<String,IVirtualVehicle> vehicleMap = new HashMap<String,IVirtualVehicle>();
 	private SensorProxy sensorProxy = new SensorProxy();
 	
 	private ServiceEntry[] services = {
@@ -86,7 +86,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			
 			servletConfig.getServletContext().setAttribute("vehicleBuilder", vehicleBuilder);
 			servletConfig.getServletContext().setAttribute("configuration", configuration);
-			servletConfig.getServletContext().setAttribute("vehicleList", vehicleList);
+			servletConfig.getServletContext().setAttribute("vehicleMap", vehicleMap);
 			servletConfig.getServletContext().setAttribute("sensorProxy", sensorProxy);
 			
 			File contexTempDir = (File)servletConfig.getServletContext().getAttribute(VehicleService.CONTEXT_TEMP_DIR);
@@ -111,7 +111,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			
 			for (File vehicleDir : contexTempDir.listFiles(vehicleFilter)) {
 				IVirtualVehicle vehicle = vehicleBuilder.build(vehicleDir);
-				vehicleList.add(vehicle);				
+				vehicleMap.put(vehicleDir.getName(),vehicle);				
 				vehicle.resume();
 			}
 			

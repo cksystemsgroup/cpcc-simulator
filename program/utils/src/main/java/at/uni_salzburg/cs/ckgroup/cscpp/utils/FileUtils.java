@@ -21,7 +21,11 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class FileUtils {
 	
@@ -33,5 +37,30 @@ public class FileUtils {
 			throw new IOException("Can not create directory " + dir);
 	}
 
+	public static void zipToStream (File file, String baseDir, ZipOutputStream out) throws IOException {
+		String name = (".".equals(baseDir) ? "" : baseDir + File.separator) + file.getName();
+
+		ZipEntry e = new ZipEntry(name + (file.isFile() ? "" : File.separator));
+		e.setTime(file.lastModified());
+		e.setCompressedSize(file.length());
+		e.setSize(file.length());
+		out.putNextEntry(e);
+		
+		if (file.isFile()) {
+			InputStream inStream = new FileInputStream(file);
+			int len;
+			byte[] buf = new byte[8192];
+			while ((len = inStream.read(buf)) >= 0) {
+				out.write(buf, 0, len);
+			}
+			out.closeEntry();
+		} else {
+			out.closeEntry();
+			for (String n : file.list()) {
+				File f = new File (file, n);
+				zipToStream(f, name, out);
+			}
+		}
+	}
 	
 }

@@ -54,7 +54,7 @@ public class FileUtilsTestCase {
 		
 		URL url = FileUtilsTestCase.class.getResource("zip");
 		File f = new File(url.getFile());
-		int prefixLength = f.getAbsolutePath().length()-3;
+		int prefixLength = f.getAbsolutePath().length()+1;
 		Map<String,ZipEntry> filesMap = new HashMap<String, ZipEntry>();
 		traverseDir(f, filesMap, prefixLength);
 		
@@ -62,7 +62,7 @@ public class FileUtilsTestCase {
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 		ZipOutputStream out = new ZipOutputStream(bo);
 		
-		FileUtils.zipToStream(f, ".", out);
+		FileUtils.zipToStream(f, f.getAbsolutePath().length()+1, out);
 		out.close();
 		
 		Assert.assertFalse (bo.size() == 0);
@@ -102,11 +102,18 @@ public class FileUtilsTestCase {
 	}
 
 	private void traverseDir(File file, Map<String, ZipEntry> filesMap, int prefixLength) {
-		String name = file.getAbsolutePath().substring(prefixLength) + (file.isDirectory() ? "/" : "");
-		ZipEntry e = new ZipEntry(name);
-		e.setSize(file.length());
-		e.setTime(file.lastModified());
-		filesMap.put(name, e);
+		String name;
+		if (file.getAbsolutePath().length() < prefixLength)
+			name = "";
+		else
+			name = file.getAbsolutePath().substring(prefixLength) + (file.isDirectory() ? "/" : "");
+		
+		if (!name.isEmpty()) {
+			ZipEntry e = new ZipEntry(name);
+			e.setSize(file.length());
+			e.setTime(file.lastModified());
+			filesMap.put(name, e);
+		}
 		
 		if (file.isDirectory())
 			for (String f : file.list())

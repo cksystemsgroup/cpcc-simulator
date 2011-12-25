@@ -200,6 +200,15 @@ public class DefaultService implements IService
 		response.setHeader("Location", location);
 		response.setContentType("text/html");
 	}
+
+	protected void emit400 (HttpServletRequest request, HttpServletResponse response, String cause) throws IOException {
+		response.setStatus(400);
+		response.setContentType("text/html");
+		response.getWriter().print(
+			"<html><head><title>Bad Request - " + cause + "</title></head>" +
+			"<body><h1>HTTP Status 400 - " + cause + "</h1></body></html>"
+		);
+	}
 	
 	protected void emit404 (HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setStatus(404);

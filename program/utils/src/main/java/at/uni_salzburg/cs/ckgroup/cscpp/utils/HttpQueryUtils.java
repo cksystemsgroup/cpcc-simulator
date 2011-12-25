@@ -20,15 +20,24 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 public class HttpQueryUtils {
 	
@@ -54,4 +63,22 @@ public class HttpQueryUtils {
 		return bo.toString();
 	}
 	
+	public static String[] fileUpload(String uploadUrl, String name, byte[] byteArray) throws IOException {
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(uploadUrl);
+		String paramName = "vehicle";
+		String paramValue = name;
+		
+		MultipartEntity entity = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
+		entity.addPart( paramName, new InputStreamBody((new ByteArrayInputStream(byteArray)), "application/zip" ));
+		entity.addPart( paramName, new StringBody( paramValue.toString(), "text/plain", Charset.forName( "UTF-8" )));
+		httppost.setEntity( entity );
+		HttpResponse httpResponse = httpclient.execute( httppost );
+		StatusLine statusLine = httpResponse.getStatusLine();
+		String reason = statusLine.getReasonPhrase();
+		int rc = statusLine.getStatusCode();
+		String response = EntityUtils.toString( httpResponse.getEntity(), "UTF-8" );
+		httpclient.getConnectionManager().shutdown();
+		return new String[] {String.valueOf(rc), reason, response};
+	}
 }

@@ -196,7 +196,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 			suspend();
 		
 		ZipOutputStream zOut = new ZipOutputStream(out);
-		FileUtils.zipToStream(workDir, ".", zOut);
+		FileUtils.zipToStream(workDir, workDir.getAbsolutePath().length()+1, zOut);
 		zOut.close();
 		
 		if (active)

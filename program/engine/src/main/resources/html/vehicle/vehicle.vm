@@ -6,6 +6,7 @@
 				<thead>
 					<tr>
 						<th>#</th>
+						<th></th>
 						<th>status</th>
 						<th>name</th>
 						<th>unique identification</th>
@@ -22,6 +23,7 @@
 #set( $x = $x + 1 )
 					<tr>
 						<td>$x</td>
+						<td><input type="checkbox" name="vehicles" value="$name" /></td>
 #if( $vehicle.isComplete() )
 						<td><span style="color: blue;">completed</span></td>
 #else
@@ -33,16 +35,16 @@
 #end
 						<td>$name</td>
 						<td>$id</td>
-						<td><a href="$contextPath/vehicle/html/vehicleDownload/$name"><img src="$contextPath/img/download-small.gif" alt="download vehicle" /></a></td>
+						<td><a href="$contextPath/vehicle/html/vehicleDownload/$name"><img src="$contextPath/img/disk.png" alt="download vehicle" /></a></td>
 #if( $vehicle.isComplete() )
-						<td><img src="$contextPath/img/icon_success_sml.gif" alt="completed" /></td>
+						<td><img src="$contextPath/img/tick.png" alt="completed" /></td>
 #else						
 #if( $vehicle.isActive() )
-						<td><a href="$contextPath/vehicle/html/suspend/$name"><img src="$contextPath/img/suspend.gif" alt="suspend" /></a></td>
+						<td><a href="$contextPath/vehicle/html/suspend/$name"><img src="$contextPath/img/control_pause.png" alt="suspend" /></a></td>
 #else
-						<td><a href="$contextPath/vehicle/html/resume/$name"><img src="$contextPath/img/resume.gif" alt="resume" /></a></td>
+						<td><a href="$contextPath/vehicle/html/resume/$name"><img src="$contextPath/img/control_play.png" alt="resume" /></a></td>
 #end
-#end										
+#end							
 					</tr>
 #end
 				<tbody>

@@ -40,6 +40,8 @@ import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.MimeEntry;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.MimeParser;
@@ -172,6 +174,37 @@ public class VehicleService extends DefaultService {
 			// * upload file to remote machine
 			// * destroy local copy if upload was successful
 			
+			String p1 = request.getParameter("vehicleDst");
+			String p2 = request.getParameter("vehicleIDs");
+			
+			if (p1 == null || p1.trim().isEmpty()) {
+				emit400(request, response, "Invalid or empty destination URL.");
+				return;
+			}
+			if (p2 == null || p2.trim().isEmpty()) {
+				emit400(request, response, "Invalid or empty virtual vehicle ID.");
+				return;
+			}
+			
+			for (String name : p2.split("\\s*,\\s")) {
+				File vd = new File(contexTempDir,name);
+				
+				try {
+					if (!vd.exists()) {
+						emit400(request, response, "No virtual vehicle " + name + " found!");
+						return;
+					}
+
+					migrateVehicle(config, p1, name);
+					LOG.info("Migration succeeded. Removing folder " + vd.getAbsolutePath());
+					FileUtils.removeRecursively(vd);
+					
+				} catch (IOException e) {
+					LOG.info("Problems at migrating virtual vehicle " + name, e);
+					emit400(request, response, e.getMessage());
+					return;
+				}
+			}
 			
 			nextPage = request.getContextPath() + "/vehicle.tpl";
 			
@@ -205,6 +238,24 @@ public class VehicleService extends DefaultService {
 			emit301 (request, response, nextPage);	
 		}
 
+	}
+
+	private void migrateVehicle(ServletConfig config, String uploadUrl, String name) throws IOException {
+		IVirtualVehicle vehicle = getVehicle(config, name);
+		Object vhl = config.getServletContext().getAttribute("vehicleMap");
+		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
+		vehicleMap.remove(name);
+		vehicle.suspend();
+		
+		ByteArrayOutputStream bo = new ByteArrayOutputStream();
+		vehicle.serialize(bo);
+		String[] rc = HttpQueryUtils.fileUpload(uploadUrl, name, bo.toByteArray());
+		LOG.info("migrateVehicle: id=" + name + ", rc=" + rc[0] + " -- " + rc[1]);
+		if (!"200".equals(rc[0])) {
+			vehicleMap.put(name, vehicle);
+			vehicle.resume();
+			throw new IOException(rc[0] + " -- " + rc[1] + " -- " + rc[2]);
+		}
 	}
 
 	private void saveFile(MimeEntry course, File file) throws IOException {

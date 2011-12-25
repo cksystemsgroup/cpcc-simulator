@@ -30,6 +30,7 @@ import java.util.zip.ZipInputStream;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 
 
 public class VirtualVehicleBuilder {
@@ -87,8 +88,16 @@ public class VirtualVehicleBuilder {
 		}
 		
 		LOG.info("Instantiating Virtual Vehicle " + workDir.getName());
-		VirtualVehicle vehicle = new VirtualVehicle(workDir);
-		vehicle.setSensorProxy(sensorProxy);
+		VirtualVehicle vehicle = null;
+		try {
+			vehicle = new VirtualVehicle(workDir);
+			vehicle.setSensorProxy(sensorProxy);
+		} catch (IOException e) {
+			LOG.error("Can not instantiate virtual vehicle " + workDir);
+			FileUtils.removeRecursively(workDir);
+			throw new IOException("Can not instantiate virtual vehicle " + workDir, e);
+		}
+		
 		
 		return vehicle;
 	}

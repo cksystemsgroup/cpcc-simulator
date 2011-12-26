@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -100,7 +101,7 @@ public class DefaultService implements IService
 		if (runTemplateEngine) {
 			FileReader reader = new FileReader(realPath);
 			PrintWriter out = response.getWriter();
-			emitVelocityRenderedFile (config, out, reader, request.getContextPath(), servicePath);
+			emitVelocityRenderedFile (config, out, reader, request.getContextPath(), servicePath, request.getParameterMap());
 		} else {
 			emitFile (response.getOutputStream(), new FileInputStream(realPath));
 		}
@@ -136,7 +137,7 @@ public class DefaultService implements IService
 		template.merge(context, out);
 	}
 
-	protected void emitVelocityRenderedFile (ServletConfig config, PrintWriter out, Reader reader, String contextPath, String servicePath) throws IOException {
+	protected void emitVelocityRenderedFile (ServletConfig config, PrintWriter out, Reader reader, String contextPath, String servicePath, Map parameters) throws IOException {
         Properties props = new Properties();
         props.setProperty("resource.loader", "class");
         props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -148,6 +149,7 @@ public class DefaultService implements IService
         context.put("servicePath", servicePath);
         context.put("servletConfig", config);
         context.put("properties", servletConfig.getProperties());
+        context.put("parameters", parameters);
         
 		ve.evaluate(context, out, "lala", reader);
 	}

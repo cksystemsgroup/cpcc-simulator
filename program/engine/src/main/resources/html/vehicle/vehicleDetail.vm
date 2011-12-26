@@ -1,11 +1,16 @@
 <div id="content">
 	<div class="post">
-		<h2 class="title"><a href="#">Current Loaded Vehicles</a></h2>
+		<h2 class="title"><a href="#">Virtual Vehicle Detail</a></h2>
 		<div style="font-size: 90%; line-height: 130%">
+#set( $vehicleNames = $parameters.get("vehicle") )
+#set( $vehicleMap = $servletConfig.getServletContext().getAttribute("vehicleMap") )
+#set( $vehicle = $vehicleMap.get($vehicleNames[0]) )
+#if( $vehicle )
+#set( $id = $vehicle.getProperties().getProperty("vehicle.id") )
+#set( $name = $vehicle.getWorkDir().getName() )
 			<table class="sensors">
 				<thead>
 					<tr>
-						<th>#</th>
 						<th></th>
 						<th>status</th>
 						<th>local name</th>
@@ -15,14 +20,7 @@
 					</tr>
 				</thead>
 				<tbody>
-#set( $x = 0 )
-#set( $vehicleMap = $servletConfig.getServletContext().getAttribute("vehicleMap") )
-#foreach( $vehicle in $vehicleMap )
-#set( $name = $vehicle.getWorkDir().getName() )
-#set( $id = $vehicle.getProperties().getProperty("vehicle.id") )
-#set( $x = $x + 1 )
 					<tr>
-						<td>$x</td>
 						<td><input type="checkbox" name="vehicles" value="$name" /></td>
 #if( $vehicle.isComplete() )
 						<td><span style="color: blue;">completed</span></td>
@@ -46,9 +44,13 @@
 #end
 #end							
 					</tr>
-#end
 				<tbody>
 			</table>
+#else
+<div style="color: red;">No such vehicle: $vehicleNames[0]</div>
+#end
+			
+			
 		</div>
 	</div>
 </div>

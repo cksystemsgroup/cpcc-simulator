@@ -51,7 +51,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	private ServiceEntry[] services = {
 		new ServiceEntry("/snoop.*", new SnoopService(this)),
 //		new ServiceEntry("/admin/.*", new AdminService(this)),
-//		new ServiceEntry("/sensor/.*", new SensorService(this)),
+		new ServiceEntry("/status/.*", new StatusService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};
 

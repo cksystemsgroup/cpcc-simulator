@@ -371,7 +371,9 @@
 
 	<distributionManagement>
 		<site>
-			<url>scp://${site.host}/${site.basedir}</url>
+                        <id>${site.deployment.id}</id>
+			<!-- <url>scp://zoot/www/docs/zoot.site/ese-cpcc/site</url> -->
+			<url>scp://141.201.106.16/home/ckrainer/public_html/site/ese-cpcc</url>
 		</site>
                 <repository>
                         <id>${site.id}</id>

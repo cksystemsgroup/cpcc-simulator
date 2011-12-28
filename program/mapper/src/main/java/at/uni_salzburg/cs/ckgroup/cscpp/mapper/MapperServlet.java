@@ -20,6 +20,8 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -32,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
@@ -43,18 +47,25 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	
 	Logger LOG = Logger.getLogger(MapperServlet.class);
 	
-	private static final String PROP_PATH_NAME = "mapper.properties";
-
+	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
+	public static final String PROP_PATH_NAME = "mapper.properties";
+	public static final String PROP_CONFIG_FILE = "mapper.config.file";
+	
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
+	private Configuration configuration = new Configuration();
+	private File contexTempDir;
+	private File configFile;
 	
 	private ServiceEntry[] services = {
 		new ServiceEntry("/snoop.*", new SnoopService(this)),
 //		new ServiceEntry("/admin/.*", new AdminService(this)),
+		new ServiceEntry("/config/.*", new ConfigService(this)),
 		new ServiceEntry("/status/.*", new StatusService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};
-
+	
+	@Override
 	public void init (ServletConfig servletConfig) throws ServletException {
 		this.servletConfig = servletConfig;
 		super.init();
@@ -70,17 +81,22 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 		
 		try {
 			props.load(propStream);
-					
-//			servletConfig.getServletContext().setAttribute("aviator", aviator);
 			
-//			File contexTempDir = (File)servletConfig.getServletContext().getAttribute(AdminService.CONTEXT_TEMP_DIR);
+			servletConfig.getServletContext().setAttribute("configuration", configuration);	
+			
+			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
+			configuration.setWorkDir (contexTempDir);
+			
+			configFile = new File (contexTempDir, props.getProperty(PROP_CONFIG_FILE));
+			reloadConfigFile();
 		
 		} catch (IOException e) {
 			throw new ServletException (e);
 		}
 
 	}
-
+	
+	@Override
 	protected void service (HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
@@ -100,14 +116,32 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 		return;
 	}
 	
+	@Override
     public void destroy () {
-//    	backGroundTimer.cancel();
-//    	backGroundTimerTask.finish();
-//    	aviator.destroy();
+    	// TODO check / implement
     }
-
+    
+    @Override
 	public Properties getProperties() {
 		return props;
+	}
+
+	@Override
+	public File getContextTempDir() {
+		return contexTempDir;
+	}
+
+	@Override
+	public File getConfigFile() {
+		return configFile;
+	}
+
+	@Override
+	public void reloadConfigFile() throws IOException {
+		if (configFile != null && configFile.exists()) {
+			configuration.loadConfig(new FileInputStream(configFile));
+			LOG.info("Loading existing configuration from " + configFile);
+		}
 	}
 
 }

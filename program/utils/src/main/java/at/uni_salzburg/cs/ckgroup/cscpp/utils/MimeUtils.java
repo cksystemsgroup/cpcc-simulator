@@ -1,5 +1,5 @@
 /*
- * @(#) IServletConfig.java
+ * @(#) MimeUtils.java
  *
  * This code is part of the JNavigator project.
  * Copyright (c) 2011  Clemens Krainer
@@ -21,17 +21,19 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
-public interface IServletConfig {
+public class MimeUtils {
+
+	public static void saveFile(MimeEntry course, File file) throws IOException {
+		if (file.exists() && file.isFile())
+			file.delete();
+			
+		FileOutputStream w = new FileOutputStream(file);
+		w.write(course.getBody());
+		w.close();
+	}
 	
-	public Properties getProperties ();
-	
-	public File getContextTempDir();
-	
-	public File getConfigFile();
-	
-	public void reloadConfigFile() throws IOException;
 	
 }

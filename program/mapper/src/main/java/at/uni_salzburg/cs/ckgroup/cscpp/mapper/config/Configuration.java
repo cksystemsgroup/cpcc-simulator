@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.engine.config;
+package at.uni_salzburg.cs.ckgroup.cscpp.mapper.config;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,24 +31,16 @@ import org.apache.log4j.Logger;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigurationParser;
 
 public class Configuration extends ConfigurationParser implements IConfiguration {
-
+	
 	Logger LOG = Logger.getLogger(Configuration.class);
 	
-	public static final String PROP_PILOT_SENSOR_URL = "pilot.sensor.url";
-	public static final String PROP_MAPPER_REGISTRY_URL = "mapper.registry.url";
-	
-	/**
-	 * The prefix of the sensor properties. 
-	 */
-	public static final String PROP_SENSOR_PREFIX = "sensor.";
-	public static final String PROP_SENSOR_LIST = PROP_SENSOR_PREFIX + "list";
+	public static final String PROP_HOME_BASE_ENGINE_URL = "home.base.engine.url";
 	
 	/**
 	 * The parameters and their default values. 
 	 */
 	public static final String [][] parameters = {
-		{ PROP_PILOT_SENSOR_URL },
-		{ PROP_MAPPER_REGISTRY_URL },
+		{ PROP_HOME_BASE_ENGINE_URL },
 	};
 	
 	/**
@@ -58,47 +50,38 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	@SuppressWarnings("serial")
 	private static final Map<String,String> configErrors = new HashMap<String,String>() {{
-		put(PROP_PILOT_SENSOR_URL,ERROR_MESSAGE_MISSING_VALUE);
-		put(PROP_MAPPER_REGISTRY_URL,ERROR_MESSAGE_MISSING_VALUE);
+		put(PROP_HOME_BASE_ENGINE_URL,ERROR_MESSAGE_MISSING_VALUE);
 	}};
 	
 	/**
-	 * The base URL of the associated auto pilot sensors. 
+	 * The base URL of the associated home base engine. 
 	 */
-	private URI pilotSensorUrl;
+	private URI homeBaseEngineUrl;
 	
-	private URI mapperRegistryUrl;
-	
-	public Configuration() {
+	/**
+	 * Construct a <code>Configuration</code> object.
+	 */
+	public Configuration () {
 		super(parameters, configErrors);
 	}
 	
 	/**
-	 * Load a vehicle configuration from an <code>InputStream</code> and build it.
+	 * Load the mapper configuration from an <code>InputStream</code> and build it.
 	 * 
 	 * @param inStream the configuration's <code>InputStream</code>
 	 * @throws IOException thrown in case of errors.
 	 */
+	@Override
 	public void loadConfig (InputStream inStream) throws IOException {
 		super.loadConfig(inStream);
-		pilotSensorUrl = parseURI(PROP_PILOT_SENSOR_URL);
-		mapperRegistryUrl = parseURI(PROP_MAPPER_REGISTRY_URL);
-	}
-	
-	/* (non-Javadoc)
-	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration#getPilotSensorUrl()
-	 */
-	@Override
-	public URI getPilotSensorUrl() {
-		return pilotSensorUrl;
+		homeBaseEngineUrl = parseURI(PROP_HOME_BASE_ENGINE_URL);
 	}
 
 	/* (non-Javadoc)
-	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.AbstractConfiguration#getMapperRegistryUrl()
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.IConfiguration#getHomeBaseEngineUrl()
 	 */
-	@Override
-	public URI getMapperRegistryUrl() {
-		return mapperRegistryUrl;
+	public URI getHomeBaseEngineUrl() {
+		return homeBaseEngineUrl;
 	}
 
 }

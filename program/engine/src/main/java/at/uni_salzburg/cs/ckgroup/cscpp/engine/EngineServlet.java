@@ -42,6 +42,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
@@ -52,17 +53,22 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	
 	Logger LOG = Logger.getLogger(EngineServlet.class);
 	
+	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
 	private static final String PROP_PATH_NAME = "engine.properties";
-
+	public final static String PROP_CONFIG_FILE = "vehicle.config.file";
+	
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
 	private VirtualVehicleBuilder vehicleBuilder = new VirtualVehicleBuilder();
 	private Configuration configuration = new Configuration();
 	private Map<String,IVirtualVehicle> vehicleMap = new HashMap<String,IVirtualVehicle>();
 	private SensorProxy sensorProxy = new SensorProxy();
+	private File contexTempDir;
+	private File configFile;
 	
 	private ServiceEntry[] services = {
 		new ServiceEntry("/vehicle/.*", new VehicleService(this)),
+		new ServiceEntry("/config/.*", new ConfigService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};
 
@@ -89,14 +95,11 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			servletConfig.getServletContext().setAttribute("vehicleMap", vehicleMap);
 			servletConfig.getServletContext().setAttribute("sensorProxy", sensorProxy);
 			
-			File contexTempDir = (File)servletConfig.getServletContext().getAttribute(VehicleService.CONTEXT_TEMP_DIR);
+			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
 			configuration.setWorkDir (contexTempDir);
 			
-			File confFile = new File (contexTempDir, props.getProperty(VehicleService.PROP_CONFIG_FILE));
-			if (confFile.exists()) {
-				configuration.loadConfig(new FileInputStream(confFile));
-				LOG.info("Loading existing configuration from " + confFile);
-			}
+			configFile = new File (contexTempDir, props.getProperty(PROP_CONFIG_FILE));
+			reloadConfigFile();
 			
 			URI pilotSensorUrl = configuration.getPilotSensorUrl();
 			if (pilotSensorUrl != null)
@@ -122,7 +125,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		}
 
 	}
-
+	
+	@Override
 	protected void service (HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
@@ -142,13 +146,33 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		return;
 	}
 	
+	@Override
     public void destroy () {
     	sensorProxy.terminate();
     	// TODO check
     }
-
+    
+    @Override
 	public Properties getProperties() {
 		return props;
+	}
+
+	@Override
+	public File getContextTempDir() {
+		return contexTempDir;
+	}
+
+	@Override
+	public File getConfigFile() {
+		return configFile;
+	}
+
+	@Override
+	public void reloadConfigFile() throws IOException {
+		if (configFile != null && configFile.exists()) {
+			configuration.loadConfig(new FileInputStream(configFile));
+			LOG.info("Loading existing configuration from " + configFile);
+		}
 	}
 	
 }

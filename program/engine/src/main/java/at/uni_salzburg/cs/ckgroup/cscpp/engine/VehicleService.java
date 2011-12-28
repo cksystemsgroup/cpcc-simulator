@@ -23,8 +23,6 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -51,9 +48,7 @@ public class VehicleService extends DefaultService {
 	
 	Logger LOG = Logger.getLogger(VehicleService.class);
 	
-	public final static String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
-	
-	public final static String ACTION_CONFIG_UPLOAD = "configUpload";
+//	public final static String ACTION_CONFIG_UPLOAD = "configUpload";
 	public final static String ACTION_VEHICLE_UPLOAD = "vehicleUpload";
 	public final static String ACTION_VEHICLE_DOWNLOAD = "vehicleDownload";
 	public final static String ACTION_VEHICLE_MIGRATION = "vehicleMigration";
@@ -61,7 +56,6 @@ public class VehicleService extends DefaultService {
 	public final static String ACTION_VEHICLE_SUSPEND = "suspend";
 	public final static String ACTION_VEHICLE_RESUME = "resume";
 	
-	public final static String PROP_CONFIG_FILE = "vehicle.config.file";
 	
 	public VehicleService (IServletConfig servletConfig) {
 		super (servletConfig);
@@ -71,7 +65,7 @@ public class VehicleService extends DefaultService {
 	public void service(ServletConfig config, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
-		File contexTempDir = (File)config.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
+		File contexTempDir = servletConfig.getContextTempDir();
 		
 		String servicePath = request.getRequestURI();
 		if (request.getRequestURI().startsWith(request.getContextPath()))
@@ -114,20 +108,22 @@ public class VehicleService extends DefaultService {
 		
 		String nextPage;
 
-		if (ACTION_CONFIG_UPLOAD.equals(action)) {
-			File confFile = new File (contexTempDir, servletConfig.getProperties().getProperty(PROP_CONFIG_FILE));
-			if (uploadedFile != null) {
-				saveFile (uploadedFile, confFile);
-				nextPage = request.getContextPath() + "/config.tpl";
-				Configuration cfg = (Configuration)config.getServletContext().getAttribute("configuration");
-				cfg.loadConfig(new FileInputStream(confFile));
-				LOG.info("Configuration uploaded.");
-			} else {
-				emit422(request, response);
-				return;
-			}
-			
-		} else if (ACTION_VEHICLE_UPLOAD.equals(action)) {
+//		if (ACTION_CONFIG_UPLOAD.equals(action)) {
+//			File confFile = servletConfig.getConfigFile();
+//			if (uploadedFile != null) {
+//				MimeUtils.saveFile (uploadedFile, confFile);
+//				LOG.info("Written: " + confFile);
+//				servletConfig.reloadConfigFile();
+//				LOG.info("Configuration uploaded.");
+//				nextPage = request.getContextPath() + "/config.tpl";
+//			} else {
+//				emit422(request, response);
+//				return;
+//			}
+//			
+//		} else
+		
+		if (ACTION_VEHICLE_UPLOAD.equals(action)) {
 			if (uploadedFile != null) {
 				nextPage = request.getContextPath() + "/vehicle.tpl";
 				LOG.info("Virtual Vehicle uploaded.");
@@ -158,7 +154,6 @@ public class VehicleService extends DefaultService {
 				v.serialize(bo);
 				emitByteArray(response, "application/zip", bo.toByteArray());
 				return;
-//				nextPage = request.getContextPath() + "/vehicle.tpl";
 			} else {
 				emit422(request, response);
 				return;
@@ -256,16 +251,6 @@ public class VehicleService extends DefaultService {
 			vehicle.resume();
 			throw new IOException(rc[0] + " -- " + rc[1] + " -- " + rc[2]);
 		}
-	}
-
-	private void saveFile(MimeEntry course, File file) throws IOException {
-		if (file.exists() && file.isFile())
-			file.delete();
-			
-		FileOutputStream w = new FileOutputStream(file);
-		w.write(course.getBody());
-		w.close();
-		LOG.info("Written: " + file);
 	}
 
 	private void changeVehicleState (ServletConfig config, String vehicle, String state) throws IOException {

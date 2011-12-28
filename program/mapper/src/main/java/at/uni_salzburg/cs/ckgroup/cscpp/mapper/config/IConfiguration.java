@@ -1,5 +1,5 @@
 /*
- * @(#) IServletConfig.java
+ * @(#) IConfiguration.java
  *
  * This code is part of the JNavigator project.
  * Copyright (c) 2011  Clemens Krainer
@@ -18,20 +18,19 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.utils;
+package at.uni_salzburg.cs.ckgroup.cscpp.mapper.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
+import java.net.URI;
 
-public interface IServletConfig {
-	
-	public Properties getProperties ();
-	
-	public File getContextTempDir();
-	
-	public File getConfigFile();
-	
-	public void reloadConfigFile() throws IOException;
+public interface IConfiguration {
+
+	/**
+	 * Once a virtual vehicle completes its mission, the mapper initiates the
+	 * migration to the home-base engine.
+	 * 
+	 * @return the base URL of the associated home-base engine.
+	 */
+	public URI getHomeBaseEngineUrl();
+
 	
 }

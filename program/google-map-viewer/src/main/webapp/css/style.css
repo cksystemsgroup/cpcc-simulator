@@ -504,3 +504,20 @@ table.sensors thead tr {
     background-color: #e5decb;
 }
 
+table.pilot {
+	border: 0px;
+	padding: 0px 0px 0px 0px;
+	letter-spacing: 0px;
+	table-layout: fixed;
+	font-size: 10px;
+}
+
+table.pilot tr {
+	height: 10px;
+}
+
+table.pilot td {
+	color: #000000;
+	padding: 0px 0px 0px 0px;
+}
+

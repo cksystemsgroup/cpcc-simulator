@@ -3,6 +3,7 @@ var positionUrl = '/gmview/json/position';
 var waypointsUrl = '/gmview/json/waypoints';
 var map;
 var markers = {};
+//var pilots = {};
 var position = {};
 
 
@@ -14,33 +15,37 @@ function updateMap() {
 			// do nothing
 		} else {
 			// obsolete one
-			map.removeOverlay(markers[m]);
+//			map.removeOverlay(markers[m]);
+			markers[m].setMap(null);
 		}
 	}
 	
 	for (m in position) {
 		var a = position[m].position;
-		var point = new GLatLng(a.latitude, a.longitude);
+		var point = new google.maps.LatLng(a.latitude, a.longitude);
 		if (markers[m]) {
 			// update position
-			markers[m].setLatLng(point);
+			markers[m].setPosition(point);
+//			pilots[m].setPosition(point);
 //			markers[m].openInfoWindowHtml(String(point));
 		} else {
 			// new one!
-			markers[m] = new GMarker(point, {title: m});
-			map.addOverlay(markers[m]);
+//			markers[m] = new google.maps.Marker({position: point, title: m, map: map});
+//			pilots[m] = new PilotOverlay(point, map);
+			markers[m] = new PilotOverlay(point, map);
+//			map.addOverlay(markers[m]);
 //			markers[m].openInfoWindowHtml(m, {maxWidth: 50});
+//			markers[m].setMap(map);
 		}
 	}
 	
 }
 
 function onLoad() {
-	if (!GBrowserIsCompatible())
-		return;
+//	if (!google.maps.BrowserIsCompatible())
+//		return;
 
-	map = new GMap2(document.getElementById("map_canvas"));
-	map.addControl(new GLargeMapControl());
+//	map.addControl(new google.maps.LargeMapControl());
 	
 	var center = 0;
 	var zoomLevel = 0;
@@ -57,9 +62,9 @@ function onLoad() {
 	
 	if (center) {
 		var a = center.evalJSON();
-		center = new GLatLng(a.y, a.x);
+		center = new google.maps.LatLng(a.y, a.x);
 	} else {
-		center = new GLatLng(47.821881, 13.040328);
+		center = new google.maps.LatLng(47.821881, 13.040328);
 	}
 	
 	if (zoomLevel)
@@ -68,38 +73,25 @@ function onLoad() {
 		zoomLevel = 17;
 	
 	var mapTypeName = mapType ? mapType.evalJSON() : '';
-	if (mapTypeName == "Hybrid")
-		map.setMapType(G_HYBRID_MAP);
-	else if (mapTypeName == "Terrain")
-		map.setMapType(G_PHYSICAL_MAP);
-	else if (mapTypeName == "Satellite")
-		map.setMapType(G_SATELLITE_MAP);
-	else
-		map.setMapType(G_NORMAL_MAP);
+//	if (mapTypeName == "Hybrid")
+//		map.setMapType(google.maps.MapTypeId.HYBRID);
+//	else if (mapTypeName == "Terrain")
+//		map.setMapType(google.maps.MapTypeId.TERRAIN);
+//	else if (mapTypeName == "Satellite")
+//		map.setMapType(google.maps.MapTypeId.SATELLITE);
+//	else
+//		map.setMapType(google.maps.MapTypeId.ROADMAP);
 	
-	map.setCenter(center, zoomLevel);
-	map.setUIToDefault();
+//	map.setCenter(center, zoomLevel);
+//	map.setUIToDefault();
 
-//	new Ajax.PeriodicalUpdater('position', positionUrl,
-//	  {
-//	    method: 'get',
-//	    insertion: Element.update,
-//	    frequency: 10,
-//	    onSuccess: function(){ updateMap(); },
-//	  });
-	
-	/*
-	new Ajax.Request('/gmview/json/position',
-	  {
-	    method:'get',
-	    onSuccess: function(transport){
-	      var response = transport.responseText || "no response text";
-	      alert("Success! \n\n" + response);
-	    },
-	    onFailure: function(){ alert('Something went wrong...') }
-	  });
-	*/
-	
+    var myOptions = {
+      zoom: zoomLevel,
+      center: center,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	
 	new PeriodicalExecuter(
 		function() {
@@ -115,13 +107,12 @@ function onLoad() {
 		},
 	1);
 	
-	
-	
-	
 }
 
 
-
+function GUnload() {
+//	alert("unload");
+}
 
 
 

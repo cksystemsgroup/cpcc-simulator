@@ -20,6 +20,7 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -38,15 +39,18 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SnoopService;
 
 
-@SuppressWarnings("serial")
 public class ViewerServlet extends HttpServlet implements IServletConfig {
 	
 	Logger LOG = Logger.getLogger(ViewerServlet.class);
 	
+	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
 	private static final String PROP_PATH_NAME = "google-map-viewer.properties";
-
+	public final static String PROP_CONFIG_FILE = "viewer.config.file";
+	
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
+	private File contexTempDir;
+	private File configFile;
 	
 	private ServiceEntry[] services = {
 		new ServiceEntry("/snoop.*", new SnoopService(this)),
@@ -72,8 +76,12 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 					
 //			servletConfig.getServletContext().setAttribute("aviator", aviator);
 			
-//			File contexTempDir = (File)servletConfig.getServletContext().getAttribute(AdminService.CONTEXT_TEMP_DIR);
-		
+			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
+//			configuration.setWorkDir (contexTempDir);
+			
+			configFile = new File (contexTempDir, props.getProperty(PROP_CONFIG_FILE));
+			reloadConfigFile();
+			
 		} catch (IOException e) {
 			throw new ServletException (e);
 		}
@@ -108,6 +116,24 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 
 	public Properties getProperties() {
 		return props;
+	}
+
+	@Override
+	public File getContextTempDir() {
+		return contexTempDir;
+	}
+
+	@Override
+	public File getConfigFile() {
+		return configFile;
+	}
+
+	@Override
+	public void reloadConfigFile() throws IOException {
+//		if (configFile != null && configFile.exists()) {
+//			configuration.loadConfig(new FileInputStream(configFile));
+//			LOG.info("Loading existing configuration from " + configFile);
+//		}
 	}
 	
 }

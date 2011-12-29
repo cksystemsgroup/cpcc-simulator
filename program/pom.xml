@@ -67,9 +67,9 @@
 	<modules>
 		<module>engine</module>
 		<module>mapper</module>
+		<module>google-map-viewer</module>
 		<module>utils</module>
-    <module>google-map-viewer</module>
-  </modules>
+	</modules>
 
 	<scm>
 		<connection>scm:svn:https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/program</connection>
@@ -151,11 +151,11 @@
 						<optimize>true</optimize>
 					</configuration>
 				</plugin>
-				<plugin>
+				<!-- <plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
 					<version>2.5</version>
-				</plugin>
+				</plugin> -->
 				<!-- plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>findbugs-maven-plugin</artifactId>
@@ -248,21 +248,22 @@
 		</pluginManagement>
 
 		<plugins>
+<!--
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					 <check>
-						  <haltOnFailure>false</haltOnFailure>
-						  <regexes>
-							<regex>
-								 <pattern>at.uni_salzburg.*</pattern>
-								 <branchRate>70</branchRate>
-								 <lineRate>70</lineRate>
-							</regex>
-						  </regexes>
-					 </check>
+					<check>
+						<haltOnFailure>false</haltOnFailure>
+						<regexes>
+						<regex>
+							 <pattern>at.uni_salzburg.*</pattern>
+							 <branchRate>70</branchRate>
+							 <lineRate>70</lineRate>
+						</regex>
+						</regexes>
+					</check>
 					<instrumentation>
 						<includes>
 							<include>at/uni_salzburg/cs/ckgroup/**/*.class</include>
@@ -279,6 +280,7 @@
 					</execution>
 				</executions>
 			</plugin>
+-->
 <!-- -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -371,20 +373,20 @@
 
 	<distributionManagement>
 		<site>
-                        <id>${site.deployment.id}</id>
+			<id>${site.deployment.id}</id>
 			<!-- <url>scp://zoot/www/docs/zoot.site/ese-cpcc/site</url> -->
 			<url>scp://141.201.106.16/home/ckrainer/public_html/site/ese-cpcc</url>
 		</site>
-                <repository>
-                        <id>${site.id}</id>
-                        <name>Inhouse Repository</name>
-                        <url>${inhouse.maven.repository}</url>
-                </repository>
-                <snapshotRepository>
-                        <id>${site.id}</id>
-                        <name>Snapshot Repository</name>
-                        <url>${inhouse_snapshot.maven.repository}</url>
-                </snapshotRepository>
+		<repository>
+			<id>${site.id}</id>
+			<name>Inhouse Repository</name>
+			<url>${inhouse.maven.repository}</url>
+		</repository>
+		<snapshotRepository>
+			<id>${site.id}</id>
+			<name>Snapshot Repository</name>
+			<url>${inhouse_snapshot.maven.repository}</url>
+		</snapshotRepository>
 	</distributionManagement>
 	<repositories>
 		<repository>

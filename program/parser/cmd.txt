@@ -1,0 +1,11 @@
+Point 123.45 2134234.345 34 tolerance a12.3 
+Picture 
+Temperature
+
+Point 1 1 1 tolerance 100 
+Temperature
+
+Point 2 2 2 tolerance 0.00012
+Picture 
+
+

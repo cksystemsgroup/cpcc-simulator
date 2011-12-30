@@ -1,4 +1,4 @@
-Point 123.45 2134234.345 34 tolerance a12.3 
+Point 123.45 2134234.345 34 tolerance 12.3 
 Picture 
 Temperature
 

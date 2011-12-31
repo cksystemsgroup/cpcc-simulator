@@ -140,7 +140,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	public void reloadConfigFile() throws IOException {
 		if (configFile != null && configFile.exists()) {
 			configuration.loadConfig(new FileInputStream(configFile));
-			LOG.info("Loading existing configuration from " + configFile);
+			LOG.info("Loading configuration from " + configFile);
 		}
 	}
 

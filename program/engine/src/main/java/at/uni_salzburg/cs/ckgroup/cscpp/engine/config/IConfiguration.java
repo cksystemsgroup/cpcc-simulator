@@ -23,6 +23,11 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.config;
 import java.net.URI;
 
 public interface IConfiguration {
+	
+	/**
+	 * @return true if there is a pilot attached.
+	 */
+	public boolean isPilotAvailable();
 
 	/**
 	 * @return the base URL of the associated auto pilot sensors. 

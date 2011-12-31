@@ -34,6 +34,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 
 	Logger LOG = Logger.getLogger(Configuration.class);
 	
+	public static final String PROP_PILOT_AVAILABLE = "pilot.available";
 	public static final String PROP_PILOT_SENSOR_URL = "pilot.sensor.url";
 	public static final String PROP_MAPPER_REGISTRY_URL = "mapper.registry.url";
 	
@@ -47,7 +48,8 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 * The parameters and their default values. 
 	 */
 	public static final String [][] parameters = {
-		{ PROP_PILOT_SENSOR_URL },
+		{ PROP_PILOT_AVAILABLE, "true" },
+		{ PROP_PILOT_SENSOR_URL, null, PROP_PILOT_AVAILABLE },
 		{ PROP_MAPPER_REGISTRY_URL },
 	};
 	
@@ -63,10 +65,18 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	}};
 	
 	/**
+	 * true if there is a pilot attached.
+	 */
+	private boolean pilotAvailable;
+	
+	/**
 	 * The base URL of the associated auto pilot sensors. 
 	 */
 	private URI pilotSensorUrl;
 	
+	/**
+	 * The URL of the central mapper registry.
+	 */
 	private URI mapperRegistryUrl;
 	
 	public Configuration() {
@@ -81,10 +91,19 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	public void loadConfig (InputStream inStream) throws IOException {
 		super.loadConfig(inStream);
-		pilotSensorUrl = parseURI(PROP_PILOT_SENSOR_URL);
+		
+		pilotAvailable = parseBool(PROP_PILOT_AVAILABLE).booleanValue();
+		pilotSensorUrl = pilotAvailable ? parseURI(PROP_PILOT_SENSOR_URL) : null;
 		mapperRegistryUrl = parseURI(PROP_MAPPER_REGISTRY_URL);
 	}
 	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration#isPilotAvailable()
+	 */
+	public boolean isPilotAvailable() {
+		return pilotAvailable;
+	}
+
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration#getPilotSensorUrl()
 	 */

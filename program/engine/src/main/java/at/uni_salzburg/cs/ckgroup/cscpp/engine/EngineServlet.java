@@ -100,25 +100,6 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			
 			configFile = new File (contexTempDir, props.getProperty(PROP_CONFIG_FILE));
 			reloadConfigFile();
-			
-			URI pilotSensorUrl = configuration.getPilotSensorUrl();
-			if (pilotSensorUrl != null)
-				sensorProxy.setSensorUrl(pilotSensorUrl.toASCIIString());
-			
-			FileFilter vehicleFilter = new FileFilter() {
-				@Override
-				public boolean accept(File pathname) {
-					return pathname.isDirectory() && pathname.getName().matches("vehicle\\d+");
-				}
-			};
-			
-			for (File vehicleDir : contexTempDir.listFiles(vehicleFilter)) {
-				IVirtualVehicle vehicle = vehicleBuilder.build(vehicleDir);
-				vehicleMap.put(vehicleDir.getName(),vehicle);				
-				vehicle.resume();
-			}
-			
-			sensorProxy.start();
 		
 		} catch (IOException e) {
 			throw new ServletException (e);
@@ -149,7 +130,16 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	@Override
     public void destroy () {
     	sensorProxy.terminate();
-    	// TODO check
+    	
+    	for (IVirtualVehicle vehicle : vehicleMap.values()) {
+    		if (vehicle.isActive()) {
+				try {
+					vehicle.suspend();
+				} catch (IOException e) {
+					LOG.error("Errors when suspending vehicle " + vehicle.getWorkDir(), e);
+				}
+    		}
+    	}
     }
     
     @Override
@@ -169,10 +159,36 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 
 	@Override
 	public void reloadConfigFile() throws IOException {
-		if (configFile != null && configFile.exists()) {
-			configuration.loadConfig(new FileInputStream(configFile));
-			LOG.info("Loading existing configuration from " + configFile);
+		if (configFile == null || !configFile.exists()) {
+			LOG.error("No configuration file available.");
+			return;
 		}
+		
+		configuration.loadConfig(new FileInputStream(configFile));
+		LOG.info("Loading configuration from " + configFile);
+		
+		URI pilotSensorUrl = configuration.getPilotSensorUrl();
+		sensorProxy.setSensorUrl(pilotSensorUrl != null ? pilotSensorUrl.toASCIIString() : null);
+		
+		FileFilter vehicleFilter = new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory() && pathname.getName().matches("vehicle\\d+");
+			}
+		};
+		
+		for (File vehicleDir : contexTempDir.listFiles(vehicleFilter)) {
+			IVirtualVehicle vehicle = vehicleMap.get(vehicleDir.getName());
+			if (vehicle == null) {
+				vehicle = vehicleBuilder.build(vehicleDir);
+				vehicleMap.put(vehicleDir.getName(),vehicle);
+			}
+			if (!vehicle.isActive())
+				vehicle.resume();
+		}
+		
+		if (configuration.isPilotAvailable() && !sensorProxy.isAlive())
+			sensorProxy.start();
 	}
 	
 }

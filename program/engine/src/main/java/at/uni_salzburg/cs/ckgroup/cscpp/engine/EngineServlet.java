@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.Configuration;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.json.JsonQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
@@ -69,6 +70,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	private ServiceEntry[] services = {
 		new ServiceEntry("/vehicle/.*", new VehicleService(this)),
 		new ServiceEntry("/config/.*", new ConfigService(this)),
+		new ServiceEntry("/json/.*", new JsonQueryService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};
 
@@ -104,7 +106,13 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		} catch (IOException e) {
 			throw new ServletException (e);
 		}
-
+		
+		for (ServiceEntry entry : services) {
+			if (entry.service instanceof JsonQueryService) {
+				JsonQueryService jqs = (JsonQueryService)entry.service;
+				jqs.setVehicleMap(vehicleMap);
+			}
+		}
 	}
 	
 	@Override

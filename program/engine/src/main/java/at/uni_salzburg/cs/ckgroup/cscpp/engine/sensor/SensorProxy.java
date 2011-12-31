@@ -139,10 +139,8 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	 */
 	@Override
 	public InputStream getSensorValueAsStream(String name) {
-		if (pilotSensorUrl == null) {
-			LOG.error("pilotSensorUrl not set.");
+		if (pilotSensorUrl == null)
 			return null;
-		}
 		
 		String url = pilotSensorUrl+"/"+name;
 		HttpClient httpclient = new DefaultHttpClient();

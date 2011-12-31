@@ -20,14 +20,48 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class VirtualVehicleQuery implements IJsonQuery {
 
 	@Override
 	public String execute(IServletConfig config, String[] parameters) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Logger LOG = Logger.getLogger(VirtualVehicleQuery.class);
+		
+		Properties props = config.getProperties();
+		
+		String pilotListString = props.getProperty(IJsonQuery.PROP_PILOT_LIST);
+		String[] pilotList = pilotListString.trim().split("\\s*,\\s*");
+		JSONParser parser = new JSONParser();
+		
+		// TODO do this in parallel
+		Map<String, Object> vehicleStatus = new LinkedHashMap<String, Object>();
+		for (String pilot : pilotList) {
+			String position = null;
+			try {
+				String pilotName = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_NAME);
+				String pilotVehicleURL = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_VEHICLE_STATUS_URL);
+				position = HttpQueryUtils.simpleQuery(pilotVehicleURL);
+				Map<String, Object> p = new LinkedHashMap<String, Object>();
+				p.put("name", pilotName);				
+				p.put("vehicles", parser.parse(position));
+				vehicleStatus.put(pilot, p);
+			} catch (Exception e) {
+				LOG.info("Can not query pilot " + pilot + ": " + position);
+			}
+		}
+
+		return JSONValue.toJSONString(vehicleStatus);
 	}
 
 }

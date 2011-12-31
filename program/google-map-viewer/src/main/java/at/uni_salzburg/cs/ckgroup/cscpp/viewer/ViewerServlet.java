@@ -39,6 +39,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SnoopService;
 
 
+@SuppressWarnings("serial")
 public class ViewerServlet extends HttpServlet implements IServletConfig {
 	
 	Logger LOG = Logger.getLogger(ViewerServlet.class);

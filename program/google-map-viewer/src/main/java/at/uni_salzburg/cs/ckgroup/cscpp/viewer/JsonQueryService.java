@@ -20,76 +20,22 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
-import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.IJsonQuery;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.QueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.PositionQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.RealVehicleQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.VirtualVehicleQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.WaypointsQuery;
 
 
-public class JsonQueryService extends DefaultService {
-	
-	Logger LOG = Logger.getLogger(JsonQueryService.class);
-	
-	@SuppressWarnings("serial")
-	private final static Map<String,IJsonQuery> actions = new HashMap<String, IJsonQuery>() {{
-		put("position", new PositionQuery());
-		put("waypoints", new WaypointsQuery());
-		put("virtualVehicle", new VirtualVehicleQuery());
-		put("realVehicle", new RealVehicleQuery());
-	}};
+public class JsonQueryService extends QueryService {
 	
 	public JsonQueryService (IServletConfig servletConfig) {
 		super (servletConfig);
-	}
-
-	@Override
-	public void service(ServletConfig config, HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		
-		String servicePath = request.getRequestURI();
-		if (request.getRequestURI().startsWith(request.getContextPath()))
-			servicePath = request.getRequestURI().substring(request.getContextPath().length());
-		
-		String[] cmd = servicePath.trim().split("/+");
-		if (cmd.length < 3) {
-			emit404(request, response);
-			return;
-		}
-		
-//		String[] newCmds = (String[])ArrayUtils.subarray(cmd, 2, cmd.length);
-		IJsonQuery action = null;
-		
-		try {
-			action = actions.get(cmd[2]);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
-			System.out.println("len=" + cmd.length);
-		}
-		
-		if (action == null) {
-			emit404(request, response);
-			return;
-		}
-		
-		String result = action.execute(servletConfig, cmd);
-		if (result == null)
-			emit200(request, response);
-		
-		emitPlainText(response, result);
+		queries.put("position", new PositionQuery());
+		queries.put("waypoints", new WaypointsQuery());
+		queries.put("virtualVehicle", new VirtualVehicleQuery());
+		queries.put("realVehicle", new RealVehicleQuery());
 	}
 
 }

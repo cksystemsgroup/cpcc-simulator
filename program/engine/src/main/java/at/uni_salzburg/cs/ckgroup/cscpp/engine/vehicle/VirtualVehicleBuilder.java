@@ -108,7 +108,7 @@ public class VirtualVehicleBuilder {
 	 * @throws IOException thrown in case of IO or configuration errors.
 	 */
 	public IVirtualVehicle build(File workDir) throws IOException {
-		LOG.info("Instatiating Virtual Vehicle " + workDir.getName());
+		LOG.info("Instantiating Virtual Vehicle " + workDir.getName());
 		VirtualVehicle vehicle = new VirtualVehicle(workDir);
 		vehicle.setSensorProxy(sensorProxy);
 		return vehicle;

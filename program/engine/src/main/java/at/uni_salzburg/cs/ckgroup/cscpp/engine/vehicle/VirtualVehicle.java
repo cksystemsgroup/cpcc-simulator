@@ -21,17 +21,25 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Parser;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ParserException;
 
 public class VirtualVehicle extends AbstractVirtualVehicle {
 	
 	Logger LOG = Logger.getLogger(VirtualVehicle.class);
+        List<Command> commandList;
+        boolean programCorrupted = true;
 	
 	/**
 	 * Construct a virtual vehicle.
@@ -41,7 +49,30 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 */
 	public VirtualVehicle (File workDir) throws IOException {
 		super(workDir);
+		try 
+		{
+			Scanner sc = new Scanner(program.getAbsolutePath());
+			Parser pa = new Parser();
+			
+	
+			commandList = pa.run(sc);
 		
+		
+		} 
+		catch(ParserException e)
+		{
+			LOG.error(e.getMessage());
+		}
+		catch (FileNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			LOG.error(e.getMessage(), e);
+		}
+		catch(IOException e) 
+		{
+			// TODO Auto-generated catch block
+			LOG.error(e.getMessage(), e);
+		}
 		//TODO: implement file parsing, program verification, set programCorrupted flag
 	}
 
@@ -65,6 +96,8 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 //				", alt=" + altitudeOverGround + ", course=" + courseOverGround +
 //				", speed=" + speedOverGround
 //				);
+            
+            //TODO: implement interpreter
 		
 		
 	}

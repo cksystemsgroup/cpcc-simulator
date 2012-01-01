@@ -1,17 +1,7 @@
+package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
+
 import java.util.LinkedList;
 import java.util.List;
-
-
-class ParserException extends Exception
-{
-	private String message;
-	
-	public ParserException(String msg)
-	{
-		super(msg);
-	}
-
-};
 
 public class Parser 
 {

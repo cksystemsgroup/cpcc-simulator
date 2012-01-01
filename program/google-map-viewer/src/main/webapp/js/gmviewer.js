@@ -1,10 +1,11 @@
 
 var positionUrl = '/gmview/json/position';
 var waypointsUrl = '/gmview/json/waypoints';
+var vehicleUrl = '/gmview/json/virtualVehicle';
 var map;
 var markers = {};
-//var pilots = {};
 var position = {};
+var vehicles = {};
 
 
 function updateMap() {
@@ -15,7 +16,6 @@ function updateMap() {
 			// do nothing
 		} else {
 			// obsolete one
-//			map.removeOverlay(markers[m]);
 			markers[m].setMap(null);
 		}
 	}
@@ -26,27 +26,18 @@ function updateMap() {
 		if (markers[m]) {
 			// update position
 			markers[m].setPosition(point);
-//			pilots[m].setPosition(point);
-//			markers[m].openInfoWindowHtml(String(point));
 		} else {
 			// new one!
-//			markers[m] = new google.maps.Marker({position: point, title: m, map: map});
-//			pilots[m] = new PilotOverlay(point, map);
 			markers[m] = new PilotOverlay(point, map);
-//			map.addOverlay(markers[m]);
-//			markers[m].openInfoWindowHtml(m, {maxWidth: 50});
-//			markers[m].setMap(map);
+			markers[m].setPilotName(position[m].name);
 		}
+		markers[m].setVehicles(vehicles[m].vehicles);
+		markers[m].setPilotFlying(position[m].autoPilotFlight);
 	}
 	
 }
 
 function onLoad() {
-//	if (!google.maps.BrowserIsCompatible())
-//		return;
-
-//	map.addControl(new google.maps.LargeMapControl());
-	
 	var center = 0;
 	var zoomLevel = 0;
 	var mapType = '';
@@ -73,17 +64,6 @@ function onLoad() {
 		zoomLevel = 17;
 	
 	var mapTypeName = mapType ? mapType.evalJSON() : '';
-//	if (mapTypeName == "Hybrid")
-//		map.setMapType(google.maps.MapTypeId.HYBRID);
-//	else if (mapTypeName == "Terrain")
-//		map.setMapType(google.maps.MapTypeId.TERRAIN);
-//	else if (mapTypeName == "Satellite")
-//		map.setMapType(google.maps.MapTypeId.SATELLITE);
-//	else
-//		map.setMapType(google.maps.MapTypeId.ROADMAP);
-	
-//	map.setCenter(center, zoomLevel);
-//	map.setUIToDefault();
 
     var myOptions = {
       zoom: zoomLevel,
@@ -107,11 +87,25 @@ function onLoad() {
 		},
 	1);
 	
+	new PeriodicalExecuter(
+		function() {
+			new Ajax.Request(vehicleUrl,
+			  {
+			    method:'get',
+			    onSuccess: function(transport){
+			      vehicles = transport.responseText.evalJSON();
+			      updateMap();
+			    },
+			    onFailure: function(){ alert('Something went wrong...') }
+			  });
+		},
+	1);
+	
 }
 
 
 function GUnload() {
-//	alert("unload");
+	//	alert("unload");
 }
 
 

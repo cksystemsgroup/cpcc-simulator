@@ -107,21 +107,6 @@ public class VehicleService extends DefaultService {
 		}
 		
 		String nextPage;
-
-//		if (ACTION_CONFIG_UPLOAD.equals(action)) {
-//			File confFile = servletConfig.getConfigFile();
-//			if (uploadedFile != null) {
-//				MimeUtils.saveFile (uploadedFile, confFile);
-//				LOG.info("Written: " + confFile);
-//				servletConfig.reloadConfigFile();
-//				LOG.info("Configuration uploaded.");
-//				nextPage = request.getContextPath() + "/config.tpl";
-//			} else {
-//				emit422(request, response);
-//				return;
-//			}
-//			
-//		} else
 		
 		if (ACTION_VEHICLE_UPLOAD.equals(action)) {
 			if (uploadedFile != null) {
@@ -137,6 +122,7 @@ public class VehicleService extends DefaultService {
 				IVirtualVehicle vehicle = vehicleBuilder.build(workDir, new ByteArrayInputStream(uploadedFile.getBody()));
 				
 				Object vhl = config.getServletContext().getAttribute("vehicleMap");
+				@SuppressWarnings("unchecked")
 				Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
 				vehicleMap.put(workDir.getName(), vehicle);
 				vehicle.resume();
@@ -181,7 +167,7 @@ public class VehicleService extends DefaultService {
 				return;
 			}
 			
-			for (String name : p2.split("\\s*,\\s")) {
+			for (String name : p2.split("\\s*,\\s*")) {
 				File vd = new File(contexTempDir,name);
 				
 				try {
@@ -238,6 +224,7 @@ public class VehicleService extends DefaultService {
 	private void migrateVehicle(ServletConfig config, String uploadUrl, String name) throws IOException {
 		IVirtualVehicle vehicle = getVehicle(config, name);
 		Object vhl = config.getServletContext().getAttribute("vehicleMap");
+		@SuppressWarnings("unchecked")
 		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
 		vehicleMap.remove(name);
 		vehicle.suspend();
@@ -266,6 +253,7 @@ public class VehicleService extends DefaultService {
 	
 	private IVirtualVehicle getVehicle (ServletConfig config, String vehicle) {
 		Object vhl = config.getServletContext().getAttribute("vehicleMap");
+		@SuppressWarnings("unchecked")
 		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
 		return vehicleMap.get(vehicle);
 	}

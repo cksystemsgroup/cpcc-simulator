@@ -1,3 +1,20 @@
+/*
+ * @(#) Parser.java
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.util.LinkedList;
@@ -38,12 +55,8 @@ public class Parser
 			lst_cmds.add(cmd);
 		}
 		
-		
 		return lst_cmds;
 	}
-	
-	
-	
 	
 	private Command read_command() throws ParserException
 	{
@@ -51,20 +64,18 @@ public class Parser
 		List<Action> list_actions = null;
 		
 		if (sym==Scanner.SymPOINT)
-		{;
+		{
 			next_sym();
 			
 			pos = read_position();
 			
 			list_actions = read_actions();
-			
 		}
 		else
 			throw_exception("error reading command - no point specified");
 	
 		return new Command(pos, list_actions);
 	}
-	
 
 	private Position read_position() throws ParserException			
 	{
@@ -86,11 +97,9 @@ public class Parser
 		}
 		else
 			throw_exception("error reading position - no tolerance specified");
-			
 		
 		return new Position(pt, tol);
 	}
-
 	
 	private Point read_point() throws ParserException
 	{
@@ -119,10 +128,8 @@ public class Parser
 		}
 		else
 			throw_exception("error reading point - need double for altitude");
-
 		
 		return new Point(lat, lon, alt);
-		
 	}
 	
 	private List<Action> read_actions()
@@ -146,7 +153,6 @@ public class Parser
 				// maybe beginning of next command -> so no exception
 				cont = false;
 				break;
-			
 			}
 			
 			if (cont)
@@ -154,7 +160,6 @@ public class Parser
 		}
 		
 		return lst;
-	
 	}
 	
 	private void throw_exception(String msg) throws ParserException
@@ -162,7 +167,6 @@ public class Parser
 		msg = "line "+scanner.get_line() +": " + msg;
 		
 		throw new ParserException(msg);
-	
 	}
 	
 }

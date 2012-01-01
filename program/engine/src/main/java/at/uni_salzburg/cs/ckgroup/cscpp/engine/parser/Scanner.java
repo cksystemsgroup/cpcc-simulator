@@ -1,3 +1,20 @@
+/*
+ * @(#) Scanner.java
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.FileInputStream;
@@ -9,9 +26,6 @@ import java.util.HashMap;
 
 public class Scanner 
 {
-	//String strFileName;
-	//int State;
-	
 	private InputStreamReader input_file;
 	private int c;
 	
@@ -20,7 +34,6 @@ public class Scanner
 	private String identifier;
 	
 	private HashMap<String, Integer> map_keywords;
-	
 	
 	public static final int SymDOUBLE = 1;
 	public static final int SymNUMBER = 2;
@@ -32,20 +45,18 @@ public class Scanner
 	public static final int SymTOLERANCE = 8;
 	
 	int line;
-	
 
-	
+
 	public Scanner(String strFile) throws FileNotFoundException
 	{ 
 		line = 1;
 		c = 0;
-		map_keywords = new HashMap();
+		map_keywords = new HashMap<String, Integer>();
 		
 		map_keywords.put(new String("POINT"), new Integer(SymPOINT));
 		map_keywords.put(new String("PICTURE"), new Integer(SymPICTURE));
 		map_keywords.put(new String("TEMPERATURE"), new Integer(SymTEMPERATURE));
 		map_keywords.put(new String("TOLERANCE"), new Integer(SymTOLERANCE));
-
 		
 		FileInputStream input_stream = new FileInputStream(strFile);
 		input_file = new InputStreamReader(input_stream);
@@ -92,7 +103,6 @@ public class Scanner
 			sym = read_identifier();
 		}
 		
-		
 		return sym;
 	}
 	
@@ -102,7 +112,6 @@ public class Scanner
 		int ret = 0;
 		
 		String strNumber = new String();
-		
 		
 		do 
 		{
@@ -149,7 +158,6 @@ public class Scanner
 			next_char();
 		}
 		
-		
 		return get_keyword();
 	}
 	
@@ -160,7 +168,6 @@ public class Scanner
 		Integer sym = (Integer)map_keywords.get(str);
 			
 		return (sym==null ? SymIDENTIFIER : sym.intValue());
-			
 	}
 
 	
@@ -178,7 +185,6 @@ public class Scanner
 	{
 		return identifier;
 	}
-	
 	
 }
 

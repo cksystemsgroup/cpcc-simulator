@@ -1,7 +1,22 @@
+/*
+ * @(#) tester.java
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -12,36 +27,21 @@ public class tester {
 	 */
 	public static void main(String[] args) 
 	{
-
-		System.out.println("test\n");
-		
 		try 
 		{
-			Scanner sc = new Scanner("/home/andreas/workspace/Flight_Commands/src/cmd.txt");
+			String cmdPathName = tester.class.getResource("cmd.txt").getPath();
+			Scanner sc = new Scanner(cmdPathName);
 			Parser pa = new Parser();
-			
 	
 			List<Command> lst = pa.run(sc);
-		
-		
+			for (Command c : lst) {
+				System.out.println(c.toString());
+			}
 		} 
-		catch(ParserException e)
+		catch(Exception e)
 		{
-			System.out.println(e.getMessage());
-		}
-		catch (FileNotFoundException e) 
-		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		catch(IOException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		
 	}
 
 }

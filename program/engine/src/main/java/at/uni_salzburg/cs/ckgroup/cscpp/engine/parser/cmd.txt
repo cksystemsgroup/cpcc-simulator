@@ -5,7 +5,7 @@ Temperature
 Point 1 1 1 tolerance 100 
 Temperature
 
-Point 2 2 2 tolerance 0.00012
+Point 2 2 2 tolerance 1.2
 Picture 
 
 

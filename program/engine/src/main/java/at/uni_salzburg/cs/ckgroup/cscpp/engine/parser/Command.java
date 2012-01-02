@@ -17,18 +17,25 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.ListIterator;
+
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.ISensorProxy;
 
 
-public class Command
+public class Command implements Serializable
 {
 	private Position position;
-	private List<Action> lst_actions;
+	private List<IAction> lst_actions;
+	
+	private boolean finished;
 		
-	public Command(Position pos, List<Action> actions)
+	public Command(Position pos, List<IAction> actions)
 	{
 		position = pos;
 		lst_actions = actions;
+		finished = false;
 	}
 	
 	public String toString()
@@ -38,12 +45,47 @@ public class Command
 		s.append(position.toString());
 		s.append("\n");
 		
-		for (Action action : lst_actions) {
+		for (IAction action : lst_actions) {
 			s.append(action.toString());
 			s.append("\n");
 		}
 		
 		return s.toString();
+	}
+	
+	public Position get_position()
+	{
+		return position;
+	}
+	
+	public List<IAction> get_actions()
+	{
+		return lst_actions;
+	}
+	
+	public boolean is_finished()
+	{
+		return finished;
+	}
+	
+	public boolean execute(ISensorProxy sproxy)
+	{
+		if (!finished)
+		{
+			IAction act = null;
+		    ListIterator<IAction> iter = lst_actions.listIterator();
+		    
+		    while (iter.hasNext())
+		    {
+		    	act = iter.next();
+		    	
+		    	act.execute(sproxy);
+		    }
+		    
+		    finished = true;
+		}
+		
+		return true;
 	}
 	
 } 

@@ -17,9 +17,11 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
+import java.io.Serializable;
 import java.util.Locale;
 
-public class Point {
+public class Point implements Serializable
+{
 	
 	private double latitude;
 	private double longitude;

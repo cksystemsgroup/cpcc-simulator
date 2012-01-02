@@ -17,7 +17,10 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-public class Position {
+import java.io.Serializable;
+
+public class Position implements Serializable
+{
 	private Point pt;
 	private double tolerance;
 

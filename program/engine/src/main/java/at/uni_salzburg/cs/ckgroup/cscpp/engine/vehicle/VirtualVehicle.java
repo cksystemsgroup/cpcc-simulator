@@ -25,11 +25,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Position;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Parser;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
@@ -41,6 +44,10 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
         List<Command> commandList;
         boolean programCorrupted = true;
 	
+        
+    private ListIterator<Command> listIter;
+    private Command currentCommand;
+        
 	/**
 	 * Construct a virtual vehicle.
 	 * 
@@ -51,13 +58,24 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		super(workDir);
 		try 
 		{
+			currentCommand=null;
+			
 			Scanner sc = new Scanner(program.getAbsolutePath());
 			Parser pa = new Parser();
 			
 	
 			commandList = pa.run(sc);
-		
-		
+			listIter = commandList.listIterator();
+			
+			
+			if (listIter.hasNext())
+				currentCommand = listIter.next();
+			else
+				completed = true;
+				
+			
+			programCorrupted = false;
+			
 		} 
 		catch(ParserException e)
 		{
@@ -80,10 +98,30 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.AbstractVirtualVehicle#execute()
 	 */
 	@Override
-	public void execute() {
+	public void execute() 
+	{
 		// TODO Auto-generated method stub
 
-//		PolarCoordinate p = sensorProxy.getCurrentPosition();
+		PolarCoordinate p = sensorProxy.getCurrentPosition();		
+		Position pos = currentCommand.get_position();
+		
+		boolean at_pos = true;
+		
+		// TODO: Check if p is in the tolerance area of pos
+		// @Clemens -> Do we have a function to calculate the differnce im meters of 
+		// two points in polar coordinates ?
+		
+		if (at_pos)
+		{
+			currentCommand.execute(sensorProxy);
+			
+			if (listIter.hasNext())
+				currentCommand = listIter.next();
+			else 
+				completed = true;
+		}
+		
+		
 //		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 //		Double courseOverGround = sensorProxy.getCourseOverGround();
 //		Double speedOverGround = sensorProxy.getSpeedOverGround();
@@ -100,6 +138,22 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
             //TODO: implement interpreter
 		
 		
+	}
+	
+	
+	public VirtualVehicleState getState()
+	{
+		VirtualVehicleState vss = new VirtualVehicleState();
+		
+		for (Command cmd : commandList)
+		{
+			if (cmd.is_finished())
+				vss.CommandsExecuted++;
+			else	
+				vss.CommandsToExecute++;
+		}
+		
+		return vss;
 	}
 
 }

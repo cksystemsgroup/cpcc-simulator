@@ -61,7 +61,7 @@ public class Parser
 	private Command read_command() throws ParserException
 	{
 		Position pos = null;
-		List<Action> list_actions = null;
+		List<IAction> list_actions = null;
 		
 		if (sym==Scanner.SymPOINT)
 		{
@@ -132,9 +132,9 @@ public class Parser
 		return new Point(lat, lon, alt);
 	}
 	
-	private List<Action> read_actions()
+	private List<IAction> read_actions()
 	{
-		List<Action> lst = new LinkedList<Action>();
+		List<IAction> lst = new LinkedList<IAction>();
 		
 		boolean cont = true;
 		
@@ -143,10 +143,10 @@ public class Parser
 			switch(sym)
 			{
 			case Scanner.SymTEMPERATURE: 
-				lst.add(new Action(Action.ActionType.TEMPERATURE)); 
+				lst.add(new ActionTemperature()); 
 				break;
 			case Scanner.SymPICTURE: 
-				lst.add(new Action(Action.ActionType.PICTURE)); 	
+				lst.add(new ActionPicture()); 	
 				break;
 				
 			default:

@@ -100,7 +100,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	/**
 	 * True if all tasks of this virtual vehicle have been successful.
 	 */
-	private boolean completed = false;
+	protected boolean completed = false;
 	
 	/**
 	 * Construct a virtual vehicle instance.

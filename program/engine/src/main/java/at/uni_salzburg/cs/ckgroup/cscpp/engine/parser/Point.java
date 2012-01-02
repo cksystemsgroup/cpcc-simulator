@@ -20,7 +20,10 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 import java.io.Serializable;
 import java.util.Locale;
 
+import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+
 public class Point implements Serializable
+//TODO check: why Serializable?
 {
 	
 	private double latitude;
@@ -33,16 +36,20 @@ public class Point implements Serializable
 		altitude = alt;
 	}
 
-	double get_latitude() {
+	public double get_latitude() {
 		return latitude;
 	}
 
-	double get_longitude() {
+	public double get_longitude() {
 		return longitude;
 	}
 
-	double get_altitude() {
+	public double get_altitude() {
 		return altitude;
+	}
+	
+	public PolarCoordinate getPolarCoordinate() {
+		return new PolarCoordinate(latitude, longitude, altitude);
 	}
 
 	public String toString() {

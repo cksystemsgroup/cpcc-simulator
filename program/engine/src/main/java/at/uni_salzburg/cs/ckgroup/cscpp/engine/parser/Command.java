@@ -25,6 +25,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.ISensorProxy;
 
 
 public class Command implements Serializable
+//TODO check: why Serializable?
 {
 	private Position position;
 	private List<IAction> lst_actions;

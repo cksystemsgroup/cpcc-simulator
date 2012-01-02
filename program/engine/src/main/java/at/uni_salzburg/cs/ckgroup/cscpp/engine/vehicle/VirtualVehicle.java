@@ -21,33 +21,34 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
+import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
+import at.uni_salzburg.cs.ckgroup.course.WGS84;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Parser;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Position;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Parser;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ParserException;
 
 public class VirtualVehicle extends AbstractVirtualVehicle {
 	
 	Logger LOG = Logger.getLogger(VirtualVehicle.class);
-        List<Command> commandList;
-        boolean programCorrupted = true;
 	
+	private List<Command> commandList;
+    private boolean programCorrupted = true;
         
     private ListIterator<Command> listIter;
     private Command currentCommand;
-        
+
+    private IGeodeticSystem geodeticSystem = new WGS84();
+    
+    
 	/**
 	 * Construct a virtual vehicle.
 	 * 
@@ -56,42 +57,32 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 */
 	public VirtualVehicle (File workDir) throws IOException {
 		super(workDir);
+		
+		// TODO read vehicle state from file. Use vehicleStatus as file name.
+		
 		try 
 		{
-			currentCommand=null;
+			currentCommand = null;
 			
 			Scanner sc = new Scanner(program.getAbsolutePath());
 			Parser pa = new Parser();
-			
 	
 			commandList = pa.run(sc);
 			listIter = commandList.listIterator();
-			
 			
 			if (listIter.hasNext())
 				currentCommand = listIter.next();
 			else
 				completed = true;
-				
 			
 			programCorrupted = false;
-			
 		} 
-		catch(ParserException e)
+		catch(Exception e)
 		{
 			LOG.error(e.getMessage());
 		}
-		catch (FileNotFoundException e) 
-		{
-			// TODO Auto-generated catch block
-			LOG.error(e.getMessage(), e);
-		}
-		catch(IOException e) 
-		{
-			// TODO Auto-generated catch block
-			LOG.error(e.getMessage(), e);
-		}
-		//TODO: implement file parsing, program verification, set programCorrupted flag
+		
+		// TODO store current vehicle state in a file. Use vehicleStatus as file name.
 	}
 
 	/* (non-Javadoc)
@@ -100,16 +91,24 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	@Override
 	public void execute() 
 	{
-		// TODO Auto-generated method stub
-
-		PolarCoordinate p = sensorProxy.getCurrentPosition();		
+		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
+		if (currentPosition == null || completed)
+			return;
+		
+		CartesianCoordinate currentPosCartesian = geodeticSystem.polarToRectangularCoordinates(currentPosition);
+		
 		Position pos = currentCommand.get_position();
+		PolarCoordinate commandPosition = pos.getPt().getPolarCoordinate();
+		CartesianCoordinate commandPosCartesian = geodeticSystem.polarToRectangularCoordinates(commandPosition);
 		
-		boolean at_pos = true;
+		double distance = commandPosCartesian.subtract(currentPosCartesian).norm();
 		
-		// TODO: Check if p is in the tolerance area of pos
+		// Check if p is in the tolerance area of pos
 		// @Clemens -> Do we have a function to calculate the differnce im meters of 
 		// two points in polar coordinates ?
+		// TODO yes we have. See code above.
+		
+		boolean at_pos = distance <= pos.getTolerance();
 		
 		if (at_pos)
 		{
@@ -121,7 +120,11 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 				completed = true;
 		}
 		
+		// TODO store current vehicle state in a file after each command execution. Use vehicleStatus as file name.
+
 		
+		
+
 //		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 //		Double courseOverGround = sensorProxy.getCourseOverGround();
 //		Double speedOverGround = sensorProxy.getSpeedOverGround();
@@ -129,31 +132,37 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 //		Integer random = sensorProxy.getSensorValueAsInteger(SensorProxy.SENSOR_NAME_RANDOM);
 //		String sonar = sensorProxy.getSensorValue(SensorProxy.SENSOR_NAME_SONAR);
 //		InputStream photo = sensorProxy.getSensorValueAsStream(SensorProxy.SENSOR_NAME_PHOTO);
-		
+//		
 //		LOG.error("VirtualVehicle.execute() is not implemented yet! position=" + p +
 //				", alt=" + altitudeOverGround + ", course=" + courseOverGround +
 //				", speed=" + speedOverGround
 //				);
-            
-            //TODO: implement interpreter
-		
-		
 	}
 	
 	
-	public VirtualVehicleState getState()
-	{
+	public VirtualVehicleState getState() {
 		VirtualVehicleState vss = new VirtualVehicleState();
-		
-		for (Command cmd : commandList)
-		{
+
+		for (Command cmd : commandList) {
 			if (cmd.is_finished())
 				vss.CommandsExecuted++;
-			else	
+			else
 				vss.CommandsToExecute++;
 		}
-		
+
 		return vss;
 	}
 
+	public List<Command> getCommandList() {
+		return commandList;
+	}
+
+	public boolean isProgramCorrupted() {
+		return programCorrupted;
+	}
+
+	public Command getCurrentCommand() {
+		return currentCommand;
+	}
+	
 }

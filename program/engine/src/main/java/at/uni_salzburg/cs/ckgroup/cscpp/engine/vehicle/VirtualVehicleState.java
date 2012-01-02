@@ -1,5 +1,7 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
+// TODO GNU header
+
 public class VirtualVehicleState 
 {
 	public int CommandsExecuted;

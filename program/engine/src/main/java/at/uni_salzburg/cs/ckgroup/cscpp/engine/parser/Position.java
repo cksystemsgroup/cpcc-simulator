@@ -20,6 +20,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 import java.io.Serializable;
 
 public class Position implements Serializable
+//TODO check: why Serializable?
+
 {
 	private Point pt;
 	private double tolerance;

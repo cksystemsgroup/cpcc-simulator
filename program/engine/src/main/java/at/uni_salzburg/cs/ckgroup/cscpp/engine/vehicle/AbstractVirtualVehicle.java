@@ -44,6 +44,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public static final String PROGRAM_PATH = "vehicle.prg";
 	public static final String LOG_PATH = "vehicle.log";
 	public static final String PROPERTY_PATH = "vehicle.properties";
+	public static final String STATUS_PATH = "vehicle.status";
 	public static final String DATA_SUBDIR = "data";
 	public static final long timerDelay = 500;
 	public static final long timerPeriod = 5000;
@@ -66,6 +67,11 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 * The virtual vehicle program to be executed.
 	 */
 	protected File program;
+	
+	/**
+	 * The virtual vehicle status.
+	 */
+	protected File vehicleStatus;
 	
 	/**
 	 * The properties of the virtual vehicle.
@@ -117,6 +123,10 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		program = new File(workDir, PROGRAM_PATH);
 		if (!program.exists())
 			throw new IOException("Program file not found " + program);
+		
+		vehicleStatus = new File(workDir, STATUS_PATH);
+		if (!vehicleStatus.exists())
+			vehicleStatus.createNewFile();
 		
 		properties = new Properties();
 		File propsFile = new File(workDir, PROPERTY_PATH);

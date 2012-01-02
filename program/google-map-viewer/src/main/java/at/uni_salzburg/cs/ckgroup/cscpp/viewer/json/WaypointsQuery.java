@@ -20,56 +20,45 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class WaypointsQuery implements IJsonQuery {
-
+	
+	Logger LOG = Logger.getLogger(WaypointsQuery.class);
+	
 	public String execute(IServletConfig config, String[] parameters) {
 		
+		Properties props = config.getProperties();
 		
-//		int line = config.getAviator().getCurrentVclCommandLine();
-//		List<ICommand> commandList = config.getAviator().getVclSctipt();
-//
-//		JSONArray list = new JSONArray();
-//
-//		int counter = 0;
-//		for (ICommand command : commandList) {
-//			++counter;
-//			Map<String,Object> obj = new LinkedHashMap<String,Object>();
-//			
-//			if (command instanceof CommandFlyToAbs) {
-//				CommandFlyToAbs o = (CommandFlyToAbs)command;
-//				obj.put("longitude", o.getCoordinate().getLongitude());
-//				obj.put("latitude", o.getCoordinate().getLatitude());
-//				obj.put("altitude", o.getCoordinate().getAltitude());
-//				obj.put("precision", o.getPrecision());
-//				obj.put("velocity", o.getVelocity());
-//				
-//			} else if (command instanceof CommandFlyToAbsOld) {
-//				CommandFlyToAbsOld o = (CommandFlyToAbsOld)command;
-//				obj.put("longitude", o.getCoordinate().getLongitude());
-//				obj.put("latitude", o.getCoordinate().getLatitude());
-//				obj.put("altitude", o.getCoordinate().getAltitude());
-//				obj.put("precision", o.getPrecision());
-//				obj.put("velocity", o.getVelocity());
-//				
-//			} else if (command instanceof CommandJumpToAbs) {
-//				CommandJumpToAbs o = (CommandJumpToAbs)command;
-//				obj.put("longitude", o.getCoordinate().getLongitude());
-//				obj.put("latitude", o.getCoordinate().getLatitude());
-//				obj.put("altitude", o.getCoordinate().getAltitude());
-//				obj.put("precision", o.getPrecision());
-//				
-//			} else {
-//				continue;
-//			}
-//			
-//			obj.put("current", Boolean.valueOf(counter == line));
-//			list.add(obj);
-//		}
-//		
-//		return list.toJSONString();
-		return null;
+		String pilotListString = props.getProperty(IJsonQuery.PROP_PILOT_LIST);
+		String[] pilotList = pilotListString.trim().split("\\s*,\\s*");
+		JSONParser parser = new JSONParser();
+		
+		// TODO do this in parallel
+		Map<String, Object> pilotWaypoints = new LinkedHashMap<String, Object>();
+		for (String pilot : pilotList) {
+			String waypoints = null;
+			try {
+				String pilotWaypointsURL = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_WAYPOINTS_URL);
+				waypoints = HttpQueryUtils.simpleQuery(pilotWaypointsURL);
+				Map<String, Object> p = new LinkedHashMap<String, Object>();
+				p.put("waypoints", parser.parse(waypoints));
+				pilotWaypoints.put(pilot, p);
+			} catch (Exception e) {
+				LOG.info("Can not query pilot " + pilot + ": " + waypoints);
+			}
+		}
+
+		return JSONValue.toJSONString(pilotWaypoints);
 	}
 
 }

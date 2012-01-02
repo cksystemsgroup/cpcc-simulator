@@ -4,9 +4,10 @@ var waypointsUrl = '/gmview/json/waypoints';
 var vehicleUrl = '/gmview/json/virtualVehicle';
 var map;
 var markers = {};
+var waypointPolylines = {};
 var position = {};
 var vehicles = {};
-
+var loadWaypoints = true;
 
 function updateMap() {
 
@@ -17,6 +18,7 @@ function updateMap() {
 		} else {
 			// obsolete one
 			markers[m].setMap(null);
+			loadWaypoints = true;
 		}
 	}
 	
@@ -30,9 +32,41 @@ function updateMap() {
 			// new one!
 			markers[m] = new PilotOverlay(point, map);
 			markers[m].setPilotName(position[m].name);
+			loadWaypoints = true;
 		}
 		markers[m].setVehicles(vehicles[m].vehicles);
 		markers[m].setPilotFlying(position[m].autoPilotFlight);
+	}
+}
+
+function updateWaypoints (waypoints) {
+	for (m in waypoints) {
+		var wp = waypoints[m].waypoints;
+		var path = new Array();
+		for (var k=0; k < wp.length; ++k) {
+			path[k] = new google.maps.LatLng(wp[k].latitude, wp[k].longitude);
+		}
+		
+		if (!waypointPolylines[m]) {
+			// new one!
+			waypointPolylines[m] = new google.maps.Polyline ({
+				clickable: false,
+				path: path,
+				strokeColor: "#6C6C6C",
+				strokeOpacity: 0.6,
+				strokeWeight: 2
+			});
+		} else {
+			waypointPolylines[m].setPath(path);
+		}
+		waypointPolylines[m].setMap(map);
+	}
+	
+	for (m in waypointPolylines) {
+		if (!waypoints[m]) {
+			// obsolete one
+			waypointPolylines[m].setMap(null);
+		}
 	}
 	
 }
@@ -93,14 +127,30 @@ function onLoad() {
 			  {
 			    method:'get',
 			    onSuccess: function(transport){
-			      vehicles = transport.responseText.evalJSON();
-			      updateMap();
+					vehicles = transport.responseText.evalJSON();
+					updateMap();
 			    },
 			    onFailure: function(){ alert('Something went wrong...') }
 			  });
 		},
 	1);
 	
+	new PeriodicalExecuter(
+		function() {
+			new Ajax.Request(waypointsUrl,
+			  {
+			    method:'get',
+			    onSuccess: function(transport){
+			    	if (loadWaypoints) {
+						loadWaypoints = false;
+						var waypoints = transport.responseText.evalJSON();
+						updateWaypoints(waypoints);
+				    }
+			    },
+			    onFailure: function(){ alert('Something went wrong...') }
+			  });
+		},
+	1);
 }
 
 

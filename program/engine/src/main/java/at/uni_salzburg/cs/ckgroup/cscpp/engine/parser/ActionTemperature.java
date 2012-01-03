@@ -15,8 +15,8 @@ public class ActionTemperature implements IAction, Serializable
 	public boolean execute(ISensorProxy sprox) 
 	{
 		// TODO Auto-generated method stub
-		Integer temperature = sprox.getSensorValueAsInteger(ISensorProxy.SENSOR_NAME_RANDOM);
-		// TODO check: temperature is of type double
+		double temperature = sprox.getSensorValueAsDouble(ISensorProxy.SENSOR_NAME_TEMPERATURE);
+		
 		// TODO store temperature
 		
 		return false;
@@ -24,9 +24,6 @@ public class ActionTemperature implements IAction, Serializable
 	
 	public String toString()
 	{
-		// TODO use: 'return "Temperature";' instead.
-		return new String("Temperature");
+		return "Temperature";
 	}
-
-
 }

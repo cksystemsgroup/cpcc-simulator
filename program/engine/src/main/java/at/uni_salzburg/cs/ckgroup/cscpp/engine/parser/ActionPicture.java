@@ -19,40 +19,27 @@ public class ActionPicture implements IAction, Serializable {
 		InputStream photo = sprox.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
 		// TODO check for null! A photo is avaliable if the InputStream is not null.
 		
-		// TODO store photo
+		// TODO store photo to dataDir and remember filename relative to dataDir
 		// TODO use FileOutputStream to store picture. Use dataDir folder from (Abstract)VirtualVehicle
 		
 		int avl = 0;
 		try 
 		{
 			// TODO check documentation, see HttpQueryUtils.simpleQuery() how to copy the stream
-			
 			avl = photo.available();
-			
 			data = new byte[avl];	
-			
 			avl = photo.read(data);
-			
-			
 		} 
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
-		
 		return false;
 	}
 
 	public String toString()
 	{
-		// TODO use: 'return "Picture";' instead.
-		return new String("Picture");
+		return "Picture";
 	}
-
-	
-	
-
-	
 }

@@ -40,12 +40,12 @@ import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.json.JsonQueryService;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 
 

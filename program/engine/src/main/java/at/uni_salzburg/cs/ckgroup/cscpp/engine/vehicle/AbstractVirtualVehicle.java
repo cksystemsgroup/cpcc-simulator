@@ -34,8 +34,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.ISensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnable {
 	

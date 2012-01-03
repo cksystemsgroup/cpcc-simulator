@@ -29,8 +29,8 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 
 
 public class VirtualVehicleBuilder {

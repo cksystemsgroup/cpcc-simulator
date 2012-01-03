@@ -62,6 +62,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 //		new ServiceEntry("/admin/.*", new AdminService(this)),
 		new ServiceEntry("/config/.*", new ConfigService(this)),
 		new ServiceEntry("/status/.*", new StatusService(this)),
+                new ServiceEntry("/register/.*", new RegistryService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};
 	

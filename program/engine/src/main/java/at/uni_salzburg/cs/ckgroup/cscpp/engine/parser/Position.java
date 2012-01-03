@@ -18,20 +18,22 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.Serializable;
+import java.util.Locale;
+
+import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
 public class Position implements Serializable
-//TODO check: why Serializable?
-
 {
-	private Point pt;
+	private static final long serialVersionUID = 4207943401820191787L;
+	private PolarCoordinate pt;
 	private double tolerance;
 
-	public Position(Point p, double tol) {
+	public Position(PolarCoordinate p, double tol) {
 		pt = p;
 		tolerance = tol;
 	}
 
-	public Point getPt() {
+	public PolarCoordinate getPt() {
 		return pt;
 	}
 
@@ -40,6 +42,7 @@ public class Position implements Serializable
 	}
 
 	public String toString() {
-		return "Point " + pt.toString() + " tolerance " + tolerance;
+		return String.format(Locale.US, "Point %.8f %.8f %.3f tolerance %.1f", 
+				pt.getLatitude(), pt.getLongitude(), pt.getAltitude(), tolerance);
 	}
 }

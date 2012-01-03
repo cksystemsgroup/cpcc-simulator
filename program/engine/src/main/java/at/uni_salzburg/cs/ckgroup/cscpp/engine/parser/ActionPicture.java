@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.ISensorProxy;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 // TODO GNU header
 

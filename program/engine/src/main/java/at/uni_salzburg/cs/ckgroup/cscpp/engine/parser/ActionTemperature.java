@@ -2,7 +2,7 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.Serializable;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.ISensorProxy;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 // TODO GNU header
 

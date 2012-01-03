@@ -98,7 +98,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		CartesianCoordinate currentPosCartesian = geodeticSystem.polarToRectangularCoordinates(currentPosition);
 		
 		Position pos = currentCommand.get_position();
-		PolarCoordinate commandPosition = pos.getPt().getPolarCoordinate();
+		PolarCoordinate commandPosition = pos.getPt();
 		CartesianCoordinate commandPosCartesian = geodeticSystem.polarToRectangularCoordinates(commandPosition);
 		
 		double distance = commandPosCartesian.subtract(currentPosCartesian).norm();

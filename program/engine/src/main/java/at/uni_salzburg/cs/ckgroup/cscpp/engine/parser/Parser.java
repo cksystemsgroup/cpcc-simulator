@@ -20,6 +20,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 import java.util.LinkedList;
 import java.util.List;
 
+import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+
 public class Parser 
 {
 	private int sym;
@@ -72,7 +74,7 @@ public class Parser
 			list_actions = read_actions();
 		}
 		else
-			throw_exception("error reading command - no point specified");
+			throw_exception("error reading command - no PolarCoordinate specified");
 	
 		return new Command(pos, list_actions);
 	}
@@ -80,7 +82,7 @@ public class Parser
 	private Position read_position() throws ParserException			
 	{
 		
-		Point pt = read_point();
+		PolarCoordinate pt = read_point();
 		double tol = 0.0;
 		
 		if (sym==Scanner.SymTOLERANCE)
@@ -101,7 +103,7 @@ public class Parser
 		return new Position(pt, tol);
 	}
 	
-	private Point read_point() throws ParserException
+	private PolarCoordinate read_point() throws ParserException
 	{
 		double lat=0.0, lon=0.0, alt=0.0;
 		
@@ -111,7 +113,7 @@ public class Parser
 			next_sym();
 		}
 		else
-			throw_exception("error reading point - need double for latitude");
+			throw_exception("error reading PolarCoordinate - need double for latitude");
 		
 		if ((sym==Scanner.SymNUMBER) || (sym==Scanner.SymDOUBLE))
 		{
@@ -119,7 +121,7 @@ public class Parser
 			next_sym();
 		}
 		else
-			throw_exception("error reading point - need double for longitude");
+			throw_exception("error reading PolarCoordinate - need double for longitude");
 
 		if ((sym==Scanner.SymNUMBER) || (sym==Scanner.SymDOUBLE))
 		{
@@ -127,9 +129,9 @@ public class Parser
 			next_sym();
 		}
 		else
-			throw_exception("error reading point - need double for altitude");
+			throw_exception("error reading PolarCoordinate - need double for altitude");
 		
-		return new Point(lat, lon, alt);
+		return new PolarCoordinate(lat, lon, alt);
 	}
 	
 	private List<IAction> read_actions()

@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.ListIterator;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.ISensorProxy;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 
 public class Command implements Serializable

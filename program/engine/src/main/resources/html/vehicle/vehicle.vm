@@ -2,6 +2,7 @@
 	<div class="post">
 		<h2 class="title"><a href="#">Current Loaded Vehicles</a></h2>
 		<div style="font-size: 90%; line-height: 130%">
+#if( $vehicleMap.size() > 0)
 			<table class="sensors">
 				<thead>
 					<tr>
@@ -49,6 +50,9 @@
 #end
 				<tbody>
 			</table>
+#else
+			No virtual vehicles loaded.
+#end
 		</div>
 	</div>
 </div>

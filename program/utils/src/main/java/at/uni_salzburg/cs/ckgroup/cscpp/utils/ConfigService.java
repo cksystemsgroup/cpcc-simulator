@@ -21,9 +21,14 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -32,17 +37,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.MimeEntry;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.MimeParser;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.MimeUtils;
-
 public class ConfigService extends DefaultService {
 	
 	Logger LOG = Logger.getLogger(ConfigService.class);
 
 	public final static String ACTION_CONFIG_UPLOAD = "configUpload";
+	
+	public final static String PROP_WEB_APP_BASE_URL = "web.app.base.url";
 
 
 	public ConfigService (IServletConfig configuraton) {
@@ -97,6 +98,17 @@ public class ConfigService extends DefaultService {
 			File confFile = servletConfig.getConfigFile();
 			if (uploadedFile != null) {
 				MimeUtils.saveFile (uploadedFile, confFile);
+				URI uri;
+				try {
+					uri = getWebAppContectUri(request);
+				} catch (URISyntaxException e) {
+					throw new ServletException(e);
+				}
+				Properties props = new Properties();
+				props.load(new FileInputStream(confFile));
+				props.setProperty(PROP_WEB_APP_BASE_URL, uri.toString());
+				props.store(new FileOutputStream(confFile), "");
+
 				LOG.info("Written: " + confFile);
 				servletConfig.reloadConfigFile();
 				LOG.info("Configuration uploaded.");
@@ -114,5 +126,11 @@ public class ConfigService extends DefaultService {
 		emit301 (request, response, nextPage);	
 	}
 
-
+	private URI getWebAppContectUri(HttpServletRequest request) throws URISyntaxException {
+		String scheme = request.getScheme();
+		String host = request.getServerName();
+		int port = request.getServerPort();
+		String path = request.getContextPath();
+		return new URI(scheme, null, host, port, path, null, null);
+	}
 }

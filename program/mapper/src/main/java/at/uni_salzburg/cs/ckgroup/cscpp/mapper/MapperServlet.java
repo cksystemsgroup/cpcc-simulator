@@ -40,6 +40,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SnoopService;
+import java.util.List;
 
 
 @SuppressWarnings("serial")
@@ -56,7 +57,8 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	private Configuration configuration = new Configuration();
 	private File contexTempDir;
 	private File configFile;
-	
+        
+
 	private ServiceEntry[] services = {
 		new ServiceEntry("/snoop.*", new SnoopService(this)),
 //		new ServiceEntry("/admin/.*", new AdminService(this)),

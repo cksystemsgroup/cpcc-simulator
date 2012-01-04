@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import java.util.logging.Level;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -44,13 +45,14 @@ import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 
 
 @SuppressWarnings("serial")
-public class EngineServlet extends HttpServlet implements IServletConfig {
+public class EngineServlet extends HttpServlet implements IServletConfig, Runnable{
 	
 	Logger LOG = Logger.getLogger(EngineServlet.class);
 	
@@ -66,6 +68,9 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	private SensorProxy sensorProxy = new SensorProxy();
 	private File contexTempDir;
 	private File configFile;
+        
+        private Thread register;
+        private boolean reg_run;
 	
 	private ServiceEntry[] services = {
 		new ServiceEntry("/vehicle/.*", new VehicleService(this)),
@@ -113,8 +118,44 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 				jqs.setVehicleMap(vehicleMap);
 			}
 		}
+                
+                reg_run = true;
+                //register = new Thread(this);
+                //register.setPriority(Thread.MIN_PRIORITY);
+                //register.start();
 	}
 	
+        public void run() {
+        
+            Object cfg = servletConfig.getServletContext().getAttribute("configuration");
+            URI reg_uri = ((Configuration)cfg).getMapperRegistryUrl();
+            URI pilot_uri = ((Configuration)cfg).getPilotSensorUrl();
+            String url = reg_uri.toString() + "?sensoruri=" + pilot_uri.toString() + "&enguri=";
+            try {
+              String ret = HttpQueryUtils.simpleQuery(url);
+              if(ret.equalsIgnoreCase("ok"))
+              {
+                  reg_run = false;
+              }
+            } catch (IOException ex) { reg_run = true; }
+            while(reg_run)
+            {
+                try {
+                    
+                    Thread.sleep(10000);
+                    
+                } catch (InterruptedException ie) { }
+                try {
+                    String ret = HttpQueryUtils.simpleQuery(url);
+                    if(ret.equalsIgnoreCase("ok"))
+                    {
+                        reg_run = false;
+                    }
+                } catch (IOException ex) { reg_run = true; }
+            }
+            
+        }
+        
 	@Override
 	protected void service (HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -148,6 +189,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 				}
     		}
     	}
+        if(register.isAlive() || register.isInterrupted())
+            reg_run = false;
     }
     
     @Override

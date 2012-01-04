@@ -43,6 +43,21 @@ public class RegistryService extends DefaultService{
 			HttpServletResponse response) throws ServletException, IOException {
      
         // TODO reg service
+        //
+        
+        String eng_uri = request.getParameter("enguri");
+        String sensor_uri = request.getParameter("sensoruri");
+        
+        if(eng_uri == null || sensor_uri == null || eng_uri.trim().isEmpty() || sensor_uri.trim().isEmpty()){
+            
+            response.getWriter().print("error");
+        }
+        else {
+            // TODO add engine
+            
+            // all successfull
+            response.getWriter().print("ok");
+        }
     }
     
 }

@@ -187,6 +187,12 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 */
 	@Override
 	public void run() {
+		
+		if (isProgramCorrupted()) {
+			try { suspend(); } catch (IOException e) { }
+			return;
+		}
+		
 		running = true;
 		
 		if (sensorProxy != null)

@@ -92,7 +92,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	public void execute() 
 	{
 		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
-		if (currentPosition == null || completed)
+		if (currentPosition == null || completed || currentCommand == null)
 			return;
 		
 		CartesianCoordinate currentPosCartesian = geodeticSystem.polarToRectangularCoordinates(currentPosition);

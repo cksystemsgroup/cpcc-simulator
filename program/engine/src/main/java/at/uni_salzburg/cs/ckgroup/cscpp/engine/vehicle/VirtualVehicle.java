@@ -174,6 +174,14 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	}
 	
 	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCurrentCommand()
+	 */
+	@Override
+	public Command getCurrentCommand() {
+		return currentCommand;
+	}
+
+	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#isProgramCorrupted()
 	 */
 	@Override

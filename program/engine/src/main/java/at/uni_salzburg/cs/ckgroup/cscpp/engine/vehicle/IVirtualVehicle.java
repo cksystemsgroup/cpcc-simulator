@@ -82,7 +82,12 @@ public interface IVirtualVehicle {
 	 * @return the index of the current command in the command list.
 	 */
 	public int getCurrentCommandIndex();
-
+	
+	/**
+	 * @return the currently executing command.
+	 */
+	public Command getCurrentCommand();
+	
 	/**
 	 * @return the current program is corrupted.
 	 */

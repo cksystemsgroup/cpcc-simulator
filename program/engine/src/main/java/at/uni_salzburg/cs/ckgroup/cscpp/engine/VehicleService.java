@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -49,11 +50,11 @@ public class VehicleService extends DefaultService {
 	
 	Logger LOG = Logger.getLogger(VehicleService.class);
 	
-//	public final static String ACTION_CONFIG_UPLOAD = "configUpload";
 	public final static String ACTION_VEHICLE_UPLOAD = "vehicleUpload";
 	public final static String ACTION_VEHICLE_DOWNLOAD = "vehicleDownload";
 	public final static String ACTION_VEHICLE_MIGRATION = "vehicleMigration";
 	public final static String ACTION_VEHICLE_DATA = "vehicleData";
+	public final static String ACTION_VEHICLE_COMMAND = "vehicleCommand";
 	
 	public final static String ACTION_VEHICLE_SUSPEND = "suspend";
 	public final static String ACTION_VEHICLE_RESUME = "resume";
@@ -220,6 +221,18 @@ public class VehicleService extends DefaultService {
 					return;
 				}
 			}
+			emit422(request, response);
+			return;
+			
+		} else if (ACTION_VEHICLE_COMMAND.equals(action)) {
+			if (cmd.length > 4) {
+				IVirtualVehicle v = getVehicle(config, cmd[4]);
+				Command currentCommand = v.getCurrentCommand();
+				String currentCommandString = currentCommand != null ? currentCommand.toString() : "";
+				emitByteArray(response, "text/plain", currentCommandString.getBytes());
+				return;
+			}
+
 			emit422(request, response);
 			return;
 			

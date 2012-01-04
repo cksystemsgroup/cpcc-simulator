@@ -24,7 +24,8 @@ public class ParserTestCase {
 	@Test
 	public void testCase01() throws FileNotFoundException, ParserException {
 		
-		String cmdPathName = ParserTestCase.class.getResource("cmd.txt").getPath();
+//		String cmdPathName = ParserTestCase.class.getResource("cmd.txt").getPath();
+		String cmdPathName = Thread.currentThread().getContextClassLoader().getResource("at/uni_salzburg/cs/ckgroup/cscpp/engine/parser/cmd.txt").getPath();
 		
 		Scanner sc = new Scanner(cmdPathName);
 		Assert.assertNotNull(sc);

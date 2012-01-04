@@ -2,6 +2,7 @@
 	<div class="post">
 		<h2 class="title"><a href="#">Current Loaded Vehicles</a></h2>
 		<div style="font-size: 90%; line-height: 130%">
+#set( $vehicleMap = $servletConfig.getServletContext().getAttribute("vehicleMap") )
 #if( $vehicleMap.size() > 0)
 			<table class="sensors">
 				<thead>
@@ -17,7 +18,6 @@
 				</thead>
 				<tbody>
 #set( $x = 0 )
-#set( $vehicleMap = $servletConfig.getServletContext().getAttribute("vehicleMap") )
 #foreach( $vehicle in $vehicleMap )
 #set( $name = $vehicle.getWorkDir().getName() )
 #set( $id = $vehicle.getProperties().getProperty("vehicle.id") )

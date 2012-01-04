@@ -504,3 +504,34 @@ table.sensors thead tr {
     background-color: #e5decb;
 }
 
+table.vvProgram {
+/* 	font-family: monospace; */
+}
+
+tr.vvProgramLine {
+	color: grey;
+}
+
+tr.vvProgramLineFinished {
+	color: blue;
+	font-style: italic;
+}
+
+tr.vvProgramLineError {
+	color: red;
+}
+
+tr.vvProgramLineActive {
+	color: green;
+	font-weight: bold;
+}
+
+div.vvProgramHeader {
+	font-size: 1.6em;
+	margin-top: 0;
+	line-height: 120%;
+}
+
+div.vvProgramError {
+	color: red;
+}

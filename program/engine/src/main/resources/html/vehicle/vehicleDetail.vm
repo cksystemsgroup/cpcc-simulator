@@ -46,6 +46,62 @@
 					</tr>
 				<tbody>
 			</table>
+			
+			<div class="vvProgramHeader">
+#if( $vehicle.isProgramCorrupted() )
+				<div class="vvProgramError">This program is corrupt!</div>
+#else
+				Program:
+#end
+			</div>
+			
+			<table class="vvProgram">
+				<tbody>
+#set( $currentIndex = $vehicle.getCurrentCommandIndex() )
+#set( $commandList = $vehicle.getCommandList() )
+#set( $x = 0 )
+#foreach( $command in $commandList )
+#if( $vehicle.isProgramCorrupted() )
+#set( $lineClassName = "vvProgramLineError" )
+#else
+#if( $x == 	$currentIndex )
+#set( $lineClassName = "vvProgramLineActive" )
+#else
+#if( $command.is_finished() )
+#set( $lineClassName = "vvProgramLineFinished" )
+#else
+#set( $lineClassName = "vvProgramLine" )
+#end
+#end
+#end
+					<tr class="$lineClassName">
+						<td>$command.toString()</td>
+					</tr>
+#set( $x = $x + 1 )
+#end
+				<tbody>
+			</table>
+				
+#if( !$vehicle.isProgramCorrupted() )	
+			<div class="vvProgramHeader">
+				Data Files:
+			</div>
+
+#if( $vehicle.getDataFileNames().size() == 0 )
+			No files collected yet.
+#else
+			<table class="vvProgram">
+				<tbody>
+#foreach( $fileName in $vehicle.getDataFileNames() )		
+					<tr class="$lineClassName">
+						<td><a href="$contextPath/vehicle/html/vehicleData/$name/$fileName">$fileName</a></td>
+					</tr>
+#end			
+#end
+				<tbody>
+			</table>
+#end
+
 #else
 <div style="color: red;">No such vehicle: $vehicleNames[0]</div>
 #end

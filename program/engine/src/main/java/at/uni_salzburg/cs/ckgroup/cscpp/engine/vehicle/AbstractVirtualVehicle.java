@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
@@ -247,13 +248,31 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	}
 	
 	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getDataDir()
+	 */
+	public File getDataDir() {
+		return dataDir;
+	}
+
+	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getProperties()
 	 */
 	public Properties getProperties() {
 		return properties;
 	}
 
-
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getDataFileNames()
+	 */
+	public String[] getDataFileNames() {
+		return dataDir.list(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return true;
+			}
+		});
+	}
+	
 	private static class MyTimerTask extends TimerTask {
 
 		private Runnable runnable;

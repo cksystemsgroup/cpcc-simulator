@@ -81,7 +81,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		{
 			LOG.error(e.getMessage());
 		}
-		
+
 		// TODO store current vehicle state in a file. Use vehicleStatus as file name.
 	}
 
@@ -153,16 +153,32 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		return vss;
 	}
 
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCommandList()
+	 */
+	@Override
 	public List<Command> getCommandList() {
 		return commandList;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCurrentCommandIndex()
+	 */
+	@Override
+	public int getCurrentCommandIndex() {
+		if (listIter == null || commandList == null)
+			return -1;
+		
+		int next = listIter.nextIndex();
+		return next == commandList.size() ? -1 : next-1;
+	}
+	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#isProgramCorrupted()
+	 */
+	@Override
 	public boolean isProgramCorrupted() {
 		return programCorrupted;
 	}
 
-	public Command getCurrentCommand() {
-		return currentCommand;
-	}
-	
 }

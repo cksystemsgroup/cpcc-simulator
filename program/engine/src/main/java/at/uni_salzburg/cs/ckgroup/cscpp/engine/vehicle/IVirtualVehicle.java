@@ -23,7 +23,10 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Properties;
+
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
 
 public interface IVirtualVehicle {
 
@@ -58,9 +61,38 @@ public interface IVirtualVehicle {
 	 *         and a sub-directory containing all collected sensor data.
 	 */
 	public File getWorkDir();
-
+	
+	/**
+	 * @return the data directory of this virtual vehicle. It contains all
+	 *         collected sensor data.
+	 */
+	public File getDataDir();
+	
 	/**
 	 * @return the properties of this virtual vehicle.
 	 */
 	public Properties getProperties();
+	
+	/**
+	 * @return the virtual vehicle commands as a list of strings.
+	 */
+	public List<Command> getCommandList();
+
+	/**
+	 * @return the index of the current command in the command list.
+	 */
+	public int getCurrentCommandIndex();
+
+	/**
+	 * @return the current program is corrupted.
+	 */
+	public boolean isProgramCorrupted();
+	
+	/**
+	 * @return get the list of files in the data folder.
+	 */
+	public String[] getDataFileNames();
+
+
+	
 }

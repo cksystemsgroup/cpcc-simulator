@@ -23,6 +23,7 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,7 @@ public class VehicleService extends DefaultService {
 	public final static String ACTION_VEHICLE_UPLOAD = "vehicleUpload";
 	public final static String ACTION_VEHICLE_DOWNLOAD = "vehicleDownload";
 	public final static String ACTION_VEHICLE_MIGRATION = "vehicleMigration";
+	public final static String ACTION_VEHICLE_DATA = "vehicleData";
 	
 	public final static String ACTION_VEHICLE_SUSPEND = "suspend";
 	public final static String ACTION_VEHICLE_RESUME = "resume";
@@ -207,6 +209,20 @@ public class VehicleService extends DefaultService {
 				return;
 			}
 			
+		} else if (ACTION_VEHICLE_DATA.equals(action)) {
+			if (cmd.length > 5) {
+				nextPage = request.getContextPath() + "/vehicleDetail.tpl?vehicle=" + cmd[4];
+				IVirtualVehicle v = getVehicle(config, cmd[4]);
+				File data = new File(v.getDataDir(),cmd[5]);
+				if (data.exists()) {
+					response.setContentType(getContentType(data));
+					emitFile(response.getOutputStream(), new FileInputStream(data));
+					return;
+				}
+			}
+			emit422(request, response);
+			return;
+			
 		} else{
 			LOG.error("Can not handle: " + servicePath);
 			emit404(request, response);
@@ -231,12 +247,19 @@ public class VehicleService extends DefaultService {
 		
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 		vehicle.serialize(bo);
-		String[] rc = HttpQueryUtils.fileUpload(uploadUrl, name, bo.toByteArray());
-		LOG.info("migrateVehicle: id=" + name + ", rc=" + rc[0] + " -- " + rc[1]);
-		if (!"200".equals(rc[0])) {
+		String[] rc;
+		try {
+			rc = HttpQueryUtils.fileUpload(uploadUrl, name, bo.toByteArray());
+			LOG.info("migrateVehicle: id=" + name + ", rc=" + rc[0] + " -- " + rc[1]);
+			if (!"200".equals(rc[0])) {
+				vehicleMap.put(name, vehicle);
+				vehicle.resume();
+				throw new IOException(rc[0] + " -- " + rc[1] + " -- " + rc[2]);
+			}
+		} catch (IOException e) {
 			vehicleMap.put(name, vehicle);
 			vehicle.resume();
-			throw new IOException(rc[0] + " -- " + rc[1] + " -- " + rc[2]);
+			throw e;
 		}
 	}
 

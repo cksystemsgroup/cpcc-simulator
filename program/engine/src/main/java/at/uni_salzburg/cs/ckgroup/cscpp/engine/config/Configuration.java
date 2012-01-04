@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigurationParser;
 
 public class Configuration extends ConfigurationParser implements IConfiguration {
@@ -51,6 +52,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 		{ PROP_PILOT_AVAILABLE, "true" },
 		{ PROP_PILOT_SENSOR_URL, null, PROP_PILOT_AVAILABLE },
 		{ PROP_MAPPER_REGISTRY_URL },
+		{ ConfigService.PROP_WEB_APP_BASE_URL },
 	};
 	
 	/**
@@ -60,8 +62,9 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	@SuppressWarnings("serial")
 	private static final Map<String,String> configErrors = new HashMap<String,String>() {{
-		put(PROP_PILOT_SENSOR_URL,ERROR_MESSAGE_MISSING_VALUE);
-		put(PROP_MAPPER_REGISTRY_URL,ERROR_MESSAGE_MISSING_VALUE);
+		put(PROP_PILOT_SENSOR_URL, ERROR_MESSAGE_MISSING_VALUE);
+		put(PROP_MAPPER_REGISTRY_URL, ERROR_MESSAGE_MISSING_VALUE);
+		put(ConfigService.PROP_WEB_APP_BASE_URL, ERROR_MESSAGE_MISSING_VALUE);
 	}};
 	
 	/**
@@ -79,6 +82,11 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	private URI mapperRegistryUrl;
 	
+	/**
+	 * The URL of this webapplication.
+	 */
+	private URI webApplicationBaseUrl;
+	
 	public Configuration() {
 		super(parameters, configErrors);
 	}
@@ -95,6 +103,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 		pilotAvailable = parseBool(PROP_PILOT_AVAILABLE).booleanValue();
 		pilotSensorUrl = pilotAvailable ? parseURI(PROP_PILOT_SENSOR_URL) : null;
 		mapperRegistryUrl = parseURI(PROP_MAPPER_REGISTRY_URL);
+		webApplicationBaseUrl = parseURI(ConfigService.PROP_WEB_APP_BASE_URL);
 	}
 	
 	/* (non-Javadoc)
@@ -118,6 +127,14 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	@Override
 	public URI getMapperRegistryUrl() {
 		return mapperRegistryUrl;
+	}
+	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration#getWebApplicationBaseUrl()
+	 */
+	@Override
+	public URI getWebApplicationBaseUrl() {
+		return webApplicationBaseUrl;
 	}
 
 }

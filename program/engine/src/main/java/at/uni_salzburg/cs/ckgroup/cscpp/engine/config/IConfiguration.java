@@ -39,4 +39,8 @@ public interface IConfiguration {
 	 */
 	public abstract URI getMapperRegistryUrl();
 	
+	/**
+	 * @return the URL of this web application.
+	 */
+	public URI getWebApplicationBaseUrl();
 }

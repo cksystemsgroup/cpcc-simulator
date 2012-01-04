@@ -130,7 +130,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig, Runnab
             Object cfg = servletConfig.getServletContext().getAttribute("configuration");
             URI reg_uri = ((Configuration)cfg).getMapperRegistryUrl();
             URI pilot_uri = ((Configuration)cfg).getPilotSensorUrl();
-            String url = reg_uri.toString() + "?sensoruri=" + pilot_uri.toString() + "&enguri=";
+            URI engineUri = ((Configuration)cfg).getWebApplicationBaseUrl();
+            String url = reg_uri.toString() + "?sensoruri=" + pilot_uri.toString() + "&enguri=" + engineUri.toString();
             try {
               String ret = HttpQueryUtils.simpleQuery(url);
               if(ret.equalsIgnoreCase("ok"))

@@ -64,21 +64,31 @@ public class RegistryService extends DefaultService{
 	        String eng_uri = request.getParameter("enguri");
 	        String sensor_uri = request.getParameter("sensoruri");
 	        
-	        if(eng_uri == null || sensor_uri == null || eng_uri.trim().isEmpty() || sensor_uri.trim().isEmpty()) {
+	        if(eng_uri == null || sensor_uri == null) {
 	            
 	            response.getWriter().print("error");
-	            
-	            
+
 	            LOG.info("Erroneous registration: engine='" + eng_uri + "', sensor='" + sensor_uri + "'");
 	        }
 	        else {
-	            // TODO add engine
+		        if(eng_uri.trim().isEmpty() || sensor_uri.trim().isEmpty()) {
+		        	// TODO No sensors available, which is OK. This is a central engine.
+		        	// TODO Use this to migrate completed virtual vehicles to.
+		        	LOG.info("Sucessful registration: central engine='" + eng_uri + "'");
+		        	
+		        	
+		        } else {
+		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', sensor='" + sensor_uri + "'");
+		        	
+		        	
+		        }
+	        	
+	        	// TODO add engine
 	            
 	            // all successfull
 	            response.getWriter().print("ok");
 	            
 	            
-	            LOG.info("Sucessful registration: engine='" + eng_uri + "', sensor='" + sensor_uri + "'");
 	        }
         
 		} else{

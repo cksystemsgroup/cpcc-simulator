@@ -52,7 +52,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 
 
 @SuppressWarnings("serial")
-public class EngineServlet extends HttpServlet implements IServletConfig, Runnable{
+public class EngineServlet extends HttpServlet implements IServletConfig {
 	
 	Logger LOG = Logger.getLogger(EngineServlet.class);
 	
@@ -69,8 +69,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig, Runnab
 	private File contexTempDir;
 	private File configFile;
         
-        private Thread register;
-        private boolean reg_run;
+        private EngineRegister register;
+        private Thread reg_thread;
 	
 	private ServiceEntry[] services = {
 		new ServiceEntry("/vehicle/.*", new VehicleService(this)),
@@ -118,45 +118,12 @@ public class EngineServlet extends HttpServlet implements IServletConfig, Runnab
 				jqs.setVehicleMap(vehicleMap);
 			}
 		}
-                
-                reg_run = true;
-                //register = new Thread(this);
-                //register.setPriority(Thread.MIN_PRIORITY);
-                //register.start();
+                register = new EngineRegister(this);
+                reg_thread = new Thread(register);
+                reg_thread.setPriority(Thread.MIN_PRIORITY);
+                //reg_thread.start();
 	}
-	
-        public void run() {
-        
-            Object cfg = servletConfig.getServletContext().getAttribute("configuration");
-            URI reg_uri = ((Configuration)cfg).getMapperRegistryUrl();
-            URI pilot_uri = ((Configuration)cfg).getPilotSensorUrl();
-            URI engineUri = ((Configuration)cfg).getWebApplicationBaseUrl();
-            String url = reg_uri.toString() + "?sensoruri=" + pilot_uri.toString() + "&enguri=" + engineUri.toString();
-            try {
-              String ret = HttpQueryUtils.simpleQuery(url);
-              if(ret.equalsIgnoreCase("ok"))
-              {
-                  reg_run = false;
-              }
-            } catch (IOException ex) { reg_run = true; }
-            while(reg_run)
-            {
-                try {
-                    
-                    Thread.sleep(10000);
-                    
-                } catch (InterruptedException ie) { }
-                try {
-                    String ret = HttpQueryUtils.simpleQuery(url);
-                    if(ret.equalsIgnoreCase("ok"))
-                    {
-                        reg_run = false;
-                    }
-                } catch (IOException ex) { reg_run = true; }
-            }
-            
-        }
-        
+	     
 	@Override
 	protected void service (HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -190,8 +157,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig, Runnab
 				}
     		}
     	}
-        if(register.isAlive() || register.isInterrupted())
-            reg_run = false;
+        if(reg_thread.isAlive() || reg_thread.isInterrupted())
+            register.setStop();
     }
     
     @Override

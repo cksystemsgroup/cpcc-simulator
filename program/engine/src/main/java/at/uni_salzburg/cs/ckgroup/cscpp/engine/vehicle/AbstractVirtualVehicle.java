@@ -146,9 +146,11 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	@Override
 	public void suspend() throws IOException {
 		LOG.info("Suspending vehicle " + workDir.getName());
-		backGroundTimer.cancel();
+		if (backGroundTimer != null)
+			backGroundTimer.cancel();
 		backGroundTimer = null;
-		backGroundTimerTask.cancel();
+		if (backGroundTimerTask != null)
+			backGroundTimerTask.cancel();
 		backGroundTimerTask = null;
 		
 		while (running) {

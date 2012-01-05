@@ -28,11 +28,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 
 
 public class RegistryService extends DefaultService{
 
+    Logger LOG = Logger.getLogger(RegistryService.class);
     
+    public static final String ACTION_ENGINE_REGISTRATION = "engineRegistration";
     
     public RegistryService(IServletConfig servletConfig){
         super(servletConfig);
@@ -41,23 +45,48 @@ public class RegistryService extends DefaultService{
     @Override
     public void service(ServletConfig config, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-     
-        // TODO reg service
-        //
+
+		String servicePath = request.getRequestURI();
+		if (request.getRequestURI().startsWith(request.getContextPath()))
+			servicePath = request.getRequestURI().substring(request.getContextPath().length());
+		
+		String[] cmd = servicePath.trim().split("/+");
+		if (cmd.length < 2) {
+			emit404(request, response);
+			return;
+		}
+		String action = cmd[2];
+		
+		if (ACTION_ENGINE_REGISTRATION.equals(action)) {   
+	        // TODO reg service
+	        //
+	        
+	        String eng_uri = request.getParameter("enguri");
+	        String sensor_uri = request.getParameter("sensoruri");
+	        
+	        if(eng_uri == null || sensor_uri == null || eng_uri.trim().isEmpty() || sensor_uri.trim().isEmpty()) {
+	            
+	            response.getWriter().print("error");
+	            
+	            
+	            LOG.info("Erroneous registration: engine='" + eng_uri + "', sensor='" + sensor_uri + "'");
+	        }
+	        else {
+	            // TODO add engine
+	            
+	            // all successfull
+	            response.getWriter().print("ok");
+	            
+	            
+	            LOG.info("Sucessful registration: engine='" + eng_uri + "', sensor='" + sensor_uri + "'");
+	        }
         
-        String eng_uri = request.getParameter("enguri");
-        String sensor_uri = request.getParameter("sensoruri");
+		} else{
+			LOG.error("Can not handle: " + servicePath);
+			emit404(request, response);
+			return;
+		}
         
-        if(eng_uri == null || sensor_uri == null || eng_uri.trim().isEmpty() || sensor_uri.trim().isEmpty()){
-            
-            response.getWriter().print("error");
-        }
-        else {
-            // TODO add engine
-            
-            // all successfull
-            response.getWriter().print("ok");
-        }
     }
     
 }

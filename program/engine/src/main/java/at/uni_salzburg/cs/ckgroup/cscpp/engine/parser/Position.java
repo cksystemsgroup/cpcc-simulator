@@ -1,7 +1,7 @@
 /*
  * @(#) Position.java
  * This code is part of the JNavigator project.
- * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schröcker, Bernhard Zechmeister
+ * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

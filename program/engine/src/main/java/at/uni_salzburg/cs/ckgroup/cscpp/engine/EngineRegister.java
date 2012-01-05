@@ -26,48 +26,70 @@ import java.io.IOException;
 import java.net.URI;
 import javax.servlet.ServletConfig;
 
-public class EngineRegister implements Runnable{
+import org.apache.log4j.Logger;
+
+public class EngineRegister extends Thread {
+	
+	Logger LOG = Logger.getLogger(EngineRegister.class);
     
     private boolean reg_run;
-    private ServletConfig servletConfig;
 
+    private String registrationUrl;
+    
+    private boolean registrationOk = false;
+    
     public EngineRegister(ServletConfig servletConfig) {
         reg_run = true;
-        this.servletConfig = servletConfig;
+        Object cfg = servletConfig.getServletContext().getAttribute("configuration");
+        URI reg_uri = ((Configuration)cfg).getMapperRegistryUrl();
+        URI pilot_uri = ((Configuration)cfg).getPilotSensorUrl();
+        URI engineUri = ((Configuration)cfg).getWebApplicationBaseUrl();
+        registrationUrl = reg_uri.toString() + "/engineRegistration?sensoruri=" + pilot_uri.toString() + "&enguri=" + engineUri.toString(); 
     }
     
-    public void run() {
-        
-            Object cfg = servletConfig.getServletContext().getAttribute("configuration");
-            URI reg_uri = ((Configuration)cfg).getMapperRegistryUrl();
-            URI pilot_uri = ((Configuration)cfg).getPilotSensorUrl();
-            URI engineUri = ((Configuration)cfg).getWebApplicationBaseUrl();
-            String url = reg_uri.toString() + "?sensoruri=" + pilot_uri.toString() + "&enguri=" + engineUri.toString();
-            try {
-              String ret = HttpQueryUtils.simpleQuery(url);
-              if(ret.equalsIgnoreCase("ok"))
-              {
-                  reg_run = false;
-              }
-            } catch (IOException ex) { reg_run = true; }
-            while(reg_run)
-            {
-                try {
-                    
-                    Thread.sleep(10000);
-                    
-                } catch (InterruptedException ie) { }
-                try {
-                    String ret = HttpQueryUtils.simpleQuery(url);
-                    if(ret.equalsIgnoreCase("ok"))
-                    {
-                        reg_run = false;
-                    }
-                } catch (IOException ex) { reg_run = true; }
-            }
-    }
+    @Override
+	public void run() {
+
+		while (reg_run && !registrationOk) {
+			register();
+			
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException ie) {
+			}
+		}
+		reg_run = false;
+	}
     
-    public void setStop() {
-        reg_run = false;
+	public void setStop() {
+		reg_run = false;
+		this.interrupt();
+	}
+    
+    /**
+     * @return true if registering succeeded.
+     */
+    public void register() {
+    	registrationOk = false;
+    	try {
+		    String ret = HttpQueryUtils.simpleQuery(registrationUrl);
+		    if(ret.equalsIgnoreCase("ok"))
+			{
+		    	LOG.info("Mapper registration succeeded. " + registrationUrl);
+		    	registrationOk = true;
+		    	return;
+			}
+		} catch (IOException ex) {
+		}
+		LOG.info("Mapper registration failed. " + registrationUrl);
     }
+
+	public String getRegistrationUrl() {
+		return registrationUrl;
+	}
+
+	public boolean isRegistrationOk() {
+		return registrationOk;
+	}
+    
 }

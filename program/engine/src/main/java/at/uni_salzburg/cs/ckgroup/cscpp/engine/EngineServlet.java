@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import java.util.logging.Level;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,7 +44,6 @@ import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
@@ -69,8 +67,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	private File contexTempDir;
 	private File configFile;
         
-        private EngineRegister register;
-        private Thread reg_thread;
+	private EngineRegister reg_thread;
 	
 	private ServiceEntry[] services = {
 		new ServiceEntry("/vehicle/.*", new VehicleService(this)),
@@ -118,10 +115,11 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 				jqs.setVehicleMap(vehicleMap);
 			}
 		}
-                register = new EngineRegister(this);
-                reg_thread = new Thread(register);
-                reg_thread.setPriority(Thread.MIN_PRIORITY);
-                //reg_thread.start();
+		
+		reg_thread = new EngineRegister(servletConfig);
+		servletConfig.getServletContext().setAttribute("engineRegistry", reg_thread);
+		reg_thread.setPriority(Thread.MIN_PRIORITY);
+		reg_thread.start();
 	}
 	     
 	@Override
@@ -157,8 +155,9 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 				}
     		}
     	}
-        if(reg_thread.isAlive() || reg_thread.isInterrupted())
-            register.setStop();
+    	
+//    	if(reg_thread.isAlive() || reg_thread.isInterrupted())
+    		reg_thread.setStop();
     }
     
     @Override

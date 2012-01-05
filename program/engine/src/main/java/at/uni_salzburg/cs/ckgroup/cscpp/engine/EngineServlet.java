@@ -232,11 +232,15 @@ public class EngineServlet extends HttpServlet implements IServletConfig, Runnab
 		for (File vehicleDir : contexTempDir.listFiles(vehicleFilter)) {
 			IVirtualVehicle vehicle = vehicleMap.get(vehicleDir.getName());
 			if (vehicle == null) {
-				vehicle = vehicleBuilder.build(vehicleDir);
+				try {
+					vehicle = vehicleBuilder.build(vehicleDir);
+					if (!vehicle.isActive())
+						vehicle.resume();
+				} catch (IOException e) {
+					LOG.error("Virtual vehicle in " + vehicleDir.getName() + " is corrupt.");
+				}
 				vehicleMap.put(vehicleDir.getName(),vehicle);
 			}
-			if (!vehicle.isActive())
-				vehicle.resume();
 		}
 		
 		if (configuration.isPilotAvailable() && !sensorProxy.isAlive())

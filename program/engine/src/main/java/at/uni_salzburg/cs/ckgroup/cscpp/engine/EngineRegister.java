@@ -44,7 +44,9 @@ public class EngineRegister extends Thread {
         URI reg_uri = ((Configuration)cfg).getMapperRegistryUrl();
         URI pilot_uri = ((Configuration)cfg).getPilotSensorUrl();
         URI engineUri = ((Configuration)cfg).getWebApplicationBaseUrl();
-        registrationUrl = reg_uri.toString() + "/engineRegistration?sensoruri=" + pilot_uri.toString() + "&enguri=" + engineUri.toString(); 
+        boolean pilotAvailable = ((Configuration)cfg).isPilotAvailable();
+        registrationUrl = reg_uri.toString() + "/engineRegistration?" + "enguri=" + engineUri.toString() +
+        		"&sensoruri=" + (pilotAvailable ? pilot_uri.toString() : ""); 
     }
     
     @Override

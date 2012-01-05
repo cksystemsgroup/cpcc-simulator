@@ -58,7 +58,9 @@ public class VehicleService extends DefaultService {
 	
 	public final static String ACTION_VEHICLE_SUSPEND = "suspend";
 	public final static String ACTION_VEHICLE_RESUME = "resume";
+	public final static String ACTION_VEHICLE_DELETE = "delete";
 	
+	public final static String ACTION_MAPPER_REGISTRATION = "mapperRegistration"; 
 	
 	public VehicleService (IServletConfig servletConfig) {
 		super (servletConfig);
@@ -210,6 +212,15 @@ public class VehicleService extends DefaultService {
 				return;
 			}
 			
+		} else if (ACTION_VEHICLE_DELETE.equals(action)) {
+			if (cmd.length > 4) {
+				removeVehicle(config, cmd[4]);
+				nextPage = request.getContextPath() + "/vehicle.tpl";
+			} else {
+				emit422(request, response);
+				return;
+			}
+			
 		} else if (ACTION_VEHICLE_DATA.equals(action)) {
 			if (cmd.length > 5) {
 				nextPage = request.getContextPath() + "/vehicleDetail.tpl?vehicle=" + cmd[4];
@@ -235,6 +246,13 @@ public class VehicleService extends DefaultService {
 
 			emit422(request, response);
 			return;
+			
+		} else if (ACTION_MAPPER_REGISTRATION.equals(action)) {
+			Object reg = config.getServletContext().getAttribute("engineRegistry");
+			EngineRegister register = (EngineRegister)reg;
+			LOG.info("Re-registration with " + register.getRegistrationUrl());
+			register.register();
+			nextPage = request.getContextPath() + "/config.tpl";
 			
 		} else{
 			LOG.error("Can not handle: " + servicePath);
@@ -269,6 +287,8 @@ public class VehicleService extends DefaultService {
 				vehicle.resume();
 				throw new IOException(rc[0] + " -- " + rc[1] + " -- " + rc[2]);
 			}
+			File workDir = vehicle.getWorkDir();
+			FileUtils.removeRecursively(workDir);
 		} catch (IOException e) {
 			vehicleMap.put(name, vehicle);
 			vehicle.resume();
@@ -284,6 +304,32 @@ public class VehicleService extends DefaultService {
 				v.resume();
 			else if (ACTION_VEHICLE_SUSPEND.equals(state))
 				v.suspend();
+		}
+	}
+
+	private void removeVehicle(ServletConfig config, String name) {
+
+		Object vhl = config.getServletContext().getAttribute("vehicleMap");
+		@SuppressWarnings("unchecked")
+		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
+		IVirtualVehicle vehicle = vehicleMap.get(name);
+		if (vehicle == null)
+			return;
+		
+		if (vehicle.isActive()) {
+			LOG.info("Vehicle " + name + " still collects data! Deletion not possible yet!");
+			return;
+		}
+		
+		LOG.info("Deleting vehicle " + name);
+		
+		try {
+			vehicleMap.remove(name);
+			vehicle.suspend();
+			File workDir = vehicle.getWorkDir();
+			FileUtils.removeRecursively(workDir);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

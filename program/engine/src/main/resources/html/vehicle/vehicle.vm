@@ -25,6 +25,9 @@
 					<tr>
 						<td>$x</td>
 						<td><input type="checkbox" name="vehicles" value="$name" /></td>
+#if( $vehicle.isProgramCorrupted() )
+						<td><span style="color: red;">corrupt</span></td>
+#else
 #if( $vehicle.isComplete() )
 						<td><span style="color: blue;">completed</span></td>
 #else
@@ -34,9 +37,13 @@
 						<td><span style="color: grey;">suspended</span></td>
 #end
 #end
+#end
 						<td><a href="$contextPath/vehicleDetail.tpl?vehicle=$name">$name</a></td>
 						<td>$id</td>
 						<td><a href="$contextPath/vehicle/html/vehicleDownload/$name"><img title="Download Virtual Vehicle" src="$contextPath/img/disk.png" alt="download vehicle" /></a></td>
+#if( $vehicle.isProgramCorrupted() )
+						<td><a href="$contextPath/vehicle/html/delete/$name"><img title="Delete Corrupt Virtual Vehicle" src="$contextPath/img/cross.png" alt="delete" /></a></td>
+#else
 #if( $vehicle.isComplete() )
 						<td><img src="$contextPath/img/tick.png" alt="completed" /></td>
 #else						
@@ -45,7 +52,8 @@
 #else
 						<td><a href="$contextPath/vehicle/html/resume/$name"><img title="Resume Virtual Vehicle" src="$contextPath/img/control_play.png" alt="resume" /></a></td>
 #end
-#end							
+#end
+#end						
 					</tr>
 #end
 				<tbody>

@@ -26,5 +26,26 @@
 </table>
 		</div>
 	</div>
+			
+	<div class="post">
+		<h2 class="title"><a href="#">Mapper Registration</a></h2>
+		<div style="font-size: 90%; line-height: 130%">
+#set( $reg = $servletConfig.getServletContext().getAttribute("engineRegistry") )
+#if( $reg.isAlive() )
+#set( $style = "color: blue;" )
+#set( $txt = "Registration in progress." )
+#else
+#if( $reg.isRegistrationOk() )
+#set( $style = "color: green;" )
+#set( $txt = "Registration succeeded." )
+#else
+#set( $style = "color: red;" )
+#set( $txt = "Registration failed." )
+#end
+#end
+			<table><tr><td><span style="$style">$txt</span></td></tr></table>
+		</div>
+	</div>
+	
 </div>
 <!-- end #content -->

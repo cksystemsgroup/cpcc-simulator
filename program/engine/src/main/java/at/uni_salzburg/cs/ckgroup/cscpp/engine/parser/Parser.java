@@ -1,6 +1,9 @@
 /*
  * @(#) Parser.java
  *
+ * This code is part of the JNavigator project.
+ * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schröcker, Bernhard Zechmeister
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +20,7 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,11 +29,13 @@ import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 public class Parser 
 {
 	private int sym;
-	Scanner scanner;
+	private Scanner scanner;
+	private File dataDir;
 	
-	public Parser()
+	public Parser(File dataDir)
 	{
 		sym = 0;
+		this.dataDir = dataDir;
 	}
 	
 	private boolean is_double()
@@ -148,7 +154,7 @@ public class Parser
 				lst.add(new ActionTemperature()); 
 				break;
 			case Scanner.SymPICTURE: 
-				lst.add(new ActionPicture()); 	
+				lst.add(new ActionPicture(dataDir)); 	
 				break;
 				
 			default:

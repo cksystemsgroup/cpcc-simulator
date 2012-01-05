@@ -21,6 +21,9 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
@@ -58,14 +61,14 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	public VirtualVehicle (File workDir) throws IOException {
 		super(workDir);
 		
-		// TODO read vehicle state from file. Use vehicleStatus as file name.
+		readVehicleState();
 		
 		try 
 		{
 			currentCommand = null;
 			
 			Scanner sc = new Scanner(program.getAbsolutePath());
-			Parser pa = new Parser();
+			Parser pa = new Parser(dataDir);
 	
 			commandList = pa.run(sc);
 			listIter = commandList.listIterator();
@@ -82,7 +85,24 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			LOG.error(e.getMessage());
 		}
 
+		storeVehicleState();
+	}
+
+	
+
+	private void readVehicleState() throws FileNotFoundException 
+	{
+		FileInputStream fin = new FileInputStream(vehicleStatus);
+		// TODO read vehicle state from file. Use vehicleStatus as file name.
+		
+		//...
+	}
+	
+	private void storeVehicleState() throws FileNotFoundException 
+	{
+		FileOutputStream fout = new FileOutputStream(vehicleStatus);
 		// TODO store current vehicle state in a file. Use vehicleStatus as file name.
+		//...
 	}
 
 	/* (non-Javadoc)
@@ -102,12 +122,6 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		CartesianCoordinate commandPosCartesian = geodeticSystem.polarToRectangularCoordinates(commandPosition);
 		
 		double distance = commandPosCartesian.subtract(currentPosCartesian).norm();
-		
-		// Check if p is in the tolerance area of pos
-		// @Clemens -> Do we have a function to calculate the differnce im meters of 
-		// two points in polar coordinates ?
-		// TODO yes we have. See code above.
-		
 		boolean at_pos = distance <= pos.getTolerance();
 		
 		if (at_pos)
@@ -120,11 +134,16 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 				completed = true;
 		}
 		
-		// TODO store current vehicle state in a file after each command execution. Use vehicleStatus as file name.
+		try {
+			storeVehicleState();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		
 		
-
+// TODO add Action* Classes for all Sesors in example code below	
 //		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 //		Double courseOverGround = sensorProxy.getCourseOverGround();
 //		Double speedOverGround = sensorProxy.getSpeedOverGround();

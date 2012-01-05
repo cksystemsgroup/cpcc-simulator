@@ -1,45 +1,90 @@
+/*
+ * @(#) ActionPicture.java
+ *
+ * This code is part of the JNavigator project.
+ * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schröcker, Bernhard Zechmeister
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
-// TODO GNU header
-
 public class ActionPicture implements IAction, Serializable {
-	// TODO check: why Serializable?
 
-	private byte[] data = null;
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2816075522080645429L;
+	private String filename = null;
+	private File dataDir;
+	private long timestamp;
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public ActionPicture(File dataDir) {
+		this.dataDir = dataDir;
+	}
+
 	@Override
-	public boolean execute(ISensorProxy sprox) 
-	{
-		InputStream photo = sprox.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
-		// TODO check for null! A photo is avaliable if the InputStream is not null.
-		
-		// TODO store photo to dataDir and remember filename relative to dataDir
-		// TODO use FileOutputStream to store picture. Use dataDir folder from (Abstract)VirtualVehicle
-		
-		int avl = 0;
+	public boolean execute(ISensorProxy sprox) {
+		InputStream instream = sprox
+				.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
+		if (instream == null)
+			return false;
+
 		try 
 		{
-			// TODO check documentation, see HttpQueryUtils.simpleQuery() how to copy the stream
-			avl = photo.available();
-			data = new byte[avl];	
-			avl = photo.read(data);
+			File f = File.createTempFile("img", "png", dataDir);
+			filename = f.getName();
+			FileOutputStream o = new FileOutputStream(f);
+
+			int l;
+			byte[] tmp = new byte[2048];
+			while ((l = instream.read(tmp)) != -1) 
+			{
+				o.write(tmp, 0, l);
+			}
+			o.close();
+			timestamp = System.currentTimeMillis();
 		} 
-		catch (IOException e) {
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
 
-	public String toString()
-	{
+	public String toString() {
 		return "Picture";
 	}
+
+	public String getFilename() {
+		return filename;
+	}
+	
+	
 }

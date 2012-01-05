@@ -30,7 +30,7 @@ public class ParserTestCase {
 		Scanner sc = new Scanner(cmdPathName);
 		Assert.assertNotNull(sc);
 		
-		Parser pa = new Parser();
+		Parser pa = new Parser(null);
 		Assert.assertNotNull(pa);
 		
 		List<Command> lst = pa.run(sc);

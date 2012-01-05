@@ -1,6 +1,9 @@
 /*
  * @(#) Command.java
  *
+ * This code is part of the JNavigator project.
+ * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schröcker, Bernhard Zechmeister
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -25,7 +28,6 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 
 public class Command implements Serializable
-//TODO check: why Serializable?
 {
 	private Position position;
 	private List<IAction> lst_actions;

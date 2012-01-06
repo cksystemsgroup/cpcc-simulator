@@ -185,8 +185,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		configuration.loadConfig(new FileInputStream(configFile));
 		LOG.info("Loading configuration from " + configFile);
 		
-		URI pilotSensorUrl = configuration.getPilotSensorUrl();
-		sensorProxy.setSensorUrl(pilotSensorUrl != null ? pilotSensorUrl.toASCIIString() : null);
+		URI pilotUrl = configuration.getPilotUrl();
+		sensorProxy.setPilotUrl(pilotUrl != null ? pilotUrl.toASCIIString() : null);
 		
 		FileFilter vehicleFilter = new FileFilter() {
 			@Override
@@ -209,7 +209,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			}
 		}
 		
-		if (configuration.isPilotAvailable() && !sensorProxy.isAlive())
+		if (configuration.isPilotAvailable() && !sensorProxy.isRunning())
 			sensorProxy.start();
 	}
 	

@@ -32,21 +32,16 @@ public class EngineRegister extends Thread {
 	
 	Logger LOG = Logger.getLogger(EngineRegister.class);
     
-    private boolean reg_run;
+    private boolean reg_run = true;
 
     private String registrationUrl;
     
     private boolean registrationOk = false;
+
+	private ServletConfig servletConfig;
     
     public EngineRegister(ServletConfig servletConfig) {
-        reg_run = true;
-        Object cfg = servletConfig.getServletContext().getAttribute("configuration");
-        URI reg_uri = ((Configuration)cfg).getMapperRegistryUrl();
-        URI pilot_uri = ((Configuration)cfg).getPilotSensorUrl();
-        URI engineUri = ((Configuration)cfg).getWebApplicationBaseUrl();
-        boolean pilotAvailable = ((Configuration)cfg).isPilotAvailable();
-        registrationUrl = reg_uri.toString() + "/engineRegistration?" + "enguri=" + engineUri.toString() +
-        		"&sensoruri=" + (pilotAvailable ? pilot_uri.toString() : ""); 
+    	this.servletConfig = servletConfig;
     }
     
     @Override
@@ -72,7 +67,16 @@ public class EngineRegister extends Thread {
      * @return true if registering succeeded.
      */
     public void register() {
+    	Configuration cfg = (Configuration)servletConfig.getServletContext().getAttribute("configuration");
+        URI reg_uri = cfg.getMapperRegistryUrl();
+        URI pilot_uri = cfg.getPilotUrl();
+        URI engineUri = cfg.getWebApplicationBaseUrl();
+        boolean pilotAvailable = cfg.isPilotAvailable();
+        registrationUrl = reg_uri.toString() +
+        		"/engineRegistration?enguri=" + (engineUri != null ? engineUri.toString() : "") +
+        		"&piloturi=" + (pilotAvailable && pilot_uri != null ? pilot_uri.toString() : ""); 
     	registrationOk = false;
+    	
     	try {
 		    String ret = HttpQueryUtils.simpleQuery(registrationUrl);
 		    if(ret.equalsIgnoreCase("ok"))

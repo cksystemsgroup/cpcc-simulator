@@ -87,33 +87,32 @@ public class RegistryService extends DefaultService{
 		        } else {
 		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
 		        	
-		        	
+		        	LOG.info("Retrieving way-point list:");
+			        try {
+						List<WayPoint> wayPointList = WayPointQueryService.getWayPointList(pilot_uri);
+						for (WayPoint p : wayPointList)
+							LOG.info("Waypoint: " + p);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+			        
+		        	LOG.info("Retrieving available sensors:");		        
+			        SensorProxy sensorProxy = new SensorProxy();
+			        sensorProxy.setPilotUrl(pilot_uri);
+			        
+					try {
+						List<String> sensors = sensorProxy.getListOfAvailableSensors();
+	
+				        for (String sensor : sensors) {
+				        	LOG.info("Sensor: " + sensor);
+				        }
+				        	
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 		        }
 
-	        	LOG.info("Retrieving way-point list:");
-		        try {
-					List<WayPoint> wayPointList = WayPointQueryService.getWayPointList(pilot_uri);
-					for (WayPoint p : wayPointList)
-						LOG.info("Waypoint: " + p);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-		        
-	        	LOG.info("Retrieving available sensors:");		        
-		        SensorProxy sensorProxy = new SensorProxy();
-		        sensorProxy.setPilotUrl(pilot_uri);
-		        
-				try {
-					List<String> sensors = sensorProxy.getListOfAvailableSensors();
-
-			        for (String sensor : sensors) {
-			        	LOG.info("Sensor: " + sensor);
-			        }
-			        	
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 		        		        
 	        	// TODO add engine
 	            

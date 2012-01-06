@@ -36,7 +36,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	Logger LOG = Logger.getLogger(Configuration.class);
 	
 	public static final String PROP_PILOT_AVAILABLE = "pilot.available";
-	public static final String PROP_PILOT_SENSOR_URL = "pilot.sensor.url";
+	public static final String PROP_PILOT_URL = "pilot.url";
 	public static final String PROP_MAPPER_REGISTRY_URL = "mapper.registry.url";
 	
 	/**
@@ -50,7 +50,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	public static final String [][] parameters = {
 		{ PROP_PILOT_AVAILABLE, "true" },
-		{ PROP_PILOT_SENSOR_URL, null, PROP_PILOT_AVAILABLE },
+		{ PROP_PILOT_URL, null, PROP_PILOT_AVAILABLE },
 		{ PROP_MAPPER_REGISTRY_URL },
 		{ ConfigService.PROP_WEB_APP_BASE_URL },
 	};
@@ -62,7 +62,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	@SuppressWarnings("serial")
 	private static final Map<String,String> configErrors = new HashMap<String,String>() {{
-		put(PROP_PILOT_SENSOR_URL, ERROR_MESSAGE_MISSING_VALUE);
+		put(PROP_PILOT_URL, ERROR_MESSAGE_MISSING_VALUE);
 		put(PROP_MAPPER_REGISTRY_URL, ERROR_MESSAGE_MISSING_VALUE);
 		put(ConfigService.PROP_WEB_APP_BASE_URL, ERROR_MESSAGE_MISSING_VALUE);
 	}};
@@ -75,7 +75,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	/**
 	 * The base URL of the associated auto pilot sensors. 
 	 */
-	private URI pilotSensorUrl;
+	private URI pilotUrl;
 	
 	/**
 	 * The URL of the central mapper registry.
@@ -101,7 +101,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 		super.loadConfig(inStream);
 		
 		pilotAvailable = parseBool(PROP_PILOT_AVAILABLE).booleanValue();
-		pilotSensorUrl = pilotAvailable ? parseURI(PROP_PILOT_SENSOR_URL) : null;
+		pilotUrl = pilotAvailable ? parseURI(PROP_PILOT_URL) : null;
 		mapperRegistryUrl = parseURI(PROP_MAPPER_REGISTRY_URL);
 		webApplicationBaseUrl = parseURI(ConfigService.PROP_WEB_APP_BASE_URL);
 	}
@@ -114,11 +114,11 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	}
 
 	/* (non-Javadoc)
-	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration#getPilotSensorUrl()
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration#getPilotUrl()
 	 */
 	@Override
-	public URI getPilotSensorUrl() {
-		return pilotSensorUrl;
+	public URI getPilotUrl() {
+		return pilotUrl;
 	}
 
 	/* (non-Javadoc)

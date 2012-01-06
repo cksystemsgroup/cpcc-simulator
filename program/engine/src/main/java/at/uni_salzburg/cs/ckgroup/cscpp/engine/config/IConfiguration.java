@@ -30,9 +30,9 @@ public interface IConfiguration {
 	public boolean isPilotAvailable();
 
 	/**
-	 * @return the base URL of the associated auto pilot sensors. 
+	 * @return the base URL of the associated auto pilot. 
 	 */
-	public URI getPilotSensorUrl();
+	public URI getPilotUrl();
 
 	/**
 	 * @return the URL of the central mapper registry.

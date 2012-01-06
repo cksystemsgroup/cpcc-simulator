@@ -20,15 +20,22 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPointQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
+
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.json.simple.parser.ParseException;
 
 
 
@@ -62,27 +69,52 @@ public class RegistryService extends DefaultService{
 	        //
 	        
 	        String eng_uri = request.getParameter("enguri");
-	        String sensor_uri = request.getParameter("sensoruri");
+	        String pilot_uri = request.getParameter("piloturi");
 	        
-	        if(eng_uri == null || sensor_uri == null) {
+	        if(eng_uri == null || pilot_uri == null) {
 	            
 	            response.getWriter().print("error");
 
-	            LOG.info("Erroneous registration: engine='" + eng_uri + "', sensor='" + sensor_uri + "'");
+	            LOG.info("Erroneous registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
 	        }
 	        else {
-		        if(eng_uri.trim().isEmpty() || sensor_uri.trim().isEmpty()) {
+		        if(eng_uri.trim().isEmpty() || pilot_uri.trim().isEmpty()) {
 		        	// TODO No sensors available, which is OK. This is a central engine.
 		        	// TODO Use this to migrate completed virtual vehicles to.
 		        	LOG.info("Sucessful registration: central engine='" + eng_uri + "'");
 		        	
 		        	
 		        } else {
-		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', sensor='" + sensor_uri + "'");
+		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
 		        	
 		        	
 		        }
-	        	
+
+	        	LOG.info("Retrieving way-point list:");
+		        try {
+					List<WayPoint> wayPointList = WayPointQueryService.getWayPointList(pilot_uri);
+					for (WayPoint p : wayPointList)
+						LOG.info("Waypoint: " + p);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+		        
+	        	LOG.info("Retrieving available sensors:");		        
+		        SensorProxy sensorProxy = new SensorProxy();
+		        sensorProxy.setPilotUrl(pilot_uri);
+		        
+				try {
+					List<String> sensors = sensorProxy.getListOfAvailableSensors();
+
+			        for (String sensor : sensors) {
+			        	LOG.info("Sensor: " + sensor);
+			        }
+			        	
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        		        
 	        	// TODO add engine
 	            
 	            // all successfull

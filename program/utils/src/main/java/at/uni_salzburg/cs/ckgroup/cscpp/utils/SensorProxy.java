@@ -23,6 +23,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,6 +32,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
@@ -37,7 +41,7 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	
 	Logger LOG = Logger.getLogger(SensorProxy.class);
 	
-	private String pilotSensorUrl;
+	private String pilotUrl;
 	
 	private boolean running = false;
 	
@@ -83,6 +87,25 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		return altitudeOverGround;
 	}
 
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy#getListOfAvailableSensors()
+	 */
+	@Override
+	public List<String> getListOfAvailableSensors() throws ParseException {
+		String jsonString = getSensorValue("sensors");
+		if (jsonString == null)
+			return null;
+		
+		JSONParser parser = new JSONParser();
+		List<Object> list = (List<Object>)parser.parse(jsonString);
+		List<String> result = new ArrayList<String>();
+		for (Object entry : list) {
+			result.add(entry.toString());
+		}
+		
+		return result;
+	}
+	
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.ISensorProxy#getSensorValueAsDouble(java.lang.String)
 	 */
@@ -139,10 +162,10 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	 */
 	@Override
 	public InputStream getSensorValueAsStream(String name) {
-		if (pilotSensorUrl == null)
+		if (pilotUrl == null)
 			return null;
 		
-		String url = pilotSensorUrl+"/"+name;
+		String url = pilotUrl+"/sensor/"+name;
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpget = new HttpGet(url);
 		HttpResponse response;
@@ -158,10 +181,10 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	}
 	
 	/**
-	 * @param pilotSensorUrl the base URL to access the associated real vehicle sensors.
+	 * @param pilotUrl the base URL to access the associated real vehicle.
 	 */
-	public void setSensorUrl(String pilotSensorUrl) {
-		this.pilotSensorUrl = pilotSensorUrl;
+	public void setPilotUrl(String pilotUrl) {
+		this.pilotUrl = pilotUrl;
 	}
 
 	/* (non-Javadoc)
@@ -188,6 +211,13 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		running = false;
 	}
 	
+	/**
+	 * @return true if this thread is active.
+	 */
+	public boolean isRunning() {
+		return running;
+	}
+
 	/**
 	 * @param positionString the current position as a string.
 	 */
@@ -256,6 +286,5 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		}
 		
 	}
-	
 	
 }

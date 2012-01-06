@@ -21,6 +21,9 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
 import java.io.InputStream;
+import java.util.List;
+
+import org.json.simple.parser.ParseException;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
@@ -77,5 +80,10 @@ public interface ISensorProxy {
 	 * @return the current sensor value as an <code>InputStream</code> object.
 	 */
 	public InputStream getSensorValueAsStream(String name);
+	
+	/**
+	 * @return the list of available sensors.
+	 */
+	public List<String> getListOfAvailableSensors() throws ParseException;
 	
 }

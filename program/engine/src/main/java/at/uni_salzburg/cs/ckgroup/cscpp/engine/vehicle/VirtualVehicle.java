@@ -152,7 +152,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 //		String sonar = sensorProxy.getSensorValue(SensorProxy.SENSOR_NAME_SONAR);
 //		InputStream photo = sensorProxy.getSensorValueAsStream(SensorProxy.SENSOR_NAME_PHOTO);
 //		
-//		LOG.error("VirtualVehicle.execute() is not implemented yet! position=" + p +
+//		LOG.error("VirtualVehicle.execute() is not implemented yet! position=" + currentPosition +
 //				", alt=" + altitudeOverGround + ", course=" + courseOverGround +
 //				", speed=" + speedOverGround
 //				);

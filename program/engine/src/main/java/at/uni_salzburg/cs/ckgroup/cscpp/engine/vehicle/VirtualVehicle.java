@@ -112,9 +112,11 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	public void execute() 
 	{
 		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
-		if (currentPosition == null || completed || currentCommand == null)
+		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
+		if (currentPosition == null || completed || currentCommand == null || altitudeOverGround == null)
 			return;
 		
+		currentPosition.setAltitude(altitudeOverGround.doubleValue());
 		CartesianCoordinate currentPosCartesian = geodeticSystem.polarToRectangularCoordinates(currentPosition);
 		
 		Position pos = currentCommand.get_position();

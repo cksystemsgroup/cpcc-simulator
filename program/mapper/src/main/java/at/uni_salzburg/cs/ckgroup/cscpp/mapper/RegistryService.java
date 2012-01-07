@@ -20,6 +20,7 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPointQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -67,7 +68,7 @@ public class RegistryService extends DefaultService{
 		if (ACTION_ENGINE_REGISTRATION.equals(action)) {   
 	        // TODO reg service
 	        //
-	        
+                
 	        String eng_uri = request.getParameter("enguri");
 	        String pilot_uri = request.getParameter("piloturi");
 	        

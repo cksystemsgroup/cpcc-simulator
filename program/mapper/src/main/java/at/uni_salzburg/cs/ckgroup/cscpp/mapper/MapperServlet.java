@@ -147,5 +147,9 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			LOG.info("Loading configuration from " + configFile);
 		}
 	}
+        
+        public List<RegData> getRegData() {
+            return regdata;
+        }
 
 }

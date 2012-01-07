@@ -34,8 +34,8 @@ function updateMap() {
 			markers[m].setPilotName(position[m].name);
 			loadWaypoints = true;
 		}
+		markers[m].setPilotFlying(a.autoPilotFlight);
 		markers[m].setVehicles(vehicles[m].vehicles);
-		markers[m].setPilotFlying(position[m].autoPilotFlight);
 	}
 }
 

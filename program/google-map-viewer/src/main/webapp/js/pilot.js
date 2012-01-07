@@ -73,13 +73,13 @@ PilotOverlay.prototype.setVehicles = function(vehicles) {
 	tr = document.createElement('TR');
 	tr.appendChild(td);
 	innerTable.appendChild(tr);
-	td.className = this.pilotFlying ? "pilot_name_flying" : "pilot_name_ground";
-		
+	td.className = this.pilotFlying ? "pilot_name_flying" : "pilot_name_ground";	
 	
 	for (var entry in vehicles) {
 		var tr = document.createElement('TR');
 		var td = document.createElement('TD');
-		td.className = "vehicle_info";
+		var state = vehicles[entry].state;
+		td.className = "vehicle_info_"+state;
 		var id = vehicles[entry]["vehicle.id"];
 		if (id.length > 10)
 			id = id.substr(0,10)+"...";

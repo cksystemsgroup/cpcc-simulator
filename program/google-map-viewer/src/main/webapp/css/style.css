@@ -531,6 +531,18 @@ td.pilot_info {
 	color: red;
 }
 
-td.vehicle_info {
+td.vehicle_info_active {
 	color: yellow;
+}
+
+td.vehicle_info_suspended {
+	color: grey;
+}
+
+td.vehicle_info_completed {
+	color: green;
+}
+
+td.vehicle_info_corrupt {
+	color: red;
 }

@@ -48,7 +48,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public static final String STATUS_PATH = "vehicle.status";
 	public static final String DATA_SUBDIR = "data";
 	public static final long timerDelay = 500;
-	public static final long timerPeriod = 5000;
+	public static final long timerPeriod = 1000;
 	
 	public static final String PROP_VEHICLE_ID = "vehicle.id";
 	

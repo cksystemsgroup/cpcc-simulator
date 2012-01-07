@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -39,9 +41,6 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.SnoopService;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @SuppressWarnings("serial")
@@ -58,10 +57,9 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	private Configuration configuration = new Configuration();
 	private File contexTempDir;
 	private File configFile;
-        private List<RegData> regdata;
+	private Map<String, RegData> regdata;
 
 	private ServiceEntry[] services = {
-		new ServiceEntry("/snoop.*", new SnoopService(this)),
 		new ServiceEntry("/config/.*", new ConfigService(this)),
 		new ServiceEntry("/status/.*", new StatusService(this)),
 		new ServiceEntry("/registry/.*", new RegistryService(this)),
@@ -71,7 +69,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	@Override
 	public void init (ServletConfig servletConfig) throws ServletException {
 		this.servletConfig = servletConfig;
-                regdata = new ArrayList<RegData>();
+		regdata = new HashMap<String, RegData>();
 		super.init();
 		myInit();
 	}
@@ -87,6 +85,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			props.load(propStream);
 			
 			servletConfig.getServletContext().setAttribute("configuration", configuration);	
+			servletConfig.getServletContext().setAttribute("regdata", regdata);
 			
 			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
 			configuration.setWorkDir (contexTempDir);
@@ -147,9 +146,5 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			LOG.info("Loading configuration from " + configFile);
 		}
 	}
-        
-        public List<RegData> getRegData() {
-            return regdata;
-        }
 
 }

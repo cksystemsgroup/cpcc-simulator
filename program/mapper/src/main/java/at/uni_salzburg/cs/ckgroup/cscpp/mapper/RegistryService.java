@@ -20,15 +20,9 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPointQueryService;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
-
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -37,6 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.json.simple.parser.ParseException;
+
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPointQueryService;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 
 
 
@@ -68,6 +68,7 @@ public class RegistryService extends DefaultService{
 		if (ACTION_ENGINE_REGISTRATION.equals(action)) {   
 	        // TODO reg service
 	        //
+			
                 
 	        String eng_uri = request.getParameter("enguri");
 	        String pilot_uri = request.getParameter("piloturi");
@@ -89,8 +90,9 @@ public class RegistryService extends DefaultService{
 		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
 		        	
 		        	LOG.info("Retrieving way-point list:");
+		        	List<WayPoint> wayPointList = null;
 			        try {
-						List<WayPoint> wayPointList = WayPointQueryService.getWayPointList(pilot_uri);
+						wayPointList = WayPointQueryService.getWayPointList(pilot_uri);
 						for (WayPoint p : wayPointList)
 							LOG.info("Waypoint: " + p);
 					} catch (ParseException e) {
@@ -100,9 +102,9 @@ public class RegistryService extends DefaultService{
 		        	LOG.info("Retrieving available sensors:");		        
 			        SensorProxy sensorProxy = new SensorProxy();
 			        sensorProxy.setPilotUrl(pilot_uri);
-			        
+			        List<String> sensors = null;
 					try {
-						List<String> sensors = sensorProxy.getListOfAvailableSensors();
+						sensors = sensorProxy.getListOfAvailableSensors();
 	
 				        for (String sensor : sensors) {
 				        	LOG.info("Sensor: " + sensor);
@@ -112,11 +114,16 @@ public class RegistryService extends DefaultService{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+
+					@SuppressWarnings("unchecked")
+					Map<String, RegData> regdata = (Map<String, RegData>)config.getServletContext().getAttribute("regdata");
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, wayPointList, sensors));
+
 		        }
 
 		        		        
 	        	// TODO add engine
-	            
+				
 	            // all successfull
 	            response.getWriter().print("ok");
 	            

@@ -22,13 +22,15 @@ package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
 import java.util.List;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
+
 public class RegData {
     
     private String eng_uri;
-    private List<String> waypoints;
+    private List<WayPoint> waypoints;
     private List<String> sensors;
     
-    public RegData(String eu, List<String> wp, List<String> sens) {
+    public RegData(String eu, List<WayPoint> wp, List<String> sens) {
         eng_uri = eu;
         waypoints = wp;
         sensors = sens;
@@ -38,7 +40,7 @@ public class RegData {
         return eng_uri;
     }
      
-    public List<String> getWaypoints() {
+    public List<WayPoint> getWaypoints() {
         return waypoints;
     }
     

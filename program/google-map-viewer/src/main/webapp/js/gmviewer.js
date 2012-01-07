@@ -7,6 +7,7 @@ var markers = {};
 var waypointPolylines = {};
 var position = {};
 var vehicles = {};
+var pointsOfInterest = {};
 var loadWaypoints = true;
 
 function updateMap() {
@@ -36,6 +37,48 @@ function updateMap() {
 		}
 		markers[m].setPilotFlying(a.autoPilotFlight);
 		markers[m].setVehicles(vehicles[m].vehicles);
+	}
+}
+
+function updatePointsOfInterest () {
+	var vehicleMap = {};
+	for (id in vehicles) {
+		var vs = vehicles[id].vehicles;
+		for (v in vs) {
+			var state = vs[v].state;
+			var vid = vs[v]["vehicle.id"];
+			var vin = vs[v];
+			if (state == "active") {
+				vehicleMap[vid] = vin;
+			}
+		}
+	}
+	
+	for (id in pointsOfInterest) {
+		if (vehicleMap[id]) {
+			// do nothing
+		} else {
+			// obsolete one
+			pointsOfInterest[id].setMap(null);
+		}
+	}
+	
+	for (id in vehicleMap) {
+		var v = vehicleMap[id];
+		var point = new google.maps.LatLng(v.latitude, v.longitude);
+		if ( pointsOfInterest[id] ) {
+			// update position
+			pointsOfInterest[id].setPosition(point);
+		} else {
+			// new one!
+			pointsOfInterest[id] = new google.maps.Marker({
+				map: map,
+				position: point,
+				clickable: false,
+				title: id,
+				visible: true
+			});
+		}
 	}
 }
 
@@ -129,6 +172,7 @@ function onLoad() {
 			    onSuccess: function(transport){
 					vehicles = transport.responseText.evalJSON();
 					updateMap();
+					updatePointsOfInterest();
 			    },
 			    onFailure: function(){ alert('Something went wrong...') }
 			  });

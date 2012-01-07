@@ -56,7 +56,7 @@ public class ActionPicture implements IAction, Serializable {
 
 		try 
 		{
-			File f = File.createTempFile("img", "png", dataDir);
+			File f = File.createTempFile("img", ".png", dataDir);
 			filename = f.getName();
 			FileOutputStream o = new FileOutputStream(f);
 

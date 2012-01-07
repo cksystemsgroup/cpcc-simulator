@@ -20,19 +20,39 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.json;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.json.simple.JSONValue;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ActionPicture;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ActionTemperature;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Position;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class VehicleQuery implements IQuery {
 
+	private static final String PROP_VEHICLE_STATE = "state";
+	private static final String PROP_VEHICLE_LATITUDE = "latitude";
+	private static final String PROP_VEHICLE_LONGITUDE = "longitude";
+	private static final String PROP_VEHICLE_ALTITUDE = "altitude";
+	private static final String PROP_VEHICLE_TOLERANCE = "tolerance";
+	private static final String PROP_VEHICLE_ACTIONS = "actions";
+	
 	private Map<String, IVirtualVehicle> vehicleMap;
+	
+	@SuppressWarnings("serial")
+	private Map<String,String> actionsMap = new HashMap<String, String>() {{
+		put(new ActionTemperature().toString(), "temperature");
+		put(new ActionPicture(null).toString(), "photo");
+	}};
 
 	public void setVehicleMap(Map<String, IVirtualVehicle> vehicleMap) {
 		this.vehicleMap = vehicleMap;
@@ -46,6 +66,35 @@ public class VehicleQuery implements IQuery {
 			Map<String, Object> props = new LinkedHashMap<String, Object>();
 			for (Entry<Object, Object> e : vehicle.getProperties().entrySet())
 				props.put((String)e.getKey(), e.getValue());
+			
+			if(vehicle.isProgramCorrupted()) {
+				props.put(PROP_VEHICLE_STATE, "corrupt");
+			} else if(vehicle.isCompleted()) {
+				props.put(PROP_VEHICLE_STATE, "completed");
+			} else if (vehicle.isActive()) {
+				props.put(PROP_VEHICLE_STATE, "active");
+			} else {
+				props.put(PROP_VEHICLE_STATE, "suspended");
+			}
+
+			if (vehicle.getCurrentCommand() != null) {
+				Position p = vehicle.getCurrentCommand().get_position();
+				props.put(PROP_VEHICLE_LATITUDE, String.format(Locale.US, "%.8f", p.getPt().getLatitude()));
+				props.put(PROP_VEHICLE_LONGITUDE, String.format(Locale.US, "%.8f", p.getPt().getLongitude()));
+				props.put(PROP_VEHICLE_ALTITUDE, String.format(Locale.US, "%.3f", p.getPt().getAltitude()));
+				props.put(PROP_VEHICLE_TOLERANCE, String.format(Locale.US, "%.0f", p.getTolerance()));
+				
+				List<IAction> al = vehicle.getCurrentCommand().get_actions();
+				StringBuilder b = new StringBuilder();
+				boolean first = true;
+				for (IAction action : al) {
+					if (!first)
+						b.append(",");
+					b.append(actionsMap.get(action.toString()));
+					first = false;
+				}
+				props.put(PROP_VEHICLE_ACTIONS, b.toString());
+			}
 			obj.put(vehicle.getWorkDir().getName(), props);
 		}
 		

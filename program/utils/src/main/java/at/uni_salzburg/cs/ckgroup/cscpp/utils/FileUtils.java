@@ -100,15 +100,18 @@ public class FileUtils {
 	}
 
 	public static void removeRecursively(File dir) {
-//		System.out.println("removing " + dir.getAbsolutePath());
 		if (!dir.exists() || ".".equals(dir.getName()) || "..".equals(dir.getName()))
 			return;
 		
 		if (dir.isDirectory())
 			for (File f : dir.listFiles())
 				removeRecursively(f);
-		
-		dir.delete();
+
+		// This loop tries to ensure a successful deletion of directories on NFS v3 file-systems.
+		int counter = 40;
+		while (!dir.delete() && counter-- > 0) {
+			try { Thread.sleep(2000); } catch (InterruptedException e) { }
+		}
 	}
 	
 }

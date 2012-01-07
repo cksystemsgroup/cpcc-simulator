@@ -209,6 +209,7 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	 */
 	public void terminate() {
 		running = false;
+		this.interrupt();
 	}
 	
 	/**

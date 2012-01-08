@@ -53,11 +53,7 @@ public class VirtualVehicleBuilder {
 	 */
 	public IVirtualVehicle build(File workDir, InputStream data) throws IOException {
 		
-		if (!workDir.exists())
-			workDir.mkdirs();
-		
-		if (!workDir.exists())
-			throw new IOException("Can not create folder " + workDir.getAbsolutePath());
+		FileUtils.ensureDirectory(workDir);
 		
 		ZipInputStream zip = new ZipInputStream(data);
 		

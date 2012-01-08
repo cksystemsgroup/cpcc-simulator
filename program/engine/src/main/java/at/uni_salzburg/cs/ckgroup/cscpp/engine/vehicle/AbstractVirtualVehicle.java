@@ -118,8 +118,6 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public AbstractVirtualVehicle(File workDir) throws IOException {
 		this.workDir = workDir;
 		this.dataDir = new File(workDir, DATA_SUBDIR);
-		FileUtils.ensureDirectory(workDir);
-		FileUtils.ensureDirectory(dataDir);
 		
 		program = new File(workDir, PROGRAM_PATH);
 		if (!program.exists())
@@ -138,6 +136,8 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 			properties.setProperty(PROP_VEHICLE_ID, UUID.randomUUID().toString());
 			properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
 		}
+		
+		FileUtils.ensureDirectory(dataDir);
 	}
 
 	/* (non-Javadoc)

@@ -20,8 +20,10 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
@@ -36,32 +38,6 @@ public class FileUtils {
 		if (!dir.exists())
 			throw new IOException("Can not create directory " + dir);
 	}
-
-//	public static void zipToStream2 (File file, String baseDir, ZipOutputStream out) throws IOException {
-//		String name = (".".equals(baseDir) ? "" : baseDir + File.separator) + file.getName();
-//
-//		ZipEntry e = new ZipEntry(name + (file.isFile() ? "" : File.separator));
-//		e.setTime(file.lastModified());
-//		e.setCompressedSize(file.length());
-//		e.setSize(file.length());
-//		out.putNextEntry(e);
-//		
-//		if (file.isFile()) {
-//			InputStream inStream = new FileInputStream(file);
-//			int len;
-//			byte[] buf = new byte[8192];
-//			while ((len = inStream.read(buf)) >= 0) {
-//				out.write(buf, 0, len);
-//			}
-//			out.closeEntry();
-//		} else {
-//			out.closeEntry();
-//			for (String n : file.list()) {
-//				File f = new File (file, n);
-//				zipToStream2(f, name, out);
-//			}
-//		}
-//	}
 	
 	public static void zipToStream (File file, int prefixLength, ZipOutputStream out) throws IOException {
 		String name;
@@ -112,6 +88,19 @@ public class FileUtils {
 		while (!dir.delete() && counter-- > 0) {
 			try { Thread.sleep(2000); } catch (InterruptedException e) { }
 		}
+	}
+	
+	public static String loadFileAsString(File file) throws IOException {
+		FileReader reader = new FileReader(file);
+		BufferedReader lineReader = new BufferedReader(reader);
+		StringBuilder sb = new StringBuilder();
+		String line;
+		while ( (line = lineReader.readLine()) != null) {
+			sb.append(line);
+		}
+		lineReader.close();
+		reader.close();
+		return sb.toString();
 	}
 	
 }

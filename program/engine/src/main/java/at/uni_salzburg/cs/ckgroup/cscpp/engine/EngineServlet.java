@@ -44,6 +44,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
@@ -202,10 +203,12 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 					vehicle = vehicleBuilder.build(vehicleDir);
 					if (!vehicle.isActive())
 						vehicle.resume();
+					vehicleMap.put(vehicleDir.getName(),vehicle);
 				} catch (IOException e) {
-					LOG.error("Virtual vehicle in " + vehicleDir.getName() + " is corrupt.");
+					vehicleMap.remove(vehicleDir.getName());
+					FileUtils.removeRecursively(vehicleDir);
+					LOG.error("Virtual vehicle in " + vehicleDir.getName() + " is corrupt and has been removed.");
 				}
-				vehicleMap.put(vehicleDir.getName(),vehicle);
 			}
 		}
 		

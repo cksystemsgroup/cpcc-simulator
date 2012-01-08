@@ -23,8 +23,9 @@ package at.uni_salzburg.cs.ckgroup.cscpp.mapper.course;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -32,7 +33,6 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
 public class WayPointQueryService {
 
-	@SuppressWarnings("unchecked")
 	public static List<WayPoint> getWayPointList(String pilotUrl) throws IOException, ParseException {
 		
 	    String jsonString = HttpQueryUtils.simpleQuery(pilotUrl+"/json/waypoints");
@@ -40,11 +40,11 @@ public class WayPointQueryService {
 	    	return null;
 	    
 	    JSONParser parser = new JSONParser();
-	    List<Object> list = (List<Object>)parser.parse(jsonString);
+	    JSONArray array = (JSONArray)parser.parse(jsonString);
 	    List<WayPoint> wayPointList = new ArrayList<WayPoint>();
 	    
-		for (Object entry : list) {
-			WayPoint wayPoint = new WayPoint((Map<String,Object>)entry);
+		for (Object entry : array) {
+			WayPoint wayPoint = new WayPoint((JSONObject)entry);
 			wayPointList.add(wayPoint);
 		}
 		

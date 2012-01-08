@@ -20,6 +20,7 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.json.simple.parser.ParseException;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPointQueryService;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
@@ -65,11 +67,8 @@ public class RegistryService extends DefaultService{
 		}
 		String action = cmd[2];
 		
-		if (ACTION_ENGINE_REGISTRATION.equals(action)) {   
-	        // TODO reg service
-	        //
+		if (ACTION_ENGINE_REGISTRATION.equals(action)) {
 			
-                
 	        String eng_uri = request.getParameter("enguri");
 	        String pilot_uri = request.getParameter("piloturi");
 	        
@@ -84,11 +83,9 @@ public class RegistryService extends DefaultService{
 				Map<String, RegData> regdata = (Map<String, RegData>)config.getServletContext().getAttribute("regdata");
 
 		        if(pilot_uri == null || pilot_uri.trim().isEmpty()) {
-		        	// TODO No sensors available, which is OK. This is a central engine.
-		        	// TODO Use this to migrate completed virtual vehicles to.
+		        	// No sensors available, which is OK. This is a central engine.
 		        	LOG.info("Sucessful registration: central engine='" + eng_uri + "'");
 					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null));
-
 		        	
 		        } else {
 		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
@@ -100,7 +97,7 @@ public class RegistryService extends DefaultService{
 						for (WayPoint p : wayPointList)
 							LOG.info("Waypoint: " + p);
 					} catch (ParseException e) {
-						e.printStackTrace();
+						LOG.error("Error at retrieving way-point list", e);
 					}
 			        
 		        	LOG.info("Retrieving available sensors:");		        
@@ -115,23 +112,21 @@ public class RegistryService extends DefaultService{
 				        }
 				        	
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						LOG.error("Error at retrieving available sensors", e);
 					}
 
 					regdata.put(eng_uri.trim(), new RegData(eng_uri, pilot_uri, wayPointList, sensors));
 
 		        }
 
-		        		        
-	        	// TODO add engine
-				
-	            // all successfull
 	            response.getWriter().print("ok");
 	            
-	            
+				File registryFile = (File)config.getServletContext().getAttribute("registryFile");
+	            RegistryPersistence.storeRegistry(registryFile, regdata);
 	        }
-        
+            return;
+
+            
 		} else{
 			LOG.error("Can not handle: " + servicePath);
 			emit404(request, response);
@@ -139,5 +134,5 @@ public class RegistryService extends DefaultService{
 		}
         
     }
-    
+
 }

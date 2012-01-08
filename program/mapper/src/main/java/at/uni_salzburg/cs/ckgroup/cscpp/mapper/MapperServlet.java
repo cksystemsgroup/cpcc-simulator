@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -37,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -51,12 +53,14 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
 	public static final String PROP_PATH_NAME = "mapper.properties";
 	public static final String PROP_CONFIG_FILE = "mapper.config.file";
+	public static final String PROP_REGISTRY_FILE = "registry.file";
 	
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
 	private Configuration configuration = new Configuration();
 	private File contexTempDir;
 	private File configFile;
+	private File registryFile;
 	private Map<String, RegData> regdata;
 
 	private ServiceEntry[] services = {
@@ -69,7 +73,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	@Override
 	public void init (ServletConfig servletConfig) throws ServletException {
 		this.servletConfig = servletConfig;
-		regdata = new HashMap<String, RegData>();
+		regdata = Collections.synchronizedMap(new HashMap<String, RegData>());
 		super.init();
 		myInit();
 	}
@@ -91,6 +95,8 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			configuration.setWorkDir (contexTempDir);
 			
 			configFile = new File (contexTempDir, props.getProperty(PROP_CONFIG_FILE));
+			registryFile = new File (contexTempDir, props.getProperty(PROP_REGISTRY_FILE));
+			servletConfig.getServletContext().setAttribute("registryFile", registryFile);
 			reloadConfigFile();
 		
 		} catch (IOException e) {
@@ -144,6 +150,10 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 		if (configFile != null && configFile.exists()) {
 			configuration.loadConfig(new FileInputStream(configFile));
 			LOG.info("Loading configuration from " + configFile);
+		}
+		if (registryFile != null && registryFile.exists()) {
+			RegistryPersistence.loadRegistry(registryFile, regdata);
+			LOG.info("Registry loaded from " + registryFile.getAbsolutePath());
 		}
 	}
 

@@ -20,11 +20,16 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 
-public class RegData {
+public class RegData implements JSONAware {
     
     private String eng_uri;
 	private String pilotUri;
@@ -37,6 +42,32 @@ public class RegData {
         waypoints = wp;
         sensors = sens;
     }
+    
+	public RegData(JSONObject obj) {
+        eng_uri = (String)obj.get("engUri");
+        pilotUri = (String)obj.get("pilotUri");
+        
+        JSONArray array = (JSONArray)obj.get("sensors");
+        if (array == null) {
+        	sensors = null;
+        } else {
+        	sensors = new ArrayList<String>();
+	        for (Object entry : array) {
+	        	sensors.add((String)entry);
+	        }
+        }
+        
+        array = (JSONArray)obj.get("waypoints");
+        if (array == null) {
+        	waypoints = null;
+        } else {
+            waypoints = new ArrayList<WayPoint>();
+			for (Object entry : array) {
+				WayPoint wayPoint = new WayPoint((JSONObject)entry);
+				waypoints.add(wayPoint);
+			}
+        }
+	}
     
     public String getEngineUri() {
         return eng_uri;
@@ -53,6 +84,16 @@ public class RegData {
     public List<String> getSensors() {
         return sensors;
     }
-    
-    //TODO find waypoint etc
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+	    JSONObject obj = new JSONObject();
+	    obj.put("engUri", eng_uri);
+	    obj.put("pilotUri", pilotUri);
+	    obj.put("waypoints", waypoints);
+	    obj.put("sensors", sensors);
+	    return obj.toString();
+	}
+
 }

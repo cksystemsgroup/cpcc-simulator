@@ -21,23 +21,25 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.course;
 
 import java.util.Locale;
-import java.util.Map;
+
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
-public class WayPoint {
+public class WayPoint implements JSONAware {
 	
 	private PolarCoordinate point;
 	private double precision;
 	private double velocity;
 	
-	public WayPoint (Map<String,Object> jsonMap) {
-		double longitude = ((Double)jsonMap.get("longitude")).doubleValue();
-		double latitude = ((Double)jsonMap.get("latitude")).doubleValue();
-		double altitude = ((Double)jsonMap.get("altitude")).doubleValue();
+	public WayPoint (JSONObject obj) {
+		double longitude = ((Double)obj.get("longitude")).doubleValue();
+		double latitude = ((Double)obj.get("latitude")).doubleValue();
+		double altitude = ((Double)obj.get("altitude")).doubleValue();
 		point = new PolarCoordinate(latitude, longitude, altitude);
-		precision = (Double)jsonMap.get("precision");
-		velocity = (Double)jsonMap.get("velocity");		
+		precision = (Double)obj.get("precision");
+		velocity = (Double)obj.get("velocity");		
 	}
 
 	public PolarCoordinate getPoint() {
@@ -52,9 +54,22 @@ public class WayPoint {
 		return velocity;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+	    JSONObject obj = new JSONObject();
+		obj.put("latitude", Double.valueOf(point.getLatitude()));
+	    obj.put("longitude", Double.valueOf(point.getLongitude()));
+	    obj.put("altitude", Double.valueOf(point.getAltitude()));
+	    obj.put("precision", Double.valueOf(precision));
+	    obj.put("velocity", Double.valueOf(velocity));
+	    return obj.toString();
+	}
+
 	@Override
 	public String toString() {
 		return String.format(Locale.US, "(%.8f, %.8f, %.3f) precision %.0f velocity %.1f",
 				point.getLatitude(), point.getLongitude(), point.getAltitude(), precision, velocity);
 	}
+
 }

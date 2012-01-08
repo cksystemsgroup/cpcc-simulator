@@ -29,8 +29,6 @@ import java.util.Map.Entry;
 
 import org.json.simple.JSONValue;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ActionPicture;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ActionTemperature;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Position;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
@@ -50,8 +48,8 @@ public class VehicleQuery implements IQuery {
 	
 	@SuppressWarnings("serial")
 	private Map<String,String> actionsMap = new HashMap<String, String>() {{
-		put(new ActionTemperature().toString(), "temperature");
-		put(new ActionPicture(null).toString(), "photo");
+		put("TEMPERATURE", "temperature");
+		put("PICTURE", "photo");
 	}};
 
 	public void setVehicleMap(Map<String, IVirtualVehicle> vehicleMap) {
@@ -90,7 +88,7 @@ public class VehicleQuery implements IQuery {
 				for (IAction action : al) {
 					if (!first)
 						b.append(",");
-					b.append(actionsMap.get(action.toString()));
+					b.append(actionsMap.get(action.toString().toUpperCase()));
 					first = false;
 				}
 				props.put(PROP_VEHICLE_ACTIONS, b.toString());

@@ -4,18 +4,31 @@
 		<div style="font-size: 90%; line-height: 130%">
 #set( $reg = $servletConfig.getServletContext().getAttribute("regdata") )
 #set( $keySet = $reg.keySet() )
-<table>	
+			<table class="sensors">
+				<thead>
+					<tr>
+						<th>registered engines</th>
+					</tr>
+				</thead>
+				<tbody>
 #foreach( $key in $keySet )
-<tr><td>
-Engine URL: <a href="$key">$key</a> <br/>
-Pilot URL: unknown <br/>
-Available sensors:
 #set( $rd = $reg.get($key) )
-#set( $first = true )
-#foreach( $sensor in $rd.getSensors() )#if( !$first ),#{end} $sensor#set( $first = false )#end
-</td></tr>
+					<tr>
+						<td>Engine URL: <a href="$key">$key</a> <br/>
+#if( $rd.getPilotUri() )
+Pilot URL: <a href="$rd.getPilotUri()">$rd.getPilotUri()</a> <br/>
 #end
-</table>
+#if ( $rd.getSensors() )
+Available sensors:
+#set( $first = true )
+#set( $su = $rd.getPilotUri() + "/sensor" )
+#foreach( $sensor in $rd.getSensors() )#if( !$first ),#{end} <a href="$su/$sensor">$sensor</a>#set( $first = false )#end
+#end
+						</td>
+					</tr>
+#end
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>

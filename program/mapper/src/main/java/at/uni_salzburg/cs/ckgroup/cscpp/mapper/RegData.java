@@ -27,11 +27,13 @@ import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 public class RegData {
     
     private String eng_uri;
+	private String pilotUri;
     private List<WayPoint> waypoints;
     private List<String> sensors;
     
-    public RegData(String eu, List<WayPoint> wp, List<String> sens) {
+    public RegData(String eu, String pu, List<WayPoint> wp, List<String> sens) {
         eng_uri = eu;
+        pilotUri = pu;
         waypoints = wp;
         sensors = sens;
     }
@@ -39,7 +41,11 @@ public class RegData {
     public String getEngineUri() {
         return eng_uri;
     }
-     
+
+    public String getPilotUri() {
+        return pilotUri;
+    }
+
     public List<WayPoint> getWaypoints() {
         return waypoints;
     }

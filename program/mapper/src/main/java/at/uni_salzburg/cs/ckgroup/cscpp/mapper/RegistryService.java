@@ -73,18 +73,22 @@ public class RegistryService extends DefaultService{
 	        String eng_uri = request.getParameter("enguri");
 	        String pilot_uri = request.getParameter("piloturi");
 	        
-	        if(eng_uri == null || pilot_uri == null) {
+	        if(eng_uri == null || eng_uri.trim().isEmpty()) {
 	            
 	            response.getWriter().print("error");
-
 	            LOG.info("Erroneous registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
-	        }
-	        else {
-		        if(eng_uri.trim().isEmpty() || pilot_uri.trim().isEmpty()) {
+	        
+	        } else {
+	        	
+				@SuppressWarnings("unchecked")
+				Map<String, RegData> regdata = (Map<String, RegData>)config.getServletContext().getAttribute("regdata");
+
+		        if(pilot_uri == null || pilot_uri.trim().isEmpty()) {
 		        	// TODO No sensors available, which is OK. This is a central engine.
 		        	// TODO Use this to migrate completed virtual vehicles to.
 		        	LOG.info("Sucessful registration: central engine='" + eng_uri + "'");
-		        	
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null));
+
 		        	
 		        } else {
 		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
@@ -115,9 +119,7 @@ public class RegistryService extends DefaultService{
 						e.printStackTrace();
 					}
 
-					@SuppressWarnings("unchecked")
-					Map<String, RegData> regdata = (Map<String, RegData>)config.getServletContext().getAttribute("regdata");
-					regdata.put(eng_uri.trim(), new RegData(eng_uri, wayPointList, sensors));
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, pilot_uri, wayPointList, sensors));
 
 		        }
 

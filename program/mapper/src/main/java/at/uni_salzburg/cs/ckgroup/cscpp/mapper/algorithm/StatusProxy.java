@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
+package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,10 +44,10 @@ public class StatusProxy {
 	
 	private Double velocity;
 	
-	public StatusProxy (String statusUrl) {
-		this.statusUrl = statusUrl;
-		if (statusUrl == null)
+	public StatusProxy (String pilotUrl) {
+		if (pilotUrl == null)
 			throw new NullPointerException("Status URL may not be null!");
+		this.statusUrl = pilotUrl + "/status";
 	}
 	
 	public void fetchCurrentStatus() {

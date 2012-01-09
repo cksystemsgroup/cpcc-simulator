@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.IMappingAlgorithm;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.MappingAlgrithmBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
@@ -54,6 +56,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	public static final String PROP_PATH_NAME = "mapper.properties";
 	public static final String PROP_CONFIG_FILE = "mapper.config.file";
 	public static final String PROP_REGISTRY_FILE = "registry.file";
+	public static final String PROP_MAPPER_ALGORITHM = "mapper.algorithm";
 	
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
@@ -62,6 +65,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	private File configFile;
 	private File registryFile;
 	private Map<String, RegData> regdata;
+	private IMappingAlgorithm mappingAlgorithm;
 
 	private ServiceEntry[] services = {
 		new ServiceEntry("/config/.*", new ConfigService(this)),
@@ -98,7 +102,11 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			registryFile = new File (contexTempDir, props.getProperty(PROP_REGISTRY_FILE));
 			servletConfig.getServletContext().setAttribute("registryFile", registryFile);
 			reloadConfigFile();
-		
+			
+			String algorithmName = props.getProperty(PROP_MAPPER_ALGORITHM,"random");
+			mappingAlgorithm = MappingAlgrithmBuilder.build(algorithmName.trim(), regdata);
+			servletConfig.getServletContext().setAttribute("mappingAlgorithm", mappingAlgorithm);
+			
 		} catch (IOException e) {
 			throw new ServletException (e);
 		}
@@ -127,6 +135,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	
 	@Override
     public void destroy () {
+		mappingAlgorithm.terminate();
     	// TODO check / implement
     }
     

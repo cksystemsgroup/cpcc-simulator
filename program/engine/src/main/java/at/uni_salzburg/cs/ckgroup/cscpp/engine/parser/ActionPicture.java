@@ -25,8 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Locale;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 public class ActionPicture implements IAction, Serializable {
@@ -79,7 +79,9 @@ public class ActionPicture implements IAction, Serializable {
 	}
 
 	public String toString() {
-		return "Picture";
+		if (timestamp == 0)
+			return "Picture";
+		return String.format(Locale.US, "Picture (%d %s)", timestamp, filename);
 	}
 
 	public String getFilename() {

@@ -21,6 +21,7 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
@@ -31,7 +32,7 @@ public class ActionTemperature implements IAction, Serializable
 	 */
 	private static final long serialVersionUID = -6435936757132071656L;
 	private double temperature = 0;
-	private long timestamp;
+	private long timestamp = 0;
 
 	public double getTemperature() {
 		return temperature;
@@ -50,6 +51,8 @@ public class ActionTemperature implements IAction, Serializable
 	}
 
 	public String toString() {
-		return "Temperature";
+		if (timestamp == 0)
+			return "Temperature";
+		return String.format(Locale.US, "Temperature (%d %.1f)", timestamp, temperature);
 	}
 }

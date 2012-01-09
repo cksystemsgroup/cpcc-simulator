@@ -23,7 +23,6 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.json;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -77,10 +76,10 @@ public class VehicleQuery implements IQuery {
 
 			if (vehicle.getCurrentCommand() != null) {
 				Position p = vehicle.getCurrentCommand().get_position();
-				props.put(PROP_VEHICLE_LATITUDE, String.format(Locale.US, "%.8f", p.getPt().getLatitude()));
-				props.put(PROP_VEHICLE_LONGITUDE, String.format(Locale.US, "%.8f", p.getPt().getLongitude()));
-				props.put(PROP_VEHICLE_ALTITUDE, String.format(Locale.US, "%.3f", p.getPt().getAltitude()));
-				props.put(PROP_VEHICLE_TOLERANCE, String.format(Locale.US, "%.0f", p.getTolerance()));
+				props.put(PROP_VEHICLE_LATITUDE, Double.valueOf(p.getPt().getLatitude()));
+				props.put(PROP_VEHICLE_LONGITUDE, Double.valueOf(p.getPt().getLongitude()));
+				props.put(PROP_VEHICLE_ALTITUDE, Double.valueOf(p.getPt().getAltitude()));
+				props.put(PROP_VEHICLE_TOLERANCE, Double.valueOf(p.getTolerance()));
 				
 				List<IAction> al = vehicle.getCurrentCommand().get_actions();
 				StringBuilder b = new StringBuilder();

@@ -69,8 +69,9 @@ public class DefaultService implements IService
 			for (String w : welcomePages) {
 				File indexPath = new File(realPath,w);
 				if (indexPath.exists()) {
-					servicePath = "/"+w;
-					realPath = indexPath;
+//					servicePath = "/"+w;
+//					realPath = indexPath;
+					emit301(request, response, request.getContextPath() + "/"+w);
 					break;
 				}
 			}

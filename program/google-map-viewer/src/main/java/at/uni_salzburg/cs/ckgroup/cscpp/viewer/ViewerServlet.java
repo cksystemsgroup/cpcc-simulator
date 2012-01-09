@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.SnoopService;
 
 
 @SuppressWarnings("serial")
@@ -54,7 +53,6 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 	private File configFile;
 	
 	private ServiceEntry[] services = {
-		new ServiceEntry("/snoop.*", new SnoopService(this)),
 		new ServiceEntry("/json.*", new JsonQueryService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};

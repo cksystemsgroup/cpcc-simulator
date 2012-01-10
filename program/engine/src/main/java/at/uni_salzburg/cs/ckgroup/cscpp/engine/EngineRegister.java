@@ -69,6 +69,9 @@ public class EngineRegister extends Thread {
     public void register() {
     	Configuration cfg = (Configuration)servletConfig.getServletContext().getAttribute("configuration");
         URI reg_uri = cfg.getMapperRegistryUrl();
+        if (reg_uri == null)
+        	return;
+        
         URI pilot_uri = cfg.getPilotUrl();
         URI engineUri = cfg.getWebApplicationBaseUrl();
         boolean pilotAvailable = cfg.isPilotAvailable();

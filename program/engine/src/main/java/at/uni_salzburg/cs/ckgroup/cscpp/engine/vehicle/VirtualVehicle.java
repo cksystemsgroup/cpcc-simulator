@@ -97,9 +97,23 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			
 			listIter = commandList.listIterator();
 			
-			if (listIter.hasNext())
+			
+			currentCommand = null;
+			
+			
+			// get first command which have to be executed
+			while (listIter.hasNext())
+			{
 				currentCommand = listIter.next();
-			else
+				
+				if (!currentCommand.is_finished())
+					break;
+			}
+			
+			if (currentCommand==null)
+				completed = true;
+			
+			else if (currentCommand.is_finished())
 				completed = true;
 			
 			programCorrupted = false;

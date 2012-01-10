@@ -1,6 +1,6 @@
 <div id="content">
 	<div class="post">
-		<h2 class="title"><a href="#">Current Loaded Vehicles</a></h2>
+		<h2 class="title"><a href="#">Currently Loaded Vehicles</a></h2>
 		<div style="font-size: 90%; line-height: 130%">
 #set( $vehicleMap = $servletConfig.getServletContext().getAttribute("vehicleMap") )
 #if( $vehicleMap.size() > 0)

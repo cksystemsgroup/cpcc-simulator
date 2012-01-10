@@ -83,7 +83,7 @@
 #end
 #end
 					<tr class="$lineClassName">
-						<td>$command.toString()</td>
+						<td>$command.toString().replaceAll("\n","</br>")</td>
 					</tr>
 #set( $x = $x + 1 )
 #end

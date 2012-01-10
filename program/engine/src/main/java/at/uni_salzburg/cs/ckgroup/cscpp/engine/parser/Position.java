@@ -27,16 +27,29 @@ import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 public class Position implements Serializable
 {
 	private static final long serialVersionUID = 4207943401820191787L;
-	private PolarCoordinate pt;
+	transient private PolarCoordinate pt;
 	private double tolerance;
 
+	private double latitude;
+	private double longitude;
+	private double altitude;
+	
+	
 	public Position(PolarCoordinate p, double tol) {
 		pt = p;
+		
+		// for testing
+		latitude = pt.getLatitude();
+		longitude = pt.getLongitude();
+		altitude = pt.getAltitude();
+		
 		tolerance = tol;
 	}
 
 	public PolarCoordinate getPt() {
-		return pt;
+		//return pt;
+		
+		return new PolarCoordinate(latitude, longitude, altitude);
 	}
 
 	public double getTolerance() {

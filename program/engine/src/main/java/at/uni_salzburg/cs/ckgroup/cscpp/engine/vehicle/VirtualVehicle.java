@@ -25,6 +25,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -58,19 +60,41 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 * @param workDir the working directory of this virtual vehicle.
 	 * @throws IOException thrown in case of missing files or folders.
 	 */
-	public VirtualVehicle (File workDir) throws IOException {
+	public VirtualVehicle (File workDir) throws IOException
+	{
 		super(workDir);
 		
-		readVehicleState();
+		boolean parse = true;
+		
+		try 
+		{
+			readVehicleState();
+			parse = false;
+		} 
+		catch (ClassNotFoundException e1) 
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		
 		try 
 		{
 			currentCommand = null;
 			
-			Scanner sc = new Scanner(program.getAbsolutePath());
-			Parser pa = new Parser(dataDir);
+			if (parse)
+			{
+				Scanner sc = new Scanner(program.getAbsolutePath());
+				Parser pa = new Parser(dataDir);
 	
-			commandList = pa.run(sc);
+				commandList = pa.run(sc);
+			}
+			
 			listIter = commandList.listIterator();
 			
 			if (listIter.hasNext())
@@ -85,24 +109,38 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			LOG.error(e.getMessage());
 		}
 
-		storeVehicleState();
+
+		try 
+		{
+			storeVehicleState();
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	
 
-	private void readVehicleState() throws FileNotFoundException 
+	private void readVehicleState() throws IOException, ClassNotFoundException
 	{
 		FileInputStream fin = new FileInputStream(vehicleStatus);
 		// TODO read vehicle state from file. Use vehicleStatus as file name.
 		
-		//...
+		ObjectInputStream objStream = new ObjectInputStream(fin);
+		
+		commandList = (List<Command>)objStream.readObject();
 	}
 	
-	private void storeVehicleState() throws FileNotFoundException 
+	private void storeVehicleState() throws IOException 
 	{
 		FileOutputStream fout = new FileOutputStream(vehicleStatus);
 		// TODO store current vehicle state in a file. Use vehicleStatus as file name.
 		//...
+		
+		ObjectOutputStream objStream = new ObjectOutputStream(fout);
+		objStream.writeObject(commandList);
 	}
 
 	/* (non-Javadoc)
@@ -136,9 +174,12 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 				completed = true;
 		}
 		
-		try {
+		try 
+		{
 			storeVehicleState();
-		} catch (FileNotFoundException e) {
+		} 
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

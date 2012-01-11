@@ -87,7 +87,7 @@ a:hover {
 	letter-spacing: -2px;
 	text-transform: lowercase;
 	font-size: 3.8em;
-	background: redc;
+/* 	background: redc; */
 }
 
 #logo p {
@@ -504,3 +504,6 @@ table.sensors thead tr {
     background-color: #e5decb;
 }
 
+input.sidebarTextInput {
+	width:220px;
+}

@@ -27,7 +27,6 @@ import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 public class Position implements Serializable
 {
 	private static final long serialVersionUID = 4207943401820191787L;
-	transient private PolarCoordinate pt;
 	private double tolerance;
 
 	private double latitude;
@@ -35,10 +34,7 @@ public class Position implements Serializable
 	private double altitude;
 	
 	
-	public Position(PolarCoordinate p, double tol) {
-		pt = p;
-		
-		// for testing
+	public Position(PolarCoordinate pt, double tol) {
 		latitude = pt.getLatitude();
 		longitude = pt.getLongitude();
 		altitude = pt.getAltitude();
@@ -47,8 +43,6 @@ public class Position implements Serializable
 	}
 
 	public PolarCoordinate getPt() {
-		//return pt;
-		
 		return new PolarCoordinate(latitude, longitude, altitude);
 	}
 
@@ -58,6 +52,6 @@ public class Position implements Serializable
 
 	public String toString() {
 		return String.format(Locale.US, "Point %.8f %.8f %.3f tolerance %.1f", 
-				pt.getLatitude(), pt.getLongitude(), pt.getAltitude(), tolerance);
+				latitude, longitude, altitude, tolerance);
 	}
 }

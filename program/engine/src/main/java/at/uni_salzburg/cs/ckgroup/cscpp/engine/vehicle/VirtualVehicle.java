@@ -2,7 +2,7 @@
  * @(#) VirtualVehicle.java
  *
  * This code is part of the JNavigator project.
- * Copyright (c) 2011  Clemens Krainer
+ * Copyright (c) 2011  Clemens Krainer, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,7 +35,9 @@ import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ActionPicture;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Parser;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Position;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
@@ -64,24 +65,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	{
 		super(workDir);
 		
-		boolean parse = true;
-		
-		try 
-		{
-			readVehicleState();
-			parse = false;
-		} 
-		catch (ClassNotFoundException e1) 
-		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		boolean parse = !readVehicleState();
 		
 		try 
 		{
@@ -97,10 +81,6 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			
 			listIter = commandList.listIterator();
 			
-			
-			currentCommand = null;
-			
-			
 			// get first command which have to be executed
 			while (listIter.hasNext())
 			{
@@ -110,51 +90,66 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 					break;
 			}
 			
-			if (currentCommand==null)
-				completed = true;
-			
-			else if (currentCommand.is_finished())
+			if (currentCommand==null || currentCommand.is_finished())
 				completed = true;
 			
 			programCorrupted = false;
+
+			storeVehicleState();
 		} 
 		catch(Exception e)
 		{
-			LOG.error(e.getMessage());
+			LOG.error("Vehicle " + workDir.getName() + " is corrupt. Execution refused.", e);
 		}
 
+	}
 
+	@SuppressWarnings("unchecked")
+	private boolean readVehicleState()
+	{
+		if (!vehicleStatus.exists() || vehicleStatus.length() == 0) {
+			LOG.info("Vehicle " + workDir + " has no state yet. Reading state cancelled.");
+			return false;
+		}
+		
 		try 
 		{
-			storeVehicleState();
+			FileInputStream fin = new FileInputStream(vehicleStatus);
+			// TODO read vehicle state from file. Use vehicleStatus as file name.
+		
+			ObjectInputStream objStream = new ObjectInputStream(fin);
+			commandList = (List<Command>)objStream.readObject();
+			for (Command cmd : commandList) {
+				for (IAction action : cmd.get_actions()) {
+					if (action instanceof ActionPicture) {
+						((ActionPicture)action).setDataDir(dataDir);
+					}
+				}
+			}
+		} 
+		catch (Exception e) 
+		{
+			LOG.error("Error at reading state of vehicle " + workDir + " from file.", e);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private void storeVehicleState()
+	{
+		try 
+		{
+			FileOutputStream fout = new FileOutputStream(vehicleStatus);
+			// TODO store current vehicle state in a file. Use vehicleStatus as file name.
+			
+			ObjectOutputStream objStream = new ObjectOutputStream(fout);
+			objStream.writeObject(commandList);
 		} 
 		catch (IOException e) 
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Error at storing state of vehicle " + workDir + " to file.", e);
 		}
-	}
-
-	
-
-	private void readVehicleState() throws IOException, ClassNotFoundException
-	{
-		FileInputStream fin = new FileInputStream(vehicleStatus);
-		// TODO read vehicle state from file. Use vehicleStatus as file name.
-		
-		ObjectInputStream objStream = new ObjectInputStream(fin);
-		
-		commandList = (List<Command>)objStream.readObject();
-	}
-	
-	private void storeVehicleState() throws IOException 
-	{
-		FileOutputStream fout = new FileOutputStream(vehicleStatus);
-		// TODO store current vehicle state in a file. Use vehicleStatus as file name.
-		//...
-		
-		ObjectOutputStream objStream = new ObjectOutputStream(fout);
-		objStream.writeObject(commandList);
 	}
 
 	/* (non-Javadoc)
@@ -188,16 +183,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 				completed = true;
 		}
 		
-		try 
-		{
-			storeVehicleState();
-		} 
-		catch (IOException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		storeVehicleState();
 		
 		
 // TODO add Action* Classes for all Sesors in example code below	

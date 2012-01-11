@@ -153,8 +153,10 @@ public class Parser
 			case Scanner.SymTEMPERATURE: 
 				lst.add(new ActionTemperature()); 
 				break;
-			case Scanner.SymPICTURE: 
-				lst.add(new ActionPicture(dataDir)); 	
+			case Scanner.SymPICTURE:
+				ActionPicture ap = new ActionPicture();
+				ap.setDataDir(dataDir);
+				lst.add(ap);
 				break;
 				
 			default:

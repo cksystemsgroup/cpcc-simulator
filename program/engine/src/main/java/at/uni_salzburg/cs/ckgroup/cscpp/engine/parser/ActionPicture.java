@@ -43,10 +43,6 @@ public class ActionPicture implements IAction, Serializable {
 		return timestamp;
 	}
 
-	public ActionPicture(File dataDir) {
-		this.dataDir = dataDir;
-	}
-
 	@Override
 	public boolean execute(ISensorProxy sprox) {
 		InputStream instream = sprox
@@ -81,12 +77,14 @@ public class ActionPicture implements IAction, Serializable {
 	public String toString() {
 		if (timestamp == 0)
 			return "Picture";
-		return String.format(Locale.US, "Picture (%d %s)", timestamp, filename);
+		return String.format(Locale.US, "Picture (%d \"%s\")", timestamp, filename);
 	}
 
 	public String getFilename() {
 		return filename;
 	}
-	
-	
+
+	public void setDataDir(File dataDir) {
+		this.dataDir = dataDir;
+	}
 }

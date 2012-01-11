@@ -30,7 +30,7 @@
 			<form action="vehicle/html/vehicleUpload" method="post" enctype="multipart/form-data">
 				<p>
 				Please select a vehicle archive on your machine and press the Upload button.<br>
-				<input type="file" name="configuration" size="20" maxlength="100000" accept="application/zip" /><br>
+				<input type="file" name="configuration" size="13" class="sidebarTextInput" maxlength="100000" accept="application/zip" /><br>
 				<input type="submit" name="configUpload" value="Upload" />
 				</p>
 			</form>
@@ -38,7 +38,7 @@
 			<form action="javascript:vehicleMigration()" method="post" enctype="multipart/form-data">
 				<p>
 				Please select one or more vehicles in the vehicle list, enter a destination URL, and press the Migrate button.<br>
-				<input type="text" id="destination" name="destination" size="36" maxlength="100000" /><br>
+				<input type="text" id="destination" name="destination" class="sidebarTextInput" maxlength="100000" /><br>
 				<input type="submit" name="migration" value="Migrate" />
 				</p>
 			</form>

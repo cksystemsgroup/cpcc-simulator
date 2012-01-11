@@ -83,7 +83,10 @@
 #end
 #end
 					<tr class="$lineClassName">
-						<td>$command.toString().replaceAll("\n","</br>")</td>
+#set( $pattern = '"([^"]+)"' )
+#set( $replacement = '<a href="'+"$contextPath/vehicle/html/vehicleData/$name/$1" + '">"$1"</a>' )
+#set( $code = $command.toString().replaceAll("\n","</br>").replaceAll($pattern,$replacement) )
+						<td>$code</td>
 					</tr>
 #set( $x = $x + 1 )
 #end

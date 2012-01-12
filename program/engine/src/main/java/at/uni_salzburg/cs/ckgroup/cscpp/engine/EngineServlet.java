@@ -111,8 +111,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		}
 		
 		for (ServiceEntry entry : services) {
-			if (entry.service instanceof JsonQueryService) {
-				JsonQueryService jqs = (JsonQueryService)entry.service;
+			if (entry.getService() instanceof JsonQueryService) {
+				JsonQueryService jqs = (JsonQueryService)entry.getService();
 				jqs.setVehicleMap(vehicleMap);
 			}
 		}
@@ -134,8 +134,8 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		}
 
 		for (int k = 0; k < services.length; k++) {
-			if (servicePath.matches(services[k].pattern)) {
-				services[k].service.service(servletConfig, request, response);
+			if (servicePath.matches(services[k].getPattern())) {
+				services[k].getService().service(servletConfig, request, response);
 				return;
 			}
 		}

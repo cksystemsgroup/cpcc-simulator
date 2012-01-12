@@ -70,7 +70,7 @@ public class VehicleService extends DefaultService {
 	public void service(ServletConfig config, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
-		File contexTempDir = servletConfig.getContextTempDir();
+		File contexTempDir = getServletConfig().getContextTempDir();
 		
 		String servicePath = request.getRequestURI();
 		if (request.getRequestURI().startsWith(request.getContextPath()))

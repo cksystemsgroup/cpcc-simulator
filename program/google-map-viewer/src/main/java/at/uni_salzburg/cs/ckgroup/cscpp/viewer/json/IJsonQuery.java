@@ -25,11 +25,11 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 
 public interface IJsonQuery extends IQuery {
 
-	public static final String PROP_PILOT_PREFIX = "pilot.";
-	public static final String PROP_PILOT_LIST = PROP_PILOT_PREFIX + "list";
-	public static final String PROP_PILOT_NAME = ".name";
-	public static final String PROP_PILOT_POSITION_URL = ".position.url";
-	public static final String PROP_PILOT_WAYPOINTS_URL = ".waypoints.url";
-	public static final String PROP_PILOT_VEHICLE_STATUS_URL = ".vehicle.status.url";
+	String PROP_PILOT_PREFIX = "pilot.";
+	String PROP_PILOT_LIST = PROP_PILOT_PREFIX + "list";
+	String PROP_PILOT_NAME = ".name";
+	String PROP_PILOT_POSITION_URL = ".position.url";
+	String PROP_PILOT_WAYPOINTS_URL = ".waypoints.url";
+	String PROP_PILOT_VEHICLE_STATUS_URL = ".vehicle.status.url";
 	
 }

@@ -34,7 +34,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class PositionQuery implements IJsonQuery {
 
-	Logger LOG = Logger.getLogger(PositionQuery.class);
+	private static final Logger LOG = Logger.getLogger(PositionQuery.class);
 	
 	public String execute(IServletConfig config, String[] parameters) throws IOException {
 

@@ -41,7 +41,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 @SuppressWarnings("serial")
 public class ViewerServlet extends HttpServlet implements IServletConfig {
 	
-	Logger LOG = Logger.getLogger(ViewerServlet.class);
+	private static final Logger LOG = Logger.getLogger(ViewerServlet.class);
 	
 	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
 	private static final String PROP_PATH_NAME = "google-map-viewer.properties";
@@ -98,8 +98,8 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 		}
 
 		for (int k = 0; k < services.length; k++) {
-			if (servicePath.matches(services[k].pattern)) {
-				services[k].service.service(servletConfig, request, response);
+			if (servicePath.matches(services[k].getPattern())) {
+				services[k].getService().service(servletConfig, request, response);
 				return;
 			}
 		}

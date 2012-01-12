@@ -33,7 +33,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class WaypointsQuery implements IJsonQuery {
 	
-	Logger LOG = Logger.getLogger(WaypointsQuery.class);
+	private static final Logger LOG = Logger.getLogger(WaypointsQuery.class);
 	
 	public String execute(IServletConfig config, String[] parameters) {
 		

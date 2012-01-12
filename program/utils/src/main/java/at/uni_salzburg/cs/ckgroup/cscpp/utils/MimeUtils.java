@@ -27,9 +27,10 @@ import java.io.IOException;
 public class MimeUtils {
 
 	public static void saveFile(MimeEntry course, File file) throws IOException {
-		if (file.exists() && file.isFile())
+		if (file.exists() && file.isFile()) {
 			file.delete();
-			
+		}
+		
 		FileOutputStream w = new FileOutputStream(file);
 		w.write(course.getBody());
 		w.close();

@@ -28,20 +28,22 @@ import java.util.List;
 
 public class MimeParser {
 	
-	String contentType;
-	String separator;
-	String separatorCR;
-	String terminator;
-	String terminatorCR;
+//	private String contentType;
+	private String separator;
+	private String separatorCR;
+	private String terminator;
+	private String terminatorCR;
 	
 	public MimeParser(String contentType) {
-		if (contentType == null)
+		if (contentType == null) {
 			throw new NullPointerException("Content type is null.");
-			
+		}
+		
 		String[] x = contentType.split(";\\s*boundary=");
 		
-		if (x.length == 0 || !"multipart/form-data".equals(x[0]))
+		if (x.length == 0 || !"multipart/form-data".equals(x[0])) {
 			throw new IllegalArgumentException("Content type is not a valid 'multipart/form-data'.");
+		}
 		
 		separator = "--" + x[1];
 		separatorCR = separator  + "\r";

@@ -29,5 +29,5 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface IService {
 
-	public void service (ServletConfig config, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+	void service (ServletConfig config, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 }

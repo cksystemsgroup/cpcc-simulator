@@ -24,6 +24,6 @@ import java.io.IOException;
 
 public interface IQuery {
 
-	public String execute (IServletConfig config, String[] parameters) throws IOException;
+	String execute (IServletConfig config, String[] parameters) throws IOException;
 
 }

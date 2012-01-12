@@ -71,7 +71,7 @@ public class HttpQueryUtils {
 		
 		MultipartEntity entity = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
 		entity.addPart( paramName, new InputStreamBody((new ByteArrayInputStream(byteArray)), "application/zip" ));
-		entity.addPart( paramName, new StringBody( paramValue.toString(), "text/plain", Charset.forName( "UTF-8" )));
+		entity.addPart( paramName, new StringBody( paramValue, "text/plain", Charset.forName( "UTF-8" )));
 		httppost.setEntity( entity );
 		HttpResponse httpResponse = httpclient.execute( httppost );
 		StatusLine statusLine = httpResponse.getStatusLine();

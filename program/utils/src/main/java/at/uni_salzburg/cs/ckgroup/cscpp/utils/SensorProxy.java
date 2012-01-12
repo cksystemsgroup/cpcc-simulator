@@ -39,13 +39,13 @@ import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
 public class SensorProxy extends Thread implements ISensorProxy {
 	
-	Logger LOG = Logger.getLogger(SensorProxy.class);
+	private static final Logger LOG = Logger.getLogger(SensorProxy.class);
 	
 	private String pilotUrl;
 	
 	private boolean running = false;
 	
-	private static long CYCLE = 1000;
+	private static final long CYCLE = 1000;
 	
 	private PolarCoordinate currentPosition = null;
 	
@@ -93,10 +93,12 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	@Override
 	public List<String> getListOfAvailableSensors() throws ParseException {
 		String jsonString = getSensorValue("sensors");
-		if (jsonString == null)
+		if (jsonString == null) {
 			return null;
+		}
 		
 		JSONParser parser = new JSONParser();
+		@SuppressWarnings("unchecked")
 		List<Object> list = (List<Object>)parser.parse(jsonString);
 		List<String> result = new ArrayList<String>();
 		for (Object entry : list) {
@@ -113,8 +115,9 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	public Double getSensorValueAsDouble(String name) {
 		String value = getSensorValue(name);
 		
-		if (value != null)
+		if (value != null) {
 			return Double.valueOf(value);
+		}
 		
 		return null;
 	}
@@ -126,9 +129,10 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	public Integer getSensorValueAsInteger(String name) {
 		String value = getSensorValue(name);
 		
-		if (value != null)
+		if (value != null) {
 			return Integer.valueOf(value);
-
+		}
+		
 		return null;
 	}
 	
@@ -138,9 +142,10 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	@Override
 	public String getSensorValue(String name) {
 		InputStream inStream = getSensorValueAsStream(name);
-		if (inStream == null)
+		if (inStream == null) {
 			return null;
-
+		}
+		
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 
 		int l;
@@ -162,8 +167,9 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	 */
 	@Override
 	public InputStream getSensorValueAsStream(String name) {
-		if (pilotUrl == null)
+		if (pilotUrl == null) {
 			return null;
+		}
 		
 		String url = pilotUrl+"/sensor/"+name;
 		HttpClient httpclient = new DefaultHttpClient();
@@ -252,24 +258,28 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		String[] lines = values.trim().split("\n");
 		for (String l : lines) {
 			String[] kv = l.trim().split(":\\s+");
-			if (kv.length < 2)
+			if (kv.length < 2) {
 				continue;
+			}
 			
 			Double val = Double.parseDouble(kv[1]);
 			
 			if ("Latitude".equals(kv[0])) {
-				if (currentPosition == null)
+				if (currentPosition == null) {
 					currentPosition = new PolarCoordinate();
+				}
 				currentPosition.latitude = val.doubleValue();
 				
 			} else if ("Longitude".equals(kv[0])) {
-				if (currentPosition == null)
+				if (currentPosition == null) {
 					currentPosition = new PolarCoordinate();
+				}
 				currentPosition.longitude = val.doubleValue();
 				
 			} else if ("Altitude".equals(kv[0])) {
-				if (currentPosition == null)
+				if (currentPosition == null) {
 					currentPosition = new PolarCoordinate();
+				}
 				currentPosition.altitude = val.doubleValue();
 				
 			} else if ("CourseOverGround".equals(kv[0])) {

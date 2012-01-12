@@ -21,11 +21,21 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
 public class ServiceEntry {
-	public String pattern;
-	public IService service;
+	
+	private String pattern;
+	private IService service;
 
 	public ServiceEntry(String pattern, IService service) {
 		this.pattern = pattern;
 		this.service = service;
 	}
+
+	public String getPattern() {
+		return pattern;
+	}
+
+	public IService getService() {
+		return service;
+	}
+	
 }

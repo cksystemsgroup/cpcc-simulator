@@ -29,61 +29,61 @@ import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
 public interface ISensorProxy {
 	
-	public static final String SENSOR_NAME_SONAR = "sonar";
-	public static final String SENSOR_NAME_POSITION = "position";
-	public static final String SENSOR_NAME_RANDOM = "random";
-	public static final String SENSOR_NAME_PHOTO = "photo";
-	public static final String SENSOR_NAME_VIDEO = "video";
-	public static final String SENSOR_NAME_AIR_PRESSURE = "airPressure";
-	public static final String SENSOR_NAME_TEMPERATURE = "temperature";
+	String SENSOR_NAME_SONAR = "sonar";
+	String SENSOR_NAME_POSITION = "position";
+	String SENSOR_NAME_RANDOM = "random";
+	String SENSOR_NAME_PHOTO = "photo";
+	String SENSOR_NAME_VIDEO = "video";
+	String SENSOR_NAME_AIR_PRESSURE = "airPressure";
+	String SENSOR_NAME_TEMPERATURE = "temperature";
 	
 	/**
 	 * @return the current position as a <code>PolarCoordinate</code> object.
 	 */
-	public PolarCoordinate getCurrentPosition();
+	PolarCoordinate getCurrentPosition();
 	
 	/**
 	 * @return the current speed over ground in meters per second.
 	 */
-	public Double getSpeedOverGround();
+	Double getSpeedOverGround();
 	
 	/**
 	 * @return the current course over ground in degrees. Zero degrees is north.
 	 */
-	public Double getCourseOverGround();
+	Double getCourseOverGround();
 	
 	/**
 	 * @return the current altitude over ground in meters.
 	 */
-	public Double getAltitudeOverGround();
+	Double getAltitudeOverGround();
 
 	/**
 	 * @param name the name of the designated sensor, e.g., sonar. 
 	 * @return the current sensor value as an <code>Double</code> object.
 	 */
-	public String getSensorValue(String name);
+	String getSensorValue(String name);
 	
 	/**
 	 * @param name the name of the designated sensor, e.g., sonar. 
 	 * @return the current sensor value as an <code>Double</code> object.
 	 */
-	public Double getSensorValueAsDouble(String name);
+	Double getSensorValueAsDouble(String name);
 	
 	/**
 	 * @param name the name of the designated sensor, e.g., sonar. 
 	 * @return the current sensor value as an <code>Integer</code> object.
 	 */
-	public Integer getSensorValueAsInteger(String name);
+	Integer getSensorValueAsInteger(String name);
 	
 	/**
 	 * @param name the name of the designated sensor, e.g., sonar. 
 	 * @return the current sensor value as an <code>InputStream</code> object.
 	 */
-	public InputStream getSensorValueAsStream(String name);
+	InputStream getSensorValueAsStream(String name);
 	
 	/**
 	 * @return the list of available sensors.
 	 */
-	public List<String> getListOfAvailableSensors() throws ParseException;
+	List<String> getListOfAvailableSensors() throws ParseException;
 	
 }

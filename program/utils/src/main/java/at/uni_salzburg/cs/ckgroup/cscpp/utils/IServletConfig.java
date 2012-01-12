@@ -26,12 +26,12 @@ import java.util.Properties;
 
 public interface IServletConfig {
 	
-	public Properties getProperties ();
+	Properties getProperties ();
 	
-	public File getContextTempDir();
+	File getContextTempDir();
 	
-	public File getConfigFile();
+	File getConfigFile();
 	
-	public void reloadConfigFile() throws IOException;
+	void reloadConfigFile() throws IOException;
 	
 }

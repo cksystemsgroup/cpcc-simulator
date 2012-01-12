@@ -32,22 +32,26 @@ import java.util.zip.ZipOutputStream;
 public class FileUtils {
 	
 	public static void ensureDirectory (File dir) throws IOException {
-		if (!dir.exists())
+		if (!dir.exists()) {
 			dir.mkdirs();
+		}
 			
-		if (!dir.exists())
+		if (!dir.exists()) {
 			throw new IOException("Can not create directory " + dir);
+		}
 	}
 	
 	public static void zipToStream (File file, int prefixLength, ZipOutputStream out) throws IOException {
 		String name;
-		if (file.getAbsolutePath().length() < prefixLength)
+		if (file.getAbsolutePath().length() < prefixLength) {
 			name = "";
-		else
+		} else {
 			name = file.getAbsolutePath().substring(prefixLength);
-
-		if (name.isEmpty() && file.isFile())
+		}
+		
+		if (name.isEmpty() && file.isFile()) {
 			return;
+		}
 		
 		if (!name.isEmpty()) {
 			ZipEntry e = new ZipEntry(name + (file.isFile() ? "" : File.separator));
@@ -66,8 +70,9 @@ public class FileUtils {
 			}
 			out.closeEntry();
 		} else {
-			if (!name.isEmpty())
+			if (!name.isEmpty()) {
 				out.closeEntry();
+			}
 			for (String n : file.list()) {
 				File f = new File (file, n);
 				zipToStream(f, prefixLength, out);
@@ -76,13 +81,16 @@ public class FileUtils {
 	}
 
 	public static void removeRecursively(File dir) {
-		if (!dir.exists() || ".".equals(dir.getName()) || "..".equals(dir.getName()))
+		if (!dir.exists() || ".".equals(dir.getName()) || "..".equals(dir.getName())) {
 			return;
+		}
 		
-		if (dir.isDirectory())
-			for (File f : dir.listFiles())
+		if (dir.isDirectory()) {
+			for (File f : dir.listFiles()) {
 				removeRecursively(f);
-
+			}
+		}
+		
 		// This loop tries to ensure a successful deletion of directories on NFS v3 file-systems.
 		int counter = 40;
 		while (!dir.delete() && counter-- > 0) {

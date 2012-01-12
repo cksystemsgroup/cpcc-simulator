@@ -29,15 +29,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
-
 
 public abstract class QueryService extends DefaultService {
 	
-	Logger LOG = Logger.getLogger(QueryService.class);
+//	private final Logger LOG = Logger.getLogger(QueryService.class);
 	
 	protected final static Map<String,IQuery> queries = new HashMap<String, IQuery>();
 	
@@ -50,8 +45,9 @@ public abstract class QueryService extends DefaultService {
 			HttpServletResponse response) throws ServletException, IOException {
 		
 		String servicePath = request.getRequestURI();
-		if (request.getRequestURI().startsWith(request.getContextPath()))
+		if (request.getRequestURI().startsWith(request.getContextPath())) {
 			servicePath = request.getRequestURI().substring(request.getContextPath().length());
+		}
 		
 		String[] cmd = servicePath.trim().split("/+");
 		if (cmd.length < 3) {
@@ -65,9 +61,10 @@ public abstract class QueryService extends DefaultService {
 			return;
 		}
 		
-		String result = action.execute(servletConfig, cmd);
-		if (result == null)
+		String result = action.execute(getServletConfig(), cmd);
+		if (result == null) {
 			emit200(request, response);
+		}
 		
 		emitPlainText(response, result);
 	}

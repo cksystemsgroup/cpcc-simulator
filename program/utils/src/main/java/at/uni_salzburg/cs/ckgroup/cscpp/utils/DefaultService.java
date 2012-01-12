@@ -44,11 +44,14 @@ import org.apache.velocity.app.VelocityEngine;
 
 public class DefaultService implements IService
 {
+	public static final String MIME_TYPE_TEXT_PLAIN = "text/plain";
+	public static final String MIME_TYPE_TEXT_HTML = "text/html";
+	
 	private boolean runTemplateEngine;
 	
 	private String[] welcomePages = { "index.html", "index.tpl" };
 	
-	protected IServletConfig servletConfig;
+	private IServletConfig servletConfig;
 	
 	public DefaultService (IServletConfig servletConfig) {
 		this.servletConfig = servletConfig;
@@ -59,9 +62,10 @@ public class DefaultService implements IService
 	{
 		String servicePath = request.getRequestURI();
 		
-		if (request.getRequestURI().startsWith(request.getContextPath()))
+		if (request.getRequestURI().startsWith(request.getContextPath())) {
 			servicePath = request.getRequestURI().substring(request.getContextPath().length());
-
+		}
+		
 		String realPathString = config.getServletContext ().getRealPath (servicePath);
 		File realPath = new File(realPathString);
 		
@@ -78,7 +82,7 @@ public class DefaultService implements IService
 		}
 		
 		if (servicePath.matches ("/.*-INF.*")) {
-			response.setContentType("text/plain");
+			response.setContentType(MIME_TYPE_TEXT_PLAIN);
 			PrintWriter out = response.getWriter();
 			out.println ("Your are not at all welcome!\nNow bugger off!");
 			return;
@@ -90,7 +94,7 @@ public class DefaultService implements IService
 		}	
 		
 		if (realPath.isDirectory()) {
-			response.setContentType("text/html");
+			response.setContentType(MIME_TYPE_TEXT_HTML);
 			emitDirectoryListing (config, response.getWriter(), request.getContextPath(), servicePath, realPath.list());
 			return;
 		}
@@ -138,7 +142,7 @@ public class DefaultService implements IService
 		template.merge(context, out);
 	}
 
-	protected void emitVelocityRenderedFile (ServletConfig config, PrintWriter out, Reader reader, String contextPath, String servicePath, Map parameters) throws IOException {
+	protected void emitVelocityRenderedFile (ServletConfig config, PrintWriter out, Reader reader, String contextPath, String servicePath, @SuppressWarnings("rawtypes") Map parameters) throws IOException {
         Properties props = new Properties();
         props.setProperty("resource.loader", "class");
         props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -160,38 +164,38 @@ public class DefaultService implements IService
 		String suffix = parts[parts.length-1];
 
 		runTemplateEngine = false;
-		if ("htm".equalsIgnoreCase (suffix) || "html".equalsIgnoreCase (suffix))
-			return "text/html";
-		else if ("xhtml".equalsIgnoreCase (suffix))
-			return "text/html";
-		else if ("css".equalsIgnoreCase (suffix))
+		if ("htm".equalsIgnoreCase (suffix) || "html".equalsIgnoreCase (suffix)) {
+			return MIME_TYPE_TEXT_HTML;
+		} else if ("xhtml".equalsIgnoreCase (suffix)) {
+			return MIME_TYPE_TEXT_HTML;
+		} else if ("css".equalsIgnoreCase (suffix)) {
 			return "text/css";
-		else if ("jpeg".equalsIgnoreCase (suffix))
+		} else if ("jpeg".equalsIgnoreCase (suffix)) {
 			return "image/jpeg";
-		else if ("jpg".equalsIgnoreCase (suffix))
+		} else if ("jpg".equalsIgnoreCase (suffix)) {
 			return "image/jpeg";
-		else if ("js".equalsIgnoreCase (suffix))
+		} else if ("js".equalsIgnoreCase (suffix)) {
 			return "text/javascript";
-		else if ("gif".equalsIgnoreCase (suffix))
+		} else if ("gif".equalsIgnoreCase (suffix)) {
 			return "image/gif";
-		else if ("png".equalsIgnoreCase (suffix))
+		} else if ("png".equalsIgnoreCase (suffix)) {
 			return "image/png";
-		else if ("txt".equalsIgnoreCase (suffix))
-			return "text/plain";
-		else if ("gz".equalsIgnoreCase (suffix))
+		} else if ("txt".equalsIgnoreCase (suffix)) {
+			return MIME_TYPE_TEXT_PLAIN;
+		} else if ("gz".equalsIgnoreCase (suffix)) {
 			return "application/x-gzip";
-		else if ("tpl".equalsIgnoreCase (suffix)) {
+		} else if ("tpl".equalsIgnoreCase (suffix)) {
 			runTemplateEngine = true;
-			return "text/html";
+			return MIME_TYPE_TEXT_HTML;
 		}
 		
-		return "text/plain";
+		return MIME_TYPE_TEXT_PLAIN;
 	}
 	
 	protected void emit200 (HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setStatus(200);
 		response.setHeader("Cache-Control", "no-cache");
-		response.setContentType("text/html");
+		response.setContentType(MIME_TYPE_TEXT_HTML);
 		response.getWriter().print(
 			"<html><head><title>OK - " + request.getRequestURI() + "</title></head>" +
 			"<body><h1>HTTP Status 200 - " + request.getRequestURI() + "</h1></body></html>"
@@ -201,12 +205,12 @@ public class DefaultService implements IService
 	protected void emit301 (HttpServletRequest request, HttpServletResponse response, String location) throws IOException {
 		response.setStatus(301);
 		response.setHeader("Location", location);
-		response.setContentType("text/html");
+		response.setContentType(MIME_TYPE_TEXT_HTML);
 	}
 
 	protected void emit400 (HttpServletRequest request, HttpServletResponse response, String cause) throws IOException {
 		response.setStatus(400);
-		response.setContentType("text/html");
+		response.setContentType(MIME_TYPE_TEXT_HTML);
 		response.getWriter().print(
 			"<html><head><title>Bad Request - " + cause + "</title></head>" +
 			"<body><h1>HTTP Status 400 - " + cause + "</h1></body></html>"
@@ -215,7 +219,7 @@ public class DefaultService implements IService
 	
 	protected void emit404 (HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setStatus(404);
-		response.setContentType("text/html");
+		response.setContentType(MIME_TYPE_TEXT_HTML);
 		response.getWriter().print(
 			"<html><head><title>File not found - " + request.getRequestURI() + "</title></head>" +
 			"<body><h1>HTTP Status 404 - " + request.getRequestURI() + "</h1></body></html>"
@@ -224,7 +228,7 @@ public class DefaultService implements IService
 	
 	protected void emit422 (HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setStatus(422);
-		response.setContentType("text/html");
+		response.setContentType(MIME_TYPE_TEXT_HTML);
 		response.getWriter().print(
 			"<html><head><title>File not found - " + request.getRequestURI() + "</title></head>" +
 			"<body><h1>HTTP Status 422 - " + request.getRequestURI() + "</h1></body></html>"
@@ -234,9 +238,10 @@ public class DefaultService implements IService
 	protected void emitPlainText (HttpServletResponse response, String text) throws IOException {
 		response.setStatus(200);
 		response.setHeader("Cache-Control", "no-cache");
-		response.setContentType("text/plain");
-		if (text != null)
+		response.setContentType(MIME_TYPE_TEXT_PLAIN);
+		if (text != null) {
 			response.getWriter().print(text);
+		}
 	}
 	
 	protected void emitByteArray (HttpServletResponse response, String contentType, byte[] bytes) throws IOException {
@@ -245,4 +250,9 @@ public class DefaultService implements IService
 		response.setContentType(contentType);
 		response.getOutputStream().write(bytes);
 	}
+
+	public IServletConfig getServletConfig() {
+		return servletConfig;
+	}
+	
 }

@@ -31,11 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-
 public class ConfigurationParser {
 	
-	Logger LOG = Logger.getLogger(ConfigurationParser.class);
+//	private static final Logger LOG = Logger.getLogger(ConfigurationParser.class);
 	
 	public static final String ERROR_MESSAGE_MISSING_VALUE = "# please provide a value!";
 	public static final String ERROR_MESSAGE_INVALID_VALUE = "# invalid value!";
@@ -67,15 +65,16 @@ public class ConfigurationParser {
 	/**
 	 * The parameters and their default values. 
 	 */
-	private String [][] parameters;
+	private final String [][] parameters;
 	
 	/**
 	 * @param parameters the parameters and their default values.
 	 */
-	public ConfigurationParser(String [][] parameters, Map<String,String> configErrors) {
+	public ConfigurationParser(final String [][] parameters, Map<String,String> configErrors) {
 		this.parameters = parameters;
-		if (configErrors != null)
+		if (configErrors != null) {
 			this.configErrors.putAll(configErrors);
+		}
 	}
 	
 	/**
@@ -91,15 +90,17 @@ public class ConfigurationParser {
 		
 		for (String[] entry : parameters) {
 			String v = conf.getProperty(entry[0]);
-			if (v == null && entry.length >= 2 && entry[1] != null)
+			if (v == null && entry.length >= 2 && entry[1] != null) {
 				conf.setProperty(entry[0], entry[1]);
+			}
 		}
 
 		configOk = true;
 		for (String[] entry : parameters) {
 			String v = conf.getProperty(entry[0]);
-			if (v == null && (entry.length != 3 || !"false".equals(conf.getProperty(entry[2],"false"))))
+			if (v == null && (entry.length != 3 || !"false".equals(conf.getProperty(entry[2],"false")))) {
 				configOk = false;
+			}
 		}
 	}
 
@@ -200,8 +201,9 @@ public class ConfigurationParser {
 	 */
 	public List<String> getParameterNames () {
 		List<String> names = new ArrayList<String>();
-		for (String[] entry : parameters)
+		for (String[] entry : parameters) {
 			names.add(entry[0]);
+		}
 		return names; 
 	}
 	

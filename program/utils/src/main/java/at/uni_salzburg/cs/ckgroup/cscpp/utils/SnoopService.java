@@ -36,7 +36,7 @@ import javax.servlet.http.HttpSession;
 public class SnoopService extends DefaultService {
 	
     private static final String SPACER = "   ";
-    private static final String _EQ_ = " = ";
+    private static final String EQ = " = ";
 
 	public SnoopService (IServletConfig configuraton) {
 		super (configuraton);
@@ -57,38 +57,38 @@ public class SnoopService extends DefaultService {
         {
                 final String key = (String) enumeration.nextElement();
                 final String value = config.getInitParameter(key);
-                out.println(SPACER + key + _EQ_ + value);
+                out.println(SPACER + key + EQ + value);
         }
         out.println();
 
         out.println("Context init parameters:");
         final ServletContext context = config.getServletContext();
-        Enumeration<?> params_enum = context.getInitParameterNames();
-        while (params_enum.hasMoreElements())
+        Enumeration<?> paramsEnum = context.getInitParameterNames();
+        while (paramsEnum.hasMoreElements())
         {
-                final String key = (String) params_enum.nextElement();
+                final String key = (String) paramsEnum.nextElement();
                 final Object value = context.getInitParameter(key);
-                out.println(SPACER + key + _EQ_ + value);
+                out.println(SPACER + key + EQ + value);
         }
         out.println();
 
         out.println("System properties:");
-        params_enum = System.getProperties().keys();
-        while (params_enum.hasMoreElements())
+        paramsEnum = System.getProperties().keys();
+        while (paramsEnum.hasMoreElements())
         {
-                final String key = (String) params_enum.nextElement();
+                final String key = (String) paramsEnum.nextElement();
                 final Object value = System.getProperty(key);
-                out.println(SPACER + key + _EQ_ + value);
+                out.println(SPACER + key + EQ + value);
         }
         out.println();
 
         out.println("Context attributes:");
-        params_enum = context.getAttributeNames();
-        while (params_enum.hasMoreElements())
+        paramsEnum = context.getAttributeNames();
+        while (paramsEnum.hasMoreElements())
         {
-                final String key = (String) params_enum.nextElement();
+                final String key = (String) paramsEnum.nextElement();
                 final Object value = context.getAttribute(key);
-                out.println(SPACER + key + _EQ_ + value);
+                out.println(SPACER + key + EQ + value);
         }
         out.println();
 
@@ -98,7 +98,7 @@ public class SnoopService extends DefaultService {
         {
                 final String key = (String) enumeration.nextElement();
                 final Object value = request.getAttribute(key);
-                out.println(SPACER + key + _EQ_ + value);
+                out.println(SPACER + key + EQ + value);
 
                 /*
                  * If a request was made over a secure channel, then the servlet can find out with
@@ -119,10 +119,10 @@ public class SnoopService extends DefaultService {
                 if (!value.getClass().getName().equals("[Ljava.security.cert.X509Certificate;"))
                         continue;
 
-                final java.security.cert.X509Certificate cert_array[] = (java.security.cert.X509Certificate[]) value;
-                for (int i = 0; i < cert_array.length; i++)
+                final java.security.cert.X509Certificate certArray[] = (java.security.cert.X509Certificate[]) value;
+                for (int i = 0; i < certArray.length; i++)
                 {
-                        final java.security.cert.X509Certificate cert = cert_array[0];
+                        final java.security.cert.X509Certificate cert = certArray[0];
                         try
                         {
                                 cert.checkValidity();
@@ -170,7 +170,7 @@ public class SnoopService extends DefaultService {
         {
                 final String key = (String) enumeration.nextElement();
                 final String[] values = request.getParameterValues(key);
-                out.print(SPACER + key + _EQ_);
+                out.print(SPACER + key + EQ);
                 for (int i = 0; i < values.length; i++)
                 {
                         out.print(values[i] + " ");
@@ -192,7 +192,7 @@ public class SnoopService extends DefaultService {
         for (int i = 0; cookies != null && i < cookies.length; i++)
         {
                 final Cookie cookie = cookies[i];
-                out.println(SPACER + cookie.getName() + _EQ_ + cookie.getValue());
+                out.println(SPACER + cookie.getName() + EQ + cookie.getValue());
         }
         out.println();
 
@@ -220,7 +220,7 @@ public class SnoopService extends DefaultService {
         while (names.hasMoreElements())
         {
                 final String name = (String) names.nextElement();
-                out.println(SPACER + name + _EQ_ + session.getAttribute(name));
+                out.println(SPACER + name + EQ + session.getAttribute(name));
         }
     }
 

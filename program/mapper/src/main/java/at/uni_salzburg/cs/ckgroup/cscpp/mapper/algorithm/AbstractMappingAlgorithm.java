@@ -86,8 +86,6 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 		}
 	}
 
-
-
 	private void renewStatusProxyMap() {
 		for (RegData rd : registrationData.values())
 			if (!statusProxyMap.containsKey(rd.getEngineUri()) && rd.getPilotUri() != null)
@@ -102,7 +100,6 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 		for (StatusProxy proxy : statusProxyMap.values())
 			proxy.fetchCurrentStatus();
 	}
-	
 		
 	private void getEngineStatii() throws IOException, ParseException {
 
@@ -127,5 +124,23 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 		}
 	}
 	
+	protected void migrate(String sourceEngineUrl, String vehicleName, String targetEngineUrl) {
+
+		String migrationUrl = sourceEngineUrl
+				+ "/vehicle/text/vehicleMigration?vehicleIDs=" + vehicleName
+				+ "&vehicleDst=" + targetEngineUrl
+				+ "/vehicle/text/vehicleUpload";
+		LOG.info("random migration: " + migrationUrl);
+
+		try {
+			String ret = HttpQueryUtils.simpleQuery(migrationUrl);
+			LOG.info("random migration succeeded. " + migrationUrl + ", " + ret);
+		} catch (IOException ex) {
+			LOG.error("random migration railed. " + migrationUrl, ex);
+		}
+
+	}
+
 	public abstract void execute();
+
 }

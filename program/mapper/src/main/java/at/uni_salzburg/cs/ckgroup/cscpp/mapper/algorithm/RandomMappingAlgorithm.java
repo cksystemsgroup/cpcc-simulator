@@ -20,13 +20,10 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
 public class RandomMappingAlgorithm extends AbstractMappingAlgorithm {
 
@@ -86,23 +83,6 @@ public class RandomMappingAlgorithm extends AbstractMappingAlgorithm {
 				return;
 			}
 		}
-	}
-	
-	private void migrate(String sourceEngineUrl, String vehicleName, String targetEngineUrl) {
-
-		String migrationUrl = sourceEngineUrl
-				+ "/vehicle/text/vehicleMigration?vehicleIDs=" + vehicleName
-				+ "&vehicleDst=" + targetEngineUrl
-				+ "/vehicle/text/vehicleUpload";
-		LOG.info("random migration: " + migrationUrl);
-
-		try {
-			String ret = HttpQueryUtils.simpleQuery(migrationUrl);
-			LOG.info("random migration succeeded. " + migrationUrl + ", " + ret);
-		} catch (IOException ex) {
-			LOG.error("random migration railed. " + migrationUrl, ex);
-		}
-
 	}
 
 	private Entry<String, Map<String, VehicleStatus>> getRandomEngine () {

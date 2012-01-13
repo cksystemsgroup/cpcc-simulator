@@ -29,6 +29,10 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 public class Command implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 424412301491147477L;
 	private Position position;
 	private List<IAction> lst_actions;
 	

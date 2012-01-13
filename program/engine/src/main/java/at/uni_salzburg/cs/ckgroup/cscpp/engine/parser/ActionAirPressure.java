@@ -1,5 +1,5 @@
 /*
- * @(#) ActionPicture.java
+ * @(#) ActionTemperature.java
  *
  * This code is part of the JNavigator project.
  * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
@@ -20,53 +20,28 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Locale;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
-public class ActionPicture extends AbstractAction implements Serializable {
-
+public class ActionAirPressure extends AbstractAction implements Serializable
+{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6396710753568266987L;
-	private String filename = null;
-	private File dataDir;
+	private static final long serialVersionUID = 2018138210673084098L;
+	private double airPressure = 0;
+	
+	public double getAirPressure() {
+		return airPressure;
+	}
 
 	@Override
 	public boolean execute(ISensorProxy sprox) 
 	{
-		InputStream instream = sprox
-				.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
-		if (instream == null)
-			return false;
-
-		try 
-		{
-			File f = File.createTempFile("img", ".png", dataDir);
-			filename = f.getName();
-			FileOutputStream o = new FileOutputStream(f);
-
-			int l;
-			byte[] tmp = new byte[2048];
-			while ((l = instream.read(tmp)) != -1) 
-			{
-				o.write(tmp, 0, l);
-			}
-			o.close();
-			saveTimestamp();
-		} 
-		catch (IOException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		airPressure = sprox.getSensorValueAsDouble(ISensorProxy.SENSOR_NAME_AIR_PRESSURE);
+		saveTimestamp();
 		return false;
 	}
 
@@ -74,17 +49,7 @@ public class ActionPicture extends AbstractAction implements Serializable {
 	{
 		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Picture (\"%s\")", filename);
+			s += String.format(Locale.US, "Air Pressure: %.1f", airPressure);
 		return s;
-	}
-
-	public String getFilename() 
-	{
-		return filename;
-	}
-
-	public void setDataDir(File dataDir) 
-	{
-		this.dataDir = dataDir;
 	}
 }

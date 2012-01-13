@@ -20,37 +20,26 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-import java.io.Serializable;
 import java.util.Locale;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
-
-public class ActionTemperature extends AbstractAction implements Serializable
+public abstract class AbstractAction implements IAction
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6435936757132071656L;
-	private double temperature = 0;
+	private long timestamp = 0;
+
 	
-	public double getTemperature() 
+	public long getTimestamp() 
 	{
-		return temperature;
+		return timestamp;
+	}
+	
+	protected void saveTimestamp()
+	{
+		timestamp = System.currentTimeMillis();
 	}
 
-	@Override
-	public boolean execute(ISensorProxy sprox) 
-	{
-		temperature = sprox.getSensorValueAsDouble(ISensorProxy.SENSOR_NAME_TEMPERATURE);
-		saveTimestamp();
-		return false;
-	}
-
+	
 	public String toString() 
 	{
-		String s =  super.toString();
-		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Temperature: %.1f", temperature);
-		return s;
+		return String.format(Locale.US, "Timestamp: %d ", timestamp);
 	}
 }

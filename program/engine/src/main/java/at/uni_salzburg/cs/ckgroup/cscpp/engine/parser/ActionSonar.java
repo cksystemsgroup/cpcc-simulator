@@ -21,44 +21,37 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Locale;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
-public class ActionPicture extends AbstractAction implements Serializable {
+public class ActionSonar extends AbstractAction implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6396710753568266987L;
+	private static final long serialVersionUID = -7510139159604214396L;
 	private String filename = null;
 	private File dataDir;
 
 	@Override
 	public boolean execute(ISensorProxy sprox) 
 	{
-		InputStream instream = sprox
-				.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
-		if (instream == null)
+		String sonar = sprox.getSensorValue(ISensorProxy.SENSOR_NAME_SONAR);
+		if (sonar == null)
 			return false;
-
+		
 		try 
 		{
-			File f = File.createTempFile("img", ".png", dataDir);
+			File f = File.createTempFile("sonar", ".str", dataDir);
 			filename = f.getName();
-			FileOutputStream o = new FileOutputStream(f);
-
-			int l;
-			byte[] tmp = new byte[2048];
-			while ((l = instream.read(tmp)) != -1) 
-			{
-				o.write(tmp, 0, l);
-			}
-			o.close();
+			FileWriter fw = new FileWriter(f);
+			fw.write(sonar);
+			fw.close();
+			
 			saveTimestamp();
 		} 
 		catch (IOException e) 
@@ -74,7 +67,7 @@ public class ActionPicture extends AbstractAction implements Serializable {
 	{
 		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Picture (\"%s\")", filename);
+			s += String.format(Locale.US, "Sonar (\"%s\")", filename);
 		return s;
 	}
 

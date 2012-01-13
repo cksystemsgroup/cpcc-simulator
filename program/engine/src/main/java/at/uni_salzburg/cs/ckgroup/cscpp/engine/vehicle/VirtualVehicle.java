@@ -115,8 +115,6 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		try 
 		{
 			FileInputStream fin = new FileInputStream(vehicleStatus);
-			// TODO read vehicle state from file. Use vehicleStatus as file name.
-		
 			ObjectInputStream objStream = new ObjectInputStream(fin);
 			commandList = (List<Command>)objStream.readObject();
 			for (Command cmd : commandList) {
@@ -141,8 +139,6 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		try 
 		{
 			FileOutputStream fout = new FileOutputStream(vehicleStatus);
-			// TODO store current vehicle state in a file. Use vehicleStatus as file name.
-			
 			ObjectOutputStream objStream = new ObjectOutputStream(fout);
 			objStream.writeObject(commandList);
 		} 
@@ -186,7 +182,6 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		storeVehicleState();
 		
 		
-// TODO add Action* Classes for all Sesors in example code below	
 //		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 //		Double courseOverGround = sensorProxy.getCourseOverGround();
 //		Double speedOverGround = sensorProxy.getSpeedOverGround();

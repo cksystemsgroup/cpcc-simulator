@@ -49,7 +49,8 @@ public class Position implements Serializable
 	public double getTolerance() {
 		return tolerance;
 	}
-
+	
+	@Override
 	public String toString() {
 		return String.format(Locale.US, "Point %.8f %.8f %.3f tolerance %.1f", 
 				latitude, longitude, altitude, tolerance);

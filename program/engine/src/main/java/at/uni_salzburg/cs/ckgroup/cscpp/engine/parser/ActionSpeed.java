@@ -2,7 +2,7 @@
  * @(#) ActionTemperature.java
  *
  * This code is part of the JNavigator project.
- * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,6 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 public class ActionSpeed extends AbstractAction implements Serializable
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3336998124182011297L;
 	private double speedOverGround = 0;
 	
@@ -44,7 +41,8 @@ public class ActionSpeed extends AbstractAction implements Serializable
 		saveTimestamp();
 		return false;
 	}
-
+	
+	@Override
 	public String toString() 
 	{
 		String s =  super.toString();

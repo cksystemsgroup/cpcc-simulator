@@ -2,7 +2,7 @@
  * @(#) ActionTemperature.java
  *
  * This code is part of the JNavigator project.
- * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-import java.util.Locale;
 
 public abstract class AbstractAction implements IAction
 {
@@ -37,9 +36,4 @@ public abstract class AbstractAction implements IAction
 		timestamp = System.currentTimeMillis();
 	}
 
-	
-	public String toString() 
-	{
-		return String.format(Locale.US, "Timestamp: %d ", timestamp);
-	}
 }

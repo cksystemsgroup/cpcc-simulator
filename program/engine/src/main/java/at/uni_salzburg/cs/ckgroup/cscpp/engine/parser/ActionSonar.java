@@ -20,9 +20,6 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Locale;
 
@@ -31,51 +28,30 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 public class ActionSonar extends AbstractAction implements Serializable {
 
 	private static final long serialVersionUID = -7510139159604214396L;
-	private String filename = null;
-	private File dataDir;
+	private String sonar = null;
 
+	public String getSonar() {
+		return sonar;
+	}
+	
 	@Override
 	public boolean execute(ISensorProxy sprox) 
 	{
-		String sonar = sprox.getSensorValue(ISensorProxy.SENSOR_NAME_SONAR);
+		sonar = sprox.getSensorValue(ISensorProxy.SENSOR_NAME_SONAR);
 		if (sonar == null)
 			return false;
-		
-		try 
-		{
-			File f = File.createTempFile("sonar", ".str", dataDir);
-			filename = f.getName();
-			FileWriter fw = new FileWriter(f);
-			fw.write(sonar);
-			fw.close();
 			
-			saveTimestamp();
-		} 
-		catch (IOException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return false;
+		saveTimestamp();
+		return true;
 	}
 	
 	@Override
 	public String toString() 
 	{
-		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Sonar (\"%s\")", filename);
-		return s;
+			return String.format(Locale.US, "Sonar (%d '%s')", getTimestamp(), sonar);
+		else
+			return "Sonar";
 	}
 
-	public String getFilename() 
-	{
-		return filename;
-	}
-
-	public void setDataDir(File dataDir) 
-	{
-		this.dataDir = dataDir;
-	}
 }

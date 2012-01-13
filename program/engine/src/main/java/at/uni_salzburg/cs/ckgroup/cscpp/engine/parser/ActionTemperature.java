@@ -46,9 +46,9 @@ public class ActionTemperature extends AbstractAction implements Serializable
 	@Override
 	public String toString() 
 	{
-		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Temperature: %.1f", temperature);
-		return s;
+			return String.format(Locale.US, "Temperature (%d %.1f)", getTimestamp(), temperature);
+		else
+			return "Temperature";
 	}
 }

@@ -45,9 +45,9 @@ public class ActionCourse extends AbstractAction implements Serializable
 	@Override
 	public String toString() 
 	{
-		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Course: %.1f", courseOverGround);
-		return s;
+			return String.format(Locale.US, "Course (%d %.1f)", getTimestamp(), courseOverGround);
+		else
+			return "Course";
 	}
 }

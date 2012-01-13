@@ -45,9 +45,9 @@ public class ActionAltitude extends AbstractAction implements Serializable
 	@Override
 	public String toString() 
 	{
-		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Altitude: %.1f", altitudeOverGround);
-		return s;
+			return String.format(Locale.US, "Altitude (%d %.1f)", getTimestamp(), altitudeOverGround);
+		else
+			return "Altitude";
 	}
 }

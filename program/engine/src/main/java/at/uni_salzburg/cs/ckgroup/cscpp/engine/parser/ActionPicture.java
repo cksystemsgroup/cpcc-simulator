@@ -70,10 +70,10 @@ public class ActionPicture extends AbstractAction implements Serializable {
 	@Override
 	public String toString() 
 	{
-		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Picture (\"%s\")", filename);
-		return s;
+			return String.format(Locale.US, "Picture (%d \"%s\")", getTimestamp(), filename);
+		else
+			return "Picture";
 	}
 
 	public String getFilename() 

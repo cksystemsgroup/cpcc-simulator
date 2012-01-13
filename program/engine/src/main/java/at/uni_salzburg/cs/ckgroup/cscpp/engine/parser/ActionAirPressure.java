@@ -45,9 +45,9 @@ public class ActionAirPressure extends AbstractAction implements Serializable
 	@Override
 	public String toString() 
 	{
-		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Air Pressure: %.1f", airPressure);
-		return s;
+			return String.format(Locale.US, "AirPressure (%d %.1f)", getTimestamp(), airPressure);
+		else
+			return "AirPressure";
 	}
 }

@@ -172,7 +172,6 @@ public class Parser
 				break;
 			case Scanner.SymSONAR: 
 				ActionSonar a = new ActionSonar();
-				a.setDataDir(dataDir);
 				lst.add(a);
 				break;
 			case Scanner.SymSPEED: 

@@ -45,9 +45,9 @@ public class ActionSpeed extends AbstractAction implements Serializable
 	@Override
 	public String toString() 
 	{
-		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Speed: %.1f", speedOverGround);
-		return s;
+			return String.format(Locale.US, "Speed (%d %.1f)", getTimestamp(), speedOverGround);
+		else
+			return "Speed";
 	}
 }

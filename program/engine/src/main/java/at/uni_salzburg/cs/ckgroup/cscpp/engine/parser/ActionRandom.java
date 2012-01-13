@@ -45,9 +45,9 @@ public class ActionRandom extends AbstractAction implements Serializable
 	@Override
 	public String toString() 
 	{
-		String s =  super.toString();
 		if(getTimestamp() != 0)
-			s += String.format(Locale.US, "Random: %d", random);
-		return s;
+			return String.format(Locale.US, "Random (%d %d)", getTimestamp(), random);
+		else
+			return "Random";
 	}
 }

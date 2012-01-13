@@ -1,11 +1,18 @@
 		<div id="sidebar">
-#if( 0 )
-			<h2>Configuration Upload</h2>
-			<form action="config/configUpload" method="post" enctype="multipart/form-data">
+			<h2>Mapper Algorithm</h2>
+#set( $algo = $servletConfig.getServletContext().getAttribute("mappingAlgorithm") )
+#if( $algo.isPaused() )
+			<form action="status/mapperResume" method="get" enctype="text/plain">
 				<p>
-				Please select a configuration file on your machine and press the Upload button.<br>
-				<input type="file" name="configuration" size="20" maxlength="100000" accept="text/*"><br>
-				<input type="submit" name="configUpload" value="Upload" />
+				To activate the mapper algorithm press the Resume button.<br>
+				<input type="submit" name="mapperRegistration" value="Resume" />
+				</p>
+			</form>
+#else			
+			<form action="status/mapperSuspend" method="get" enctype="text/plain">
+				<p>
+				To pause the mapper algorithm press the Suspend button.<br>
+				<input type="submit" name="mapperRegistration" value="Suspend" />
 				</p>
 			</form>
 #end

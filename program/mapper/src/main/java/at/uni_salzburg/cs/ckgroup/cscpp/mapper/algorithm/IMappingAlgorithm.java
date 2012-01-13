@@ -22,8 +22,14 @@ package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
 public interface IMappingAlgorithm extends Runnable {
 	
-	public boolean isRunning();
+	boolean isRunning();
 	
-	public void terminate();
+	void terminate();
+	
+	void cease();
+	
+	void proceed();
+
+	boolean isPaused();
 
 }

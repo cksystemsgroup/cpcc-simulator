@@ -2,6 +2,20 @@
 	<div class="post">
 		<h2 class="title"><a href="#">Current Status</a></h2>
 		<div style="font-size: 90%; line-height: 130%">
+			<table class="sensors">
+				<tbody>
+					<tr>
+						<td>Mapper Algorithm: </td>
+#set( $algo = $servletConfig.getServletContext().getAttribute("mappingAlgorithm") )
+#if( $algo.isPaused() )
+						<td><span style="color: red">paused</span></td>
+#else
+						<td><span style="color: green">active</span></td>
+#end
+					</tr>
+				</tbody>
+			</table>
+			<div style="clear: both;">&nbsp;</div>
 #set( $reg = $servletConfig.getServletContext().getAttribute("regdata") )
 #set( $keySet = $reg.keySet() )
 			<table class="sensors">

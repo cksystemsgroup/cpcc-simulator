@@ -38,6 +38,8 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 	Logger LOG = Logger.getLogger(AbstractMappingAlgorithm.class);
 	
 	private boolean running = false;
+	
+	private boolean paused = false;
 
 	private long cycleTime = 1000;
 	
@@ -56,9 +58,24 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 	}
 	
 	@Override
+	public boolean isPaused() {
+		return paused;
+	}
+
+	@Override
 	public void terminate() {
 		running = false;
 		this.interrupt();
+	}
+	
+	@Override
+	public void cease() {
+		paused = true;
+	}
+	
+	@Override
+	public void proceed() {
+		paused = false;
 	}
 	
 	@Override
@@ -67,38 +84,47 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 			throw new NullPointerException("Registration data not available!");
 		
 		running = true;
+		proceed();
 		while (running) {
-			// create/remove StatusProxy objects.
-			renewStatusProxyMap();
 			
-			// get real vehicle status
-			getPilotStatii();
-			
-			// get virtual vehicle status
-			try {
-				getEngineStatii();
-			} catch (Exception e1) {
-				e1.printStackTrace();
+			if (!paused) {
+				// create/remove StatusProxy objects.
+				renewStatusProxyMap();
+				
+				// get real vehicle status
+				getPilotStatii();
+				
+				// get virtual vehicle status
+				try {
+					getEngineStatii();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				
+				execute();
 			}
-			
-			execute();
 			try { Thread.sleep(cycleTime); } catch (InterruptedException e) { }
 		}
 	}
 
 	private void renewStatusProxyMap() {
-		for (RegData rd : registrationData.values())
-			if (!statusProxyMap.containsKey(rd.getEngineUri()) && rd.getPilotUri() != null)
+		for (RegData rd : registrationData.values()) {
+			if (!statusProxyMap.containsKey(rd.getEngineUri()) && rd.getPilotUri() != null) {
 				statusProxyMap.put(rd.getEngineUri(), new StatusProxy(rd.getPilotUri()));
+			}
+		}
 		
-		for (String key : statusProxyMap.keySet())
-			if (!registrationData.containsKey(key))
+		for (String key : statusProxyMap.keySet()) {
+			if (!registrationData.containsKey(key)) {
 				statusProxyMap.remove(key);
+			}
+		}
 	}
 	
 	private void getPilotStatii() {
-		for (StatusProxy proxy : statusProxyMap.values())
+		for (StatusProxy proxy : statusProxyMap.values()) {
 			proxy.fetchCurrentStatus();
+		}
 	}
 		
 	private void getEngineStatii() throws IOException, ParseException {
@@ -109,8 +135,9 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 			String key = rd.getEngineUri();
 			String engineVehicleURL = key + "/json/vehicle";
 			String position = HttpQueryUtils.simpleQuery(engineVehicleURL);
-			if (position.trim().isEmpty())
+			if (position.trim().isEmpty()) {
 				continue;
+			}
 			JSONObject obj = (JSONObject)parser.parse(position);
 			
 			Map<String, VehicleStatus> vehicles = new HashMap<String, VehicleStatus>(); 

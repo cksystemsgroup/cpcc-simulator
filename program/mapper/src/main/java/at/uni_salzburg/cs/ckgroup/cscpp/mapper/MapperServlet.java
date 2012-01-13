@@ -103,7 +103,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			servletConfig.getServletContext().setAttribute("registryFile", registryFile);
 			reloadConfigFile();
 			
-			String algorithmName = props.getProperty(PROP_MAPPER_ALGORITHM,"random");
+			String algorithmName = props.getProperty(PROP_MAPPER_ALGORITHM, "random");
 			mappingAlgorithm = MappingAlgrithmBuilder.build(algorithmName.trim(), regdata);
 			servletConfig.getServletContext().setAttribute("mappingAlgorithm", mappingAlgorithm);
 			

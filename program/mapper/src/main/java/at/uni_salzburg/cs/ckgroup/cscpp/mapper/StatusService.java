@@ -2,7 +2,7 @@
  * @(#) StatusService.java
  *
  * This code is part of the JNavigator project.
- * Copyright (c) 2011  Clemens Krainer
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +27,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.StatusProxy;
+import org.apache.log4j.Logger;
+
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class StatusService extends DefaultService {
-
+	
+	private static final Logger LOG = Logger.getLogger(RegistryService.class);
+	
+	public static final String ACTION_MAPPER_SUSPEND = "mapperSuspend";
+	public static final String ACTION_MAPPER_RESUME = "mapperResume";
+	
 	public StatusService (IServletConfig configuraton) {
 		super (configuraton);
 	}
@@ -41,16 +47,38 @@ public class StatusService extends DefaultService {
 	@Override
 	public void service(ServletConfig config, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-
-		StatusProxy p = new StatusProxy("http://localhost:8080/pilot/status");
-		p.fetchCurrentStatus();
-		PolarCoordinate cur = p.getCurrentPosition();
-		PolarCoordinate nxt = p.getNextPosition();
-		Double vel = p.getVelocity();
-		System.out.println("current="+cur+", nxt="+nxt+", vel="+vel);
 		
-//		super.service(config, request, response);
+		String servicePath = request.getRequestURI();
+		if (request.getRequestURI().startsWith(request.getContextPath())) {
+			servicePath = request.getRequestURI().substring(request.getContextPath().length());
+		}
+		
+		String[] cmd = servicePath.trim().split("/+");
+		if (cmd.length < 2) {
+			emit404(request, response);
+			return;
+		}
+		String action = cmd[2];
+		
+		String nextPage;
+		
+		if (ACTION_MAPPER_SUSPEND.equals(action)) {
+			IMappingAlgorithm mappingAlgorithm = (IMappingAlgorithm)config.getServletContext().getAttribute("mappingAlgorithm");
+			mappingAlgorithm.cease();
+			nextPage = request.getContextPath() + "/status.tpl";
+			
+		} else if (ACTION_MAPPER_RESUME.equals(action)) {
+			IMappingAlgorithm mappingAlgorithm = (IMappingAlgorithm)config.getServletContext().getAttribute("mappingAlgorithm");
+			mappingAlgorithm.proceed();
+			nextPage = request.getContextPath() + "/status.tpl";
+			
+		} else {
+			LOG.error("Can not handle: " + servicePath);
+			emit404(request, response);
+			return;
+		}
+		
+		emit301 (request, response, nextPage);
 	}
 
 }

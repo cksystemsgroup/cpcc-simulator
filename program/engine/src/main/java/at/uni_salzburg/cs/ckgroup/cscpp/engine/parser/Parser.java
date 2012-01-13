@@ -158,7 +158,26 @@ public class Parser
 				ap.setDataDir(dataDir);
 				lst.add(ap);
 				break;
-				
+			case Scanner.SymAIRPRESSURE: 
+				lst.add(new ActionAirPressure()); 
+				break;
+			case Scanner.SymALTITUDE: 
+				lst.add(new ActionAltitude()); 
+				break;
+			case Scanner.SymCOURSE: 
+				lst.add(new ActionCourse()); 
+				break;
+			case Scanner.SymRANDOM: 
+				lst.add(new ActionRandom()); 
+				break;
+			case Scanner.SymSONAR: 
+				ActionSonar a = new ActionSonar();
+				a.setDataDir(dataDir);
+				lst.add(a);
+				break;
+			case Scanner.SymSPEED: 
+				lst.add(new ActionSpeed()); 
+				break;
 			default:
 				// maybe beginning of next command -> so no exception
 				cont = false;

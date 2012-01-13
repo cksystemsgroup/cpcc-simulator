@@ -46,6 +46,12 @@ public class Scanner
 	public static final int SymTEMPERATURE = 6;
 	public static final int SymEOF = 7;
 	public static final int SymTOLERANCE = 8;
+	public static final int SymAIRPRESSURE = 9;
+	public static final int SymALTITUDE = 10;
+	public static final int SymCOURSE = 11;
+	public static final int SymRANDOM = 12;
+	public static final int SymSONAR = 13;
+	public static final int SymSPEED = 14;
 	
 	int line;
 
@@ -56,10 +62,16 @@ public class Scanner
 		c = 0;
 		map_keywords = new HashMap<String, Integer>();
 		
-		map_keywords.put(new String("POINT"), new Integer(SymPOINT));
-		map_keywords.put(new String("PICTURE"), new Integer(SymPICTURE));
-		map_keywords.put(new String("TEMPERATURE"), new Integer(SymTEMPERATURE));
-		map_keywords.put(new String("TOLERANCE"), new Integer(SymTOLERANCE));
+		map_keywords.put("POINT", SymPOINT);
+		map_keywords.put("PICTURE", SymPICTURE);
+		map_keywords.put("TEMPERATURE", SymTEMPERATURE);
+		map_keywords.put("TOLERANCE", SymTOLERANCE);
+		map_keywords.put("AIRPRESSURE", SymAIRPRESSURE);
+		map_keywords.put("ALTITUDE", SymALTITUDE);
+		map_keywords.put("COURSE", SymCOURSE);
+		map_keywords.put("RANDOM", SymRANDOM);
+		map_keywords.put("SONAR", SymSONAR);
+		map_keywords.put("SPEED", SymSPEED);
 		
 		FileInputStream input_stream = new FileInputStream(strFile);
 		input_file = new InputStreamReader(input_stream);

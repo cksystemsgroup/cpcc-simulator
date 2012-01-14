@@ -32,7 +32,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 public class RegData implements JSONAware {
     
     private String eng_uri;
-	private String pilotUri;
+    private String pilotUri;
     private List<WayPoint> waypoints;
     private List<String> sensors;
     

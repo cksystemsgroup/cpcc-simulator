@@ -46,7 +46,7 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 	protected Map<String,StatusProxy> statusProxyMap = new HashMap<String, StatusProxy>();
 	protected Map<String,Map<String,VehicleStatus>> virtualVehicleMap = new HashMap<String, Map<String,VehicleStatus>>(); 
 	
-	private Map<String,RegData> registrationData;
+	protected Map<String,RegData> registrationData;
 	
 	public void setRegistrationData(Map<String, RegData> registrationData) {
 		this.registrationData = registrationData;

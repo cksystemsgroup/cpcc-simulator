@@ -116,7 +116,11 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		String value = getSensorValue(name);
 		
 		if (value != null) {
-			return Double.valueOf(value);
+			try {
+				return Double.valueOf(value);
+			} catch (NumberFormatException e) {
+				LOG.error("Can not parse double value for sensor: '" + name + "'" + ", value='" + value + "'");
+			}
 		}
 		
 		return null;
@@ -130,7 +134,11 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		String value = getSensorValue(name);
 		
 		if (value != null) {
-			return Integer.valueOf(value);
+			try {
+				return Integer.valueOf(value);
+			} catch (NumberFormatException e) {
+				LOG.error("Can not parse integer value for sensor: '" + name + "'" + ", value='" + value + "'");
+			}	
 		}
 		
 		return null;

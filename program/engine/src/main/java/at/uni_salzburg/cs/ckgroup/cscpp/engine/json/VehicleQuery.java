@@ -60,6 +60,9 @@ public class VehicleQuery implements IQuery {
 		Map<String, Object> obj=new LinkedHashMap<String, Object>();
 		
 		for (IVirtualVehicle vehicle : vehicleMap.values()) {
+			if (vehicle.isFrozen()) {
+				continue;
+			}
 			Map<String, Object> props = new LinkedHashMap<String, Object>();
 			for (Entry<Object, Object> e : vehicle.getProperties().entrySet())
 				props.put((String)e.getKey(), e.getValue());

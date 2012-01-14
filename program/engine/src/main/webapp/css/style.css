@@ -348,6 +348,19 @@ a:hover {
 	text-align: justify;
 }
 
+#sidebar table {
+	table-layout: auto;
+	align: left;
+	border-style: none;
+	border-width: 0px;
+	margin: 0 0px;
+	padding-left: 28px;
+}
+
+#sidebar td {
+	padding: 0px 25px 0px 0px;
+}
+
 #sidebar a {
 	border: none;
 }

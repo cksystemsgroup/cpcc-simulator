@@ -25,6 +25,9 @@
 					<tr>
 						<td>$x</td>
 						<td><input type="checkbox" name="vehicles" value="$name" /></td>
+#if( $vehicle.isFrozen() )
+						<td><span style="color: white; background-color: pink;">frozen</span></td>						
+#else
 #if( $vehicle.isProgramCorrupted() )
 						<td><span style="color: red;">corrupt</span></td>
 #else
@@ -38,22 +41,27 @@
 #end
 #end
 #end
+#end
 						<td><a href="$contextPath/vehicleDetail.tpl?vehicle=$name">$name</a></td>
 						<td>$id</td>
-						<td><a href="$contextPath/vehicle/html/vehicleDownload/$name"><img title="Download Virtual Vehicle" src="$contextPath/img/disk.png" alt="download vehicle" /></a></td>
+						<td><a href="$contextPath/vehicle/html/vehicleDownload/$name"><img title="Download Virtual Vehicle" src="$contextPath/img/disk.png" title="download vehicle" /></a></td>
+#if( $vehicle.isFrozen() )
+						<td><a href="$contextPath/vehicle/html/unfreeze/$name"><img src="$contextPath/img/weather_sun.png" title="unfreeze" /></a></td>
+#else
 #if( $vehicle.isProgramCorrupted() )
-						<td><a href="$contextPath/vehicle/html/delete/$name"><img title="Delete Corrupt Virtual Vehicle" src="$contextPath/img/cross.png" alt="delete" /></a></td>
+						<td><a href="$contextPath/vehicle/html/delete/$name"><img title="Delete Corrupt Virtual Vehicle" src="$contextPath/img/cross.png" title="delete" /></a></td>
 #else
 #if( $vehicle.isCompleted() )
-						<td><img src="$contextPath/img/tick.png" alt="completed" /></td>
+						<td><img src="$contextPath/img/tick.png" title="completed" /></td>
 #else						
 #if( $vehicle.isActive() )
-						<td><a href="$contextPath/vehicle/html/suspend/$name"><img title="Suspend Virtual Vehicle" src="$contextPath/img/control_pause.png" alt="suspend" /></a></td>
+						<td><a href="$contextPath/vehicle/html/suspend/$name"><img title="Suspend Virtual Vehicle" src="$contextPath/img/control_pause.png" title="suspend" /></a></td>
 #else
-						<td><a href="$contextPath/vehicle/html/resume/$name"><img title="Resume Virtual Vehicle" src="$contextPath/img/control_play.png" alt="resume" /></a></td>
+						<td><a href="$contextPath/vehicle/html/resume/$name"><img title="Resume Virtual Vehicle" src="$contextPath/img/control_play.png" title="resume" /></a></td>
 #end
 #end
-#end						
+#end
+#end				
 					</tr>
 #end
 				<tbody>

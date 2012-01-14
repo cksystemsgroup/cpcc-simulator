@@ -51,6 +51,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public static final long timerPeriod = 1000;
 	
 	public static final String PROP_VEHICLE_ID = "vehicle.id";
+	public static final String PROP_VEHICLE_FROZEN = "vehicle.frozen";
 	
 	/**
 	 * The working directory of this virtual vehicle. It contains the virtual
@@ -110,6 +111,12 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	protected boolean completed = false;
 	
 	/**
+	 * True this virtual vehicle is frozen, i.e., suspended and invisible to the
+	 * mapper.
+	 */
+	private boolean frozen;
+	
+	/**
 	 * Construct a virtual vehicle instance.
 	 * 
 	 * @param workDir the working directory of this virtual vehicle.
@@ -120,23 +127,27 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		this.dataDir = new File(workDir, DATA_SUBDIR);
 		
 		program = new File(workDir, PROGRAM_PATH);
-		if (!program.exists())
+		if (!program.exists()) {
 			throw new IOException("Program file not found " + program);
-		
+		}
 		vehicleStatus = new File(workDir, STATUS_PATH);
-		if (!vehicleStatus.exists())
+		if (!vehicleStatus.exists()) {
 			vehicleStatus.createNewFile();
+		}
 		
 		properties = new Properties();
 		File propsFile = new File(workDir, PROPERTY_PATH);
-		if (propsFile.exists())
+		if (propsFile.exists()) {
 			properties.load(new FileInputStream(propsFile));
-		
+		}
+
 		if (properties.getProperty(PROP_VEHICLE_ID) == null) {
 			properties.setProperty(PROP_VEHICLE_ID, UUID.randomUUID().toString());
 			properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
 		}
 		
+		frozen = Boolean.valueOf(properties.getProperty(PROP_VEHICLE_FROZEN,"false"));
+
 		FileUtils.ensureDirectory(dataDir);
 	}
 
@@ -146,11 +157,13 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	@Override
 	public void suspend() throws IOException {
 		LOG.info("Suspending vehicle " + workDir.getName());
-		if (backGroundTimer != null)
+		if (backGroundTimer != null) {
 			backGroundTimer.cancel();
+		}
 		backGroundTimer = null;
-		if (backGroundTimerTask != null)
+		if (backGroundTimerTask != null) {
 			backGroundTimerTask.cancel();
+		}
 		backGroundTimerTask = null;
 		
 		while (running) {
@@ -176,8 +189,14 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 			vehicleLog = new FileWriter(new File(workDir, LOG_PATH), true);
 		}
 		
-		if (running || backGroundTimer != null)
+		if (frozen) {
+			return;
+		}
+		
+		if (running || backGroundTimer != null) {
+			LOG.error("Vehicle is already running: " + workDir.getName());
 			throw new IOException("Program is running.");
+		}
 		
 		backGroundTimer = new Timer();
 		backGroundTimerTask = new MyTimerTask(this);
@@ -190,6 +209,10 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	@Override
 	public void run() {
 		
+		if (frozen) {
+			return;
+		}
+		
 		if (isProgramCorrupted()) {
 			try { suspend(); } catch (IOException e) { }
 			return;
@@ -197,8 +220,9 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		
 		running = true;
 		
-		if (sensorProxy != null)
+		if (sensorProxy != null) {
 			execute();
+		}
 		
 		running = false;
 	}
@@ -247,7 +271,31 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public boolean isCompleted() {
 		return completed;
 	}
+
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#isFrozen()
+	 */
+	@Override
+	public boolean isFrozen() {
+		return frozen;
+	}
 	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#setFrozen(boolean)
+	 */
+	public void setFrozen(boolean frozen) throws IOException {
+		
+		if (this.frozen != frozen) {
+			this.frozen = frozen;
+			properties.setProperty(PROP_VEHICLE_FROZEN, Boolean.valueOf(frozen).toString());
+			properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
+		}
+
+		if (frozen) {
+			suspend();
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getWorkDir()
 	 */

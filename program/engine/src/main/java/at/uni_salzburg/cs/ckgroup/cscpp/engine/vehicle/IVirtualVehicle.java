@@ -33,71 +33,88 @@ public interface IVirtualVehicle {
 	/**
 	 * Suspend the currently running program.
 	 */
-	public void suspend () throws IOException ;
+	void suspend () throws IOException ;
 	
 	/**
 	 * Resume a suspended program.
 	 */
-	public void resume () throws IOException ;
+	void resume () throws IOException ;
 	
 	/**
 	 * @param out the virtual vehicle as an <code>OutputStream</code> object.
 	 */
-	public void serialize (OutputStream out) throws IOException ;
+	void serialize (OutputStream out) throws IOException ;
 	
 	/**
-	 * @return true if this virtual vehicle executes tasks, false if it is suspended.
+	 * @return true if this virtual vehicle executes tasks, false if it is
+	 *         suspended.
 	 */
-	public boolean isActive();
+	boolean isActive();
 
 	/**
 	 * @return true if this virtual vehicle succeeded in performing all tasks.
 	 */
-	public boolean isCompleted();
+	boolean isCompleted();
+	
+	/**
+	 * @return true if this virtual vehicle is frozen, i.e., suspended and
+	 *         invisible to the mapper.
+	 */
+	boolean isFrozen();
+	
+	/**
+	 * Use true to freeze this virtual vehicle, i.e., suspend it and make it
+	 * invisible to the mapper. <B>Note:</B> Unfreezing a virtual vehicle does
+	 * not necessarily resume the vehicle.
+	 * 
+	 * @param frozen
+	 *            true freezes this vehicle, false unfreezes it.
+	 * @throws IOException
+	 *             thrown in case suspend() fails.
+	 */
+	void setFrozen(boolean frozen) throws IOException;
 	
 	/**
 	 * @return the working directory of this virtual vehicle. It contains the
 	 *         virtual vehicle program, a set of properties, a log of events,
 	 *         and a sub-directory containing all collected sensor data.
 	 */
-	public File getWorkDir();
+	File getWorkDir();
 	
 	/**
 	 * @return the data directory of this virtual vehicle. It contains all
 	 *         collected sensor data.
 	 */
-	public File getDataDir();
+	File getDataDir();
 	
 	/**
 	 * @return the properties of this virtual vehicle.
 	 */
-	public Properties getProperties();
+	Properties getProperties();
 	
 	/**
 	 * @return the virtual vehicle commands as a list of strings.
 	 */
-	public List<Command> getCommandList();
+	List<Command> getCommandList();
 
 	/**
 	 * @return the index of the current command in the command list.
 	 */
-	public int getCurrentCommandIndex();
+	int getCurrentCommandIndex();
 	
 	/**
 	 * @return the currently executing command.
 	 */
-	public Command getCurrentCommand();
+	Command getCurrentCommand();
 	
 	/**
 	 * @return the current program is corrupted.
 	 */
-	public boolean isProgramCorrupted();
+	boolean isProgramCorrupted();
 	
 	/**
 	 * @return get the list of files in the data folder.
 	 */
-	public String[] getDataFileNames();
-
-
+	String[] getDataFileNames();
 	
 }

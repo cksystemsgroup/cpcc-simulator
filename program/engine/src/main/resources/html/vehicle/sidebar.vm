@@ -1,11 +1,5 @@
 		<script type="text/javascript">
-			function vehicleMigration() {
-				var vehicleDst = document.getElementById("destination").value;
-				if (vehicleDst == "") {
-					alert("Please provide a migration destination URL!");
-					return;
-				}
-				
+			function getSelectedVehicles() {
 				var vehicleIDs = "";
 				var vs = document.getElementsByName("vehicles");
 				for (var k=0; k < vs.length; k++) {
@@ -19,10 +13,38 @@
 					alert("Please select one or more vehicles in the vehicle list!");
 					return;
 				}
+				return vehicleIDs;
+			}
+			
+			function vehicleMigration() {
+				var vehicleDst = document.getElementById("destination").value;
+				if (vehicleDst == "") {
+					alert("Please provide a migration destination URL!");
+					return;
+				}
 				
+				var vehicleIDs = getSelectedVehicles();
+				if (!vehicleIDs)
+					return;
 				document.getElementById("vehicleDst").value = vehicleDst;
 				document.getElementById("vehicleIDs").value = vehicleIDs;
 				document.getElementById("migrationForm").submit();
+			}
+			
+			function vehicleFreezing() {
+				var vehicleIDs = getSelectedVehicles();
+				if (!vehicleIDs)
+					return;
+				document.getElementById("freezeVehicleIDs").value = vehicleIDs;
+				document.getElementById("freezeForm").submit();
+			}
+			
+			function vehicleUnfreezing() {
+				var vehicleIDs = getSelectedVehicles();
+				if (!vehicleIDs)
+					return;
+				document.getElementById("unfreezeVehicleIDs").value = vehicleIDs;
+				document.getElementById("unfreezeForm").submit();
 			}
 		</script>
 		<div id="sidebar">
@@ -44,8 +66,32 @@
 			</form>
 			<form action="vehicle/html/vehicleMigration" id="migrationForm" method="get">
 				<input type="hidden" id="vehicleDst" name="vehicleDst" size="36" maxlength="100000" />
-				<input type="hidden" id="vehicleIDs" name="vehicleIDs" value="" />				
+				<input type="hidden" id="vehicleIDs" name="vehicleIDs" value="" />		
 			</form>
+			<h2>Vehicle Freeze</h2>
+			<p>
+			Please select one or more vehicles in the vehicle list, and press the Freeze or the Unfreeze button.
+			<table>
+				<tr>
+					<td>
+						<form action="javascript:vehicleFreezing()" method="post" enctype="multipart/form-data">
+							<input type="submit" name="freeze" value="Freeze" />
+						</form>
+					</td>
+					<td>
+						<form action="javascript:vehicleUnfreezing()" method="post" enctype="multipart/form-data">
+							<input type="submit" name="unfreeze" value="Unfreeze" />
+						</form>	
+					</td>
+				</tr>
+			</table>
+			<form action="vehicle/html/freeze" id="freezeForm" method="get">
+				<input type="hidden" id="freezeVehicleIDs" name="freezeVehicleIDs" value="" />
+			</form>
+			<form action="vehicle/html/unfreeze" id="unfreezeForm" method="get">
+				<input type="hidden" id="unfreezeVehicleIDs" name="freezeVehicleIDs" value="" />
+			</form>
+			</p>
 		</div>
 		<!-- end #sidebar -->
 		<div style="clear: both;">&nbsp;</div>

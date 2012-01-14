@@ -59,6 +59,8 @@ public class VehicleService extends DefaultService {
 	public final static String ACTION_VEHICLE_SUSPEND = "suspend";
 	public final static String ACTION_VEHICLE_RESUME = "resume";
 	public final static String ACTION_VEHICLE_DELETE = "delete";
+	public final static String ACTION_VEHICLE_FREEZE = "freeze";
+	public final static String ACTION_VEHICLE_UNFREEZE = "unfreeze";
 	
 	public final static String ACTION_MAPPER_REGISTRATION = "mapperRegistration"; 
 	
@@ -221,6 +223,24 @@ public class VehicleService extends DefaultService {
 				return;
 			}
 			
+		} else if (ACTION_VEHICLE_FREEZE.equals(action) || ACTION_VEHICLE_UNFREEZE.equals(action)) {
+			if (cmd.length > 3) {
+				String p2 = request.getParameter("freezeVehicleIDs");
+				if ( (p2 == null || p2.trim().isEmpty()) &&  cmd.length > 4) {
+					p2 = cmd[4];
+				}
+				if (p2 == null || p2.trim().isEmpty()) {
+					emit400(request, response, "Invalid or empty virtual vehicle ID.");
+					return;
+				}
+				
+				freezeVehicles(config, p2.trim(), ACTION_VEHICLE_FREEZE.equals(action));
+				nextPage = request.getContextPath() + "/vehicle.tpl";
+			} else {
+				emit422(request, response);
+				return;
+			}
+			
 		} else if (ACTION_VEHICLE_DATA.equals(action)) {
 			if (cmd.length > 5) {
 				nextPage = request.getContextPath() + "/vehicleDetail.tpl?vehicle=" + cmd[4];
@@ -332,7 +352,20 @@ public class VehicleService extends DefaultService {
 			e.printStackTrace();
 		}
 	}
-	
+
+	private void freezeVehicles(ServletConfig config, String vehicles, boolean freeze) throws IOException {
+		Object vhl = config.getServletContext().getAttribute("vehicleMap");
+		@SuppressWarnings("unchecked")
+		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
+		for (String name : vehicles.split("\\s*,\\s*")) {
+			IVirtualVehicle vehicle = vehicleMap.get(name);
+			if (vehicle == null) {
+				continue;
+			}
+			vehicle.setFrozen(freeze);
+		}
+	}
+
 	private IVirtualVehicle getVehicle (ServletConfig config, String vehicle) {
 		Object vhl = config.getServletContext().getAttribute("vehicleMap");
 		@SuppressWarnings("unchecked")

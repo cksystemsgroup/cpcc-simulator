@@ -27,6 +27,9 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -63,7 +66,12 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	/**
 	 * The activity log of the vehicle.
 	 */
-	protected FileWriter vehicleLog = null;
+	private PrintWriter vehicleLog = null;
+	
+	/**
+	 * Helper to render the date and time format in the vehicle log.
+	 */
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	/**
 	 * The virtual vehicle program to be executed.
@@ -108,7 +116,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	/**
 	 * True if all tasks of this virtual vehicle have been successful.
 	 */
-	protected boolean completed = false;
+	private boolean completed = false;
 	
 	/**
 	 * True this virtual vehicle is frozen, i.e., suspended and invisible to the
@@ -149,6 +157,8 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		frozen = Boolean.valueOf(properties.getProperty(PROP_VEHICLE_FROZEN,"false"));
 
 		FileUtils.ensureDirectory(dataDir);
+		
+		vehicleLog = new PrintWriter(new FileWriter(new File(workDir, LOG_PATH), true));
 	}
 
 	/* (non-Javadoc)
@@ -186,7 +196,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public void resume() throws IOException {
 		LOG.info("Resuming vehicle " + workDir.getName());
 		if (vehicleLog == null) {
-			vehicleLog = new FileWriter(new File(workDir, LOG_PATH), true);
+			vehicleLog = new PrintWriter(new FileWriter(new File(workDir, LOG_PATH), true));
 		}
 		
 		if (frozen) {
@@ -327,6 +337,36 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 				return true;
 			}
 		});
+	}
+	
+	public void setCompleted() throws IOException {
+		if (isActive()) {
+			suspend();
+		}
+		this.completed = true;
+	}
+	
+	public void addLogEntry(String entry) {
+		if (vehicleLog != null) {
+			vehicleLog.printf("%s %s",dateFormat.format(new Date()), entry);
+		} else {
+			LOG.error("Vehicle log is offline, can not log: '" + entry + "'");
+		}
+	}
+
+	public void addLogEntry(String entry, Exception ex) {
+		if (vehicleLog != null) {
+			vehicleLog.printf("%s %s",dateFormat.format(new Date()), entry);
+			ex.printStackTrace(vehicleLog);
+			vehicleLog.flush();
+		} else {
+			LOG.error("Vehicle log is offline, can not log: '" + entry + "'", ex);
+		}
+	}
+	
+	public String getLog() throws IOException {
+		File logFile = new File(workDir, LOG_PATH);
+		return FileUtils.loadFileAsString(logFile);
 	}
 	
 	private static class MyTimerTask extends TimerTask {

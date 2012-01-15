@@ -215,8 +215,18 @@ public class VehicleService extends DefaultService {
 			}
 			
 		} else if (ACTION_VEHICLE_DELETE.equals(action)) {
-			if (cmd.length > 4) {
-				removeVehicle(config, cmd[4]);
+//			if (cmd.length > 4) {
+			if (cmd.length > 3) {
+				String p2 = request.getParameter("deleteVehicleIDs");
+				if ( (p2 == null || p2.trim().isEmpty()) &&  cmd.length > 4) {
+					p2 = cmd[4];
+				}
+				if (p2 == null || p2.trim().isEmpty()) {
+					emit400(request, response, "Invalid or empty virtual vehicle ID.");
+					return;
+				}
+				
+				removeVehicles(config, p2.trim());
 				nextPage = request.getContextPath() + "/vehicle.tpl";
 			} else {
 				emit422(request, response);
@@ -327,29 +337,31 @@ public class VehicleService extends DefaultService {
 		}
 	}
 
-	private void removeVehicle(ServletConfig config, String name) {
+	private void removeVehicles(ServletConfig config, String vehicles) {
 
 		Object vhl = config.getServletContext().getAttribute("vehicleMap");
 		@SuppressWarnings("unchecked")
 		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
-		IVirtualVehicle vehicle = vehicleMap.get(name);
-		if (vehicle == null)
-			return;
-		
-		if (vehicle.isActive()) {
-			LOG.info("Vehicle " + name + " still collects data! Deletion not possible yet!");
-			return;
-		}
-		
-		LOG.info("Deleting vehicle " + name);
-		
-		try {
-			vehicleMap.remove(name);
-			vehicle.suspend();
-			File workDir = vehicle.getWorkDir();
-			FileUtils.removeRecursively(workDir);
-		} catch (IOException e) {
-			e.printStackTrace();
+		for (String name : vehicles.split("\\s*,\\s*")) {
+			IVirtualVehicle vehicle = vehicleMap.get(name);
+			if (vehicle == null)
+				return;
+			
+			if (vehicle.isActive()) {
+				LOG.error("Vehicle " + name + " still collects data! Deletion not possible yet!");
+				return;
+			}
+			
+			LOG.info("Deleting vehicle " + name);
+			
+			try {
+				vehicleMap.remove(name);
+				vehicle.suspend();
+				File workDir = vehicle.getWorkDir();
+				FileUtils.removeRecursively(workDir);
+			} catch (IOException e) {
+				LOG.error("At deleting vehicle " + name, e);
+			}
 		}
 	}
 

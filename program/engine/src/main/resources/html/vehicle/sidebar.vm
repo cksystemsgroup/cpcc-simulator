@@ -31,7 +31,7 @@
 				document.getElementById("migrationForm").submit();
 			}
 			
-			function vehicleFreezing() {
+			function vehicleFreeze() {
 				var vehicleIDs = getSelectedVehicles();
 				if (!vehicleIDs)
 					return;
@@ -39,16 +39,24 @@
 				document.getElementById("freezeForm").submit();
 			}
 			
-			function vehicleUnfreezing() {
+			function vehicleUnfreeze() {
 				var vehicleIDs = getSelectedVehicles();
 				if (!vehicleIDs)
 					return;
 				document.getElementById("unfreezeVehicleIDs").value = vehicleIDs;
 				document.getElementById("unfreezeForm").submit();
 			}
+			
+			function vehicleDelete() {
+				var vehicleIDs = getSelectedVehicles();
+				if (!vehicleIDs)
+					return;
+				document.getElementById("deleteVehicleIDs").value = vehicleIDs;
+				document.getElementById("deleteForm").submit();
+			}
 		</script>
 		<div id="sidebar">
-			<h2>Vehicle Upload</h2>
+			<h2>Upload Vehicles</h2>
 			<form action="vehicle/html/vehicleUpload" method="post" enctype="multipart/form-data">
 				<p>
 				Please select a vehicle archive on your machine and press the Upload button.<br>
@@ -56,7 +64,7 @@
 				<input type="submit" name="configUpload" value="Upload" />
 				</p>
 			</form>
-			<h2>Vehicle Migration</h2>
+			<h2>Migrate Vehicles</h2>
 			<form action="javascript:vehicleMigration()" method="post" enctype="multipart/form-data">
 				<p>
 				Please select one or more vehicles in the vehicle list, enter a destination URL, and press the Migrate button.<br>
@@ -68,19 +76,24 @@
 				<input type="hidden" id="vehicleDst" name="vehicleDst" size="36" maxlength="100000" />
 				<input type="hidden" id="vehicleIDs" name="vehicleIDs" value="" />		
 			</form>
-			<h2>Vehicle Freeze</h2>
-			<p>
-			Please select one or more vehicles in the vehicle list, and press the Freeze or the Unfreeze button.
+			<h2>Manage Vehicles</h2>
+			<p class="multiForms">
+			Please select one or more vehicles in the vehicle list, and press one of the buttons below.
 			<table>
 				<tr>
 					<td>
-						<form action="javascript:vehicleFreezing()" method="post" enctype="multipart/form-data">
+						<form action="javascript:vehicleFreeze()" method="post" enctype="multipart/form-data">
 							<input type="submit" name="freeze" value="Freeze" />
 						</form>
 					</td>
 					<td>
-						<form action="javascript:vehicleUnfreezing()" method="post" enctype="multipart/form-data">
+						<form action="javascript:vehicleUnfreeze()" method="post" enctype="multipart/form-data">
 							<input type="submit" name="unfreeze" value="Unfreeze" />
+						</form>	
+					</td>
+					<td>
+						<form action="javascript:vehicleDelete()" method="post" enctype="multipart/form-data">
+							<input type="submit" name="delete" value="Delete" />
 						</form>	
 					</td>
 				</tr>
@@ -90,6 +103,9 @@
 			</form>
 			<form action="vehicle/html/unfreeze" id="unfreezeForm" method="get">
 				<input type="hidden" id="unfreezeVehicleIDs" name="freezeVehicleIDs" value="" />
+			</form>
+			<form action="vehicle/html/delete" id="deleteForm" method="get">
+				<input type="hidden" id="deleteVehicleIDs" name="deleteVehicleIDs" value="" />
 			</form>
 			</p>
 		</div>

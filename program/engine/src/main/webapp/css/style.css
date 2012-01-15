@@ -348,6 +348,12 @@ a:hover {
 	text-align: justify;
 }
 
+#sidebar p.multiForms {
+	margin: 0 0px;
+	padding: 0px 30px 0px 30px;
+	text-align: justify;
+}
+
 #sidebar table {
 	table-layout: auto;
 	align: left;
@@ -358,7 +364,7 @@ a:hover {
 }
 
 #sidebar td {
-	padding: 0px 25px 0px 0px;
+	padding: 0px 14px 0px 0px;
 }
 
 #sidebar a {
@@ -547,6 +553,22 @@ div.vvProgramHeader {
 
 div.vvProgramError {
 	color: red;
+}
+
+table.vvErrorLog {
+	align: left;
+	border: none;
+	border-spacing: 0;
+	color: red;
+	font-size: 12px;
+	padding: 0 0 0 0;
+}
+
+td.vvErrorLog {
+	padding: 0 0 0 0;
+	border-spacing: 0px;
+	line-height: 12px;
+	white-space: pre-wrap;
 }
 
 input.sidebarTextInput {

@@ -88,6 +88,11 @@ public interface IVirtualVehicle {
 	File getDataDir();
 	
 	/**
+	 * @return the current vehicle log as a <code>String</code> object.
+	 */
+	String getLog() throws IOException;
+	
+	/**
 	 * @return the properties of this virtual vehicle.
 	 */
 	Properties getProperties();

@@ -91,7 +91,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			}
 			
 			if (currentCommand==null || currentCommand.is_finished())
-				completed = true;
+				setCompleted();
 			
 			programCorrupted = false;
 
@@ -99,6 +99,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		} 
 		catch(Exception e)
 		{
+			addLogEntry("Vehicle " + workDir.getName() + " is corrupt. Execution refused.", e);
 			LOG.error("Vehicle " + workDir.getName() + " is corrupt. Execution refused.", e);
 		}
 
@@ -156,7 +157,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	{
 		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
 		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
-		if (currentPosition == null || completed || currentCommand == null || altitudeOverGround == null)
+		if (currentPosition == null || isCompleted() || currentCommand == null || altitudeOverGround == null)
 			return;
 		
 		currentPosition.setAltitude(altitudeOverGround.doubleValue());
@@ -173,10 +174,15 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		{
 			currentCommand.execute(sensorProxy);
 			
-			if (listIter.hasNext())
+			if (listIter.hasNext()) {
 				currentCommand = listIter.next();
-			else 
-				completed = true;
+			} else {
+				try {
+					setCompleted();
+				} catch (IOException e) {
+					LOG.error("Can not set vehicle " + getWorkDir() + " to completed.", e);
+				}
+			}
 		}
 		
 		storeVehicleState();

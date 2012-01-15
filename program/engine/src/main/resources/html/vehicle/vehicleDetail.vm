@@ -102,7 +102,16 @@
 #end
 				<tbody>
 			</table>
-				
+#set( $log = $vehicle.getLog() )
+#if( $log )
+##set( $log = $log.replaceAll("\n","<br/>\n") )
+##$log
+<table class="vvErrorLog">
+#foreach( $l in $log.split("\n") )
+	<tr class="vvErrorLog"><td class="vvErrorLog">$l</td></tr>
+#end
+</table>
+#end
 #if( !$vehicle.isProgramCorrupted() )	
 			<div class="vvProgramHeader">
 				Data Files:

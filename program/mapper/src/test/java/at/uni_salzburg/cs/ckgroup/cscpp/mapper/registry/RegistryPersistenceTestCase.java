@@ -53,10 +53,10 @@ public class RegistryPersistenceTestCase {
 		RegistryPersistence.storeRegistry(tmpFile, registrationData);
 		
 		String expected = FileUtils.loadFileAsString(storagePath);
-		Assert.assertEquals(1814, expected.length());
+		Assert.assertEquals(1815, expected.length());
 		
 		String actual = FileUtils.loadFileAsString(tmpFile);
-		Assert.assertEquals(1814, actual.length());
+		Assert.assertEquals(1815, actual.length());
 		
 		Assert.assertEquals(expected, actual);
 	}

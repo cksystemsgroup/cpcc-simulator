@@ -33,9 +33,9 @@ public class VehicleStatus implements JSONAware {
 	
 	private String id;
 	private Status state;
-	private PolarCoordinate position;
-	private double tolerance;
-	private String[] actions;
+	private PolarCoordinate position = null;
+	private double tolerance = Double.NaN;
+	private String[] actions = null;
 	
 	public VehicleStatus(JSONObject obj) {
 		id = (String)obj.get("vehicle.id");

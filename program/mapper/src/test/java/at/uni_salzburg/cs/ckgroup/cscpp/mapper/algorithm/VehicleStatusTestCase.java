@@ -62,14 +62,14 @@ public class VehicleStatusTestCase {
 		Assert.assertEquals("732d463b-6836-487c-989d-47c59285c17d", s.getId());
 		Assert.assertEquals("corrupt", s.getState().toString().toLowerCase());
 		Assert.assertNull(s.getPosition());
-		Assert.assertEquals(0.0, s.getTolerance(), 1E-9);
+		Assert.assertEquals(Double.NaN, s.getTolerance(), 1E-9);
 		Assert.assertNull(s.getActions());
 		
 		s = new VehicleStatus((JSONObject)parser.parse(s.toJSONString()));
 		Assert.assertEquals("732d463b-6836-487c-989d-47c59285c17d", s.getId());
 		Assert.assertEquals("corrupt", s.getState().toString().toLowerCase());
 		Assert.assertNull(s.getPosition());
-		Assert.assertEquals(0.0, s.getTolerance(), 1E-9);
+		Assert.assertEquals(Double.NaN, s.getTolerance(), 1E-9);
 		Assert.assertNull(s.getActions());
 	}
 	
@@ -99,25 +99,31 @@ public class VehicleStatusTestCase {
 	
 	@Test
 	public void testCase04() throws ParseException {
-		String status = "{\"vehicle.id\":\"532d463b-6836-487c-989d-47c59285c17d\",\"state\":\"complete\",\"latitude\":57.8226984,\"longitude\":15.04211393,\"altitude\":5.0," +
+		String status = "{\"vehicle.id\":\"532d463b-6836-487c-989d-47c59285c17d\",\"state\":\"completed\",\"latitude\":57.8226984,\"longitude\":15.04211393,\"altitude\":5.0," +
 				"\"tolerance\":52.0,\"actions\":\"temperature,photo\"}";
 		JSONParser parser = new JSONParser();
 		VehicleStatus s = new VehicleStatus((JSONObject)parser.parse(status));
 		Assert.assertEquals("532d463b-6836-487c-989d-47c59285c17d", s.getId());
-		Assert.assertEquals("complete", s.getState().toString().toLowerCase());
-		Assert.assertEquals(57.8226984, s.getPosition().getLatitude(), 1E-9);
-		Assert.assertEquals(15.04211393, s.getPosition().getLongitude(), 1E-9);
-		Assert.assertEquals(5.0, s.getPosition().getAltitude(), 1E-9);
-		Assert.assertEquals(52.0, s.getTolerance(), 1E-9);
-		Assert.assertArrayEquals(new String[]{"temperature","photo"}, s.getActions());
+		Assert.assertEquals("completed", s.getState().toString().toLowerCase());
+//		Assert.assertEquals(57.8226984, s.getPosition().getLatitude(), 1E-9);
+//		Assert.assertEquals(15.04211393, s.getPosition().getLongitude(), 1E-9);
+//		Assert.assertEquals(5.0, s.getPosition().getAltitude(), 1E-9);
+		Assert.assertEquals(Double.NaN, s.getTolerance(), 1E-9);
+		Assert.assertNull(s.getPosition());
+//		Assert.assertNull(s.getTolerance());
+//		Assert.assertArrayEquals(new String[]{"temperature","photo"}, s.getActions());
+		Assert.assertNull(s.getActions());
 		
 		s = new VehicleStatus((JSONObject)parser.parse(s.toJSONString()));
 		Assert.assertEquals("532d463b-6836-487c-989d-47c59285c17d", s.getId());
-		Assert.assertEquals("complete", s.getState().toString().toLowerCase());
-		Assert.assertEquals(57.8226984, s.getPosition().getLatitude(), 1E-9);
-		Assert.assertEquals(15.04211393, s.getPosition().getLongitude(), 1E-9);
-		Assert.assertEquals(5.0, s.getPosition().getAltitude(), 1E-9);
-		Assert.assertEquals(52.0, s.getTolerance(), 1E-9);
-		Assert.assertArrayEquals(new String[]{"temperature","photo"}, s.getActions());
+		Assert.assertEquals("completed", s.getState().toString().toLowerCase());
+//		Assert.assertEquals(57.8226984, s.getPosition().getLatitude(), 1E-9);
+//		Assert.assertEquals(15.04211393, s.getPosition().getLongitude(), 1E-9);
+//		Assert.assertEquals(5.0, s.getPosition().getAltitude(), 1E-9);
+//		Assert.assertEquals(52.0, s.getTolerance(), 1E-9);
+//		Assert.assertArrayEquals(new String[]{"temperature","photo"}, s.getActions());
+		Assert.assertEquals(Double.NaN, s.getTolerance(), 1E-9);
+		Assert.assertNull(s.getPosition());
+		Assert.assertNull(s.getActions());
 	}
 }

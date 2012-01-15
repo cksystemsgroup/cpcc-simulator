@@ -135,6 +135,7 @@ public class DefaultService implements IService
         context.put("servicePath", servicePath);
         context.put("servletConfig", config);
         context.put("properties", servletConfig.getProperties());
+        context.put("systemProperties", System.getProperties());
         Arrays.sort(list);
         context.put("directoryListing", list);
         
@@ -155,6 +156,7 @@ public class DefaultService implements IService
         context.put("servletConfig", config);
         context.put("properties", servletConfig.getProperties());
         context.put("parameters", parameters);
+        context.put("systemProperties", System.getProperties());
         
 		ve.evaluate(context, out, "lala", reader);
 	}

@@ -105,6 +105,7 @@ public class FileUtils {
 		String line;
 		while ( (line = lineReader.readLine()) != null) {
 			sb.append(line);
+			sb.append("\n");
 		}
 		lineReader.close();
 		reader.close();

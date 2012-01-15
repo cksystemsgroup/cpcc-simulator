@@ -28,7 +28,7 @@ import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 public class VehicleStatus implements JSONAware {
 	
 	enum Status {
-		NONE, SUSPENDED, ACTIVE, CORRUPT, COMPLETE
+		NONE, SUSPENDED, ACTIVE, CORRUPT, COMPLETED
 	};
 	
 	private String id;
@@ -40,7 +40,7 @@ public class VehicleStatus implements JSONAware {
 	public VehicleStatus(JSONObject obj) {
 		id = (String)obj.get("vehicle.id");
 		state = Status.valueOf(((String)obj.get("state")).toUpperCase());
-		if (state == Status.ACTIVE || state == Status.SUSPENDED || state == Status.COMPLETE) {
+		if (state == Status.ACTIVE || state == Status.SUSPENDED) {
 			double latitude = ((Double)obj.get("latitude")).doubleValue();
 			double longitude = ((Double)obj.get("longitude")).doubleValue();
 			double altitude = ((Double)obj.get("altitude")).doubleValue();

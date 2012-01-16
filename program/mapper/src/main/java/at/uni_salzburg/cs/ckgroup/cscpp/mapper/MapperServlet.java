@@ -25,9 +25,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -77,7 +77,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	@Override
 	public void init (ServletConfig servletConfig) throws ServletException {
 		this.servletConfig = servletConfig;
-		regdata = Collections.synchronizedMap(new HashMap<String, RegData>());
+		regdata = Collections.synchronizedMap(new TreeMap<String, RegData>());
 		super.init();
 		myInit();
 	}

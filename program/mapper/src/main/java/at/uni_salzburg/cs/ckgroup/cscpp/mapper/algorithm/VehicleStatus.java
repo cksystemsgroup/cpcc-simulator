@@ -20,6 +20,9 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
+import java.nio.channels.AsynchronousCloseException;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
@@ -46,7 +49,12 @@ public class VehicleStatus implements JSONAware {
 			double altitude = ((Double)obj.get("altitude")).doubleValue();
 			position = new PolarCoordinate(latitude, longitude, altitude);
 			tolerance = (Double)obj.get("tolerance");
-			actions = ((String)obj.get("actions")).trim().split("\\s*,\\s*");
+			JSONArray as = (JSONArray)obj.get("actions");
+//			actions = ((String)obj.get("actions")).trim().split("\\s*,\\s*");
+			actions = new String[as.size()];
+			for (int k=0; k < as.size(); ++k) {
+				actions[k] = (String)as.get(k);
+			}
 		}
 	}
 

@@ -1,8 +1,8 @@
 /*
  * @(#) AbstractMappingAlgorithm.java
  *
- * This code is part of the JNavigator project.
- * Copyright (c) 2012  Clemens Krainer
+ * This code is part of the JESE-CPCC project.
+ * Copyright (c) 2012  Clemens Krainer, Michael Kleber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

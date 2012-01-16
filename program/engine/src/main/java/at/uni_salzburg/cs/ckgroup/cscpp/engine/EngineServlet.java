@@ -2,7 +2,7 @@
  * @(#) EngineServlet.java
  *
  * This code is part of the CPCC project.
- * Copyright (c) 2011  Clemens Krainer
+ * Copyright (c) 2011  Clemens Krainer, Michael Kleber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
@@ -85,15 +86,26 @@ public class VehicleQuery implements IQuery {
 				props.put(PROP_VEHICLE_TOLERANCE, Double.valueOf(p.getTolerance()));
 				
 				List<IAction> al = vehicle.getCurrentCommand().get_actions();
-				StringBuilder b = new StringBuilder();
-				boolean first = true;
+//				StringBuilder b = new StringBuilder();
+//				boolean first = true;
+//				for (IAction action : al) {
+//					if (action.getTimestamp() <= 0) {
+//						continue;
+//					}
+//					if (!first) {
+//						b.append(",");
+//					}
+//					b.append(actionsMap.get(action.toString().toUpperCase()));
+//					first = false;
+//				}
+//				props.put(PROP_VEHICLE_ACTIONS, b.toString());
+				JSONArray openActions = new JSONArray();
 				for (IAction action : al) {
-					if (!first)
-						b.append(",");
-					b.append(actionsMap.get(action.toString().toUpperCase()));
-					first = false;
+					if (!action.isComplete()) {
+						openActions.add(actionsMap.get(action.toString().toUpperCase()));	
+					}
 				}
-				props.put(PROP_VEHICLE_ACTIONS, b.toString());
+				props.put(PROP_VEHICLE_ACTIONS, openActions);
 			}
 			obj.put(vehicle.getWorkDir().getName(), props);
 		}

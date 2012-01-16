@@ -39,4 +39,8 @@ public abstract class AbstractAction implements IAction, Serializable
 		timestamp = System.currentTimeMillis();
 	}
 
+	@Override
+	public boolean isComplete() {
+		return timestamp > 0;
+	}
 }

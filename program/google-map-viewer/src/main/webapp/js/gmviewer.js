@@ -69,15 +69,18 @@ function updatePointsOfInterest () {
 		if ( pointsOfInterest[id] ) {
 			// update position
 			pointsOfInterest[id].setPosition(point);
+			pointsOfInterest[id].setVehicle(v);
 		} else {
 			// new one!
-			pointsOfInterest[id] = new google.maps.Marker({
-				map: map,
-				position: point,
-				clickable: false,
-				title: id,
-				visible: true
-			});
+//			pointsOfInterest[id] = new google.maps.Marker({
+//				map: map,
+//				position: point,
+//				clickable: false,
+//				title: id,
+//				visible: true
+//			});
+			pointsOfInterest[id] = new VvPointOverlay(point, map);
+			pointsOfInterest[id].setVehicle(v);
 		}
 	}
 }

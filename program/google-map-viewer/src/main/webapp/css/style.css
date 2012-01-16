@@ -87,7 +87,7 @@ a:hover {
 	letter-spacing: -2px;
 	text-transform: lowercase;
 	font-size: 3.8em;
-	background: redc;
+/* 	background: redc; */
 }
 
 #logo p {
@@ -545,4 +545,20 @@ td.vehicle_info_completed {
 
 td.vehicle_info_corrupt {
 	color: red;
+}
+
+table.vvpoint {
+	background-color: grey;
+    border: 1px dotted grey;
+    color: #FFFFFF;
+    font-family: monospace;
+    font-size: 10px;
+    padding: 0px;
+    white-space: nowrap;
+    width: auto;
+    opacity: 0.8;
+}
+
+td.vvpoint_symbol {
+	vertical-align:top;
 }

@@ -99,6 +99,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			servletConfig.getServletContext().setAttribute("configuration", configuration);
 			servletConfig.getServletContext().setAttribute("vehicleMap", vehicleMap);
 			servletConfig.getServletContext().setAttribute("sensorProxy", sensorProxy);
+			servletConfig.getServletContext().setAttribute("timeFormatter", new TimeFormatter());
 			
 			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
 			configuration.setWorkDir (contexTempDir);

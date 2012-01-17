@@ -73,6 +73,7 @@
 			
 			<table class="vvProgram">
 				<tbody>
+#set( $fmt = $servletConfig.getServletContext().getAttribute("timeFormatter") )
 #set( $currentIndex = $vehicle.getCurrentCommandIndex() )
 #set( $commandList = $vehicle.getCommandList() )
 #set( $x = 0 )
@@ -96,6 +97,7 @@
 #set( $pattern2 = "'([^']+)'" )
 #set( $replacement2 = "<span style="+'"color: brown"'+">'$1'</span>" )
 #set( $code = $command.toString().replaceAll("\n","</br>").replaceAll($pattern1,$replacement1).replaceAll($pattern2,$replacement2) )
+#set( $code = $fmt.formatCode($code) )
 						<td>$code</td>
 					</tr>
 #set( $x = $x + 1 )

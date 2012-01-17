@@ -356,7 +356,7 @@ a:hover {
 
 #sidebar table {
 	table-layout: auto;
-	align: left;
+/* 	align: left; */
 	border-style: none;
 	border-width: 0px;
 	margin: 0 0px;
@@ -556,7 +556,7 @@ div.vvProgramError {
 }
 
 table.vvErrorLog {
-	align: left;
+/* 	align: left; */
 	border: none;
 	border-spacing: 0;
 	color: red;

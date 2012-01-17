@@ -110,8 +110,10 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
                     if(isNear(currentPosCart, nextPosCart, virtualPosCart, tol)) {
                         RegData re_val = registrationData.get(v);
                         if(re_val != null) {
-                            if(re_val.getSensors().toString().equalsIgnoreCase(sensors.toString())) {
-                                return v;                
+                            String[] sens_v = (String[]) re_val.getSensors().toArray();
+                            for(int i = 0; i < sens_v.length; i++) {
+                                if(sensors.toString().contains(sens_v[i]))
+                                    return v;
                             }
                         }
                     }    

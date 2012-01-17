@@ -40,7 +40,7 @@ public class ActionTemperature extends AbstractAction implements Serializable
 	{
 		temperature = sprox.getSensorValueAsDouble(ISensorProxy.SENSOR_NAME_TEMPERATURE);
 		saveTimestamp();
-		return false;
+		return true;
 	}
 	
 	@Override

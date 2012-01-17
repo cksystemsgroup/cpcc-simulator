@@ -39,7 +39,7 @@ public class ActionCourse extends AbstractAction implements Serializable
 	{
 		courseOverGround = sprox.getCourseOverGround();
 		saveTimestamp();
-		return false;
+		return true;
 	}
 	
 	@Override

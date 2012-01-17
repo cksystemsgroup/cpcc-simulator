@@ -39,7 +39,7 @@ public class ActionAltitude extends AbstractAction implements Serializable
 	{
 		altitudeOverGround = sprox.getAltitudeOverGround();
 		saveTimestamp();
-		return false;
+		return true;
 	}
 	
 	@Override

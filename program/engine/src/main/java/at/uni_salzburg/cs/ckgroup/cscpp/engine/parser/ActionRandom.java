@@ -39,7 +39,7 @@ public class ActionRandom extends AbstractAction implements Serializable
 	{
 		random = sprox.getSensorValueAsInteger(ISensorProxy.SENSOR_NAME_RANDOM);
 		saveTimestamp();
-		return false;
+		return true;
 	}
 	
 	@Override

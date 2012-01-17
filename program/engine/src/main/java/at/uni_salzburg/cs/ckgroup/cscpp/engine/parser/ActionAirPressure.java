@@ -39,7 +39,7 @@ public class ActionAirPressure extends AbstractAction implements Serializable
 	{
 		airPressure = sprox.getSensorValueAsDouble(ISensorProxy.SENSOR_NAME_AIR_PRESSURE);
 		saveTimestamp();
-		return false;
+		return true;
 	}
 	
 	@Override

@@ -64,7 +64,7 @@ public class ActionPicture extends AbstractAction implements Serializable {
 			e.printStackTrace();
 		}
 
-		return false;
+		return true;
 	}
 	
 	@Override

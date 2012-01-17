@@ -39,7 +39,7 @@ public class ActionSpeed extends AbstractAction implements Serializable
 	{
 		speedOverGround = sprox.getSpeedOverGround();
 		saveTimestamp();
-		return false;
+		return true;
 	}
 	
 	@Override

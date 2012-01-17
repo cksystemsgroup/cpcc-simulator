@@ -79,15 +79,22 @@ public class Command implements Serializable
 		{
 			IAction act = null;
 		    ListIterator<IAction> iter = lst_actions.listIterator();
+		    boolean allFinished = true;
 		    
 		    while (iter.hasNext())
 		    {
 		    	act = iter.next();
+		    	if(!act.isComplete())
+		    	{
+		    		act.execute(sproxy);
+		    		if(!act.isComplete())
+		    			allFinished=false;
+		    	}
 		    	
-		    	act.execute(sproxy);
+		    		
 		    }
 		    
-		    finished = true;
+		    finished = allFinished;
 		}
 		
 		return true;

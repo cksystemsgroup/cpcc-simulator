@@ -341,6 +341,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	
 	public void setCompleted() throws IOException {
 		if (isActive()) {
+			running = false;
 			suspend();
 		}
 		this.completed = true;

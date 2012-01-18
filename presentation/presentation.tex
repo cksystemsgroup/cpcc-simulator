@@ -56,7 +56,7 @@
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
 %\author{F.~Author\inst{1} \and S.~Another\inst{2}}
-\author{M. Kleber, C. Krainer, A. Schr\"ock, B. Zechmeister}
+\author{M. Kleber, C. Krainer, A. Schr\"ocker, B. Zechmeister}
 
 % - Use the \inst command only if there are several affiliations.
 % - Keep it simple, no one is interested in your street address.
@@ -117,71 +117,142 @@ Department of Computer Sciences\\
 \end{frame}
 
 
+% - Einleitung
+%   - Aufgabenstellung
+%   - Systemarchitektur: Pilot, Engine, Mapper, GMView, Planner, ...
+%   - Datenaustausch mit HTTP(S)
 \section{Introduction}
 %\subsection[Short First Subsection Name]{First Subsection Name}
 
-\begin{frame}
-\frametitle{Introduction}
-%\framesubtitle{xxx}
-
-Test $\displaystyle{x = (x_n)_{n\in\mathds{N}_0}}$
-
-Test
-\begin{equation}
-	x : \mathds{N}_0 \rightarrow \mathds{C}
-\end{equation}
-
-\pause
-
-Test
-\begin{equation}
-	\mathcal{Z}\{x\} =
-	X(z) := \sum_{n=0}^\infty x_n\cdot z^{-n} ~, \qquad z\in \mathds{C}
-\end{equation}
-
-\pause
-\vspace{0.5cm}
-$\displaystyle{X(z)}$ ist f\"ur die $\displaystyle{z\in\mathds{C}}$ definiert, f\"ur die die
-unendliche Reihe konvergiert.
-
-%$\displaystyle{\sum_{k=0}^\infty x_k\cdot z^{-k}}$ konvergent ist.
-
-\end{frame}
-
-
-\section{Implementation}
-
-\begin{frame}
-\frametitle{Implementation}
-%\framesubtitle{xxx}
-
-Test
-
+\begin{frame}\frametitle{Target} %\framesubtitle{xxx}
+\begin{itemize}
+\item \ldots
+\end{itemize} 
 \end{frame}
 
 
 
+% - Real Vehicles
+%   - Flugplan / VCL
+%   - Simulation
+%   - Sensoren
+\section{Real Vehicles}
 
-\section{Results}
-%\subsection[Short First Subsection Name]{First Subsection Name}
+\begin{frame}\frametitle{Flight Plan} %\framesubtitle{xxx}
+\begin{itemize}
+\item real vehicles follow strict flight plans
+\item \ldots
+\end{itemize} 
+\end{frame}
 
-\begin{frame}
-\frametitle{Results}
-%\framesubtitle{xxx}
+% - Vehicle Virtualisierung
+%   - Prinzipielle Funktion eines VV-Programms
+%   - Status / Serialisierung / Migration
+%   - VV-Language: Command = Point + Actions
+%   - Scanner, Parser
+\section{Vehicle Virtualization}
 
-Test
+\begin{frame}\frametitle{Virtual Vehicle Program} %\framesubtitle{xxx}
+\begin{itemize}
+\item \ldots
+\end{itemize} 
+\end{frame}
 
+% - Mapping
+%   - Registrierung der Engines
+%   - Algorithmen: Random, Simple
+%   - Anstoﬂ der Migration
+\section{Mapping}
+
+\begin{frame}\frametitle{Engine Registration} %\framesubtitle{xxx}
+\begin{itemize}
+\item \ldots
+\end{itemize} 
+\end{frame}
+
+% - Erk‰rung User-Interface:
+%   - GM-View
+\section{User Interface}
+
+\begin{frame}\frametitle{Google Maps Viewer} %\framesubtitle{xxx}
+\begin{itemize}
+\item \ldots
+\end{itemize} 
 \end{frame}
 
 
+\section{Live Demonstration}
+% - Demo 1: "VV sammelt Daten"
+%   - Setup: 1xRV, 1xVV, 2xVV-Points
+%   - RV fliegt die VV-Points ab
+%   - VV sammelt die Daten ein
+%\subsection{Demo 1 - Data Collection}
+
+\begin{frame}\frametitle{Data Collection} %\framesubtitle{xxx}
+\begin{itemize}
+\item \ldots
+\end{itemize} 
+\end{frame}
+
+% - Demo 2: "VV wird migriert"
+%   - Setup: 2xRV, 1xVV, 2xVV-Points
+%   - Je ein RV fliegt einen VV-Point an
+%   - VV sammelt am RV1 die ersten VV-Point Daten
+%     ein, wird migriert und macht am RV2 weiter.
+%\subsection{Demo 2 - Migration}
+
+\begin{frame}\frametitle{Virtual Vehicle Migration} %\framesubtitle{xxx}
+\begin{itemize}
+\item \ldots
+\end{itemize} 
+\end{frame}
+
+% - Demo 3: "RVs haben unterschiedliche Sensoren"
+%   - Setup: 3xRV, 1xVV, 1xVV-Point
+%   - Alle RVs fliegen nacheinander einen VV-Point an
+%   - VV sammelt am RV1 die ersten VV-Point Daten
+%     ein, wird migriert auf RV2, sammelt weiter Daten
+%     ein, wird migriert auf RV3 und sammelt die
+%     restlichen Daten ein.
+%\subsection{Demo 3 - Sensor Variety}
+
+\begin{frame}\frametitle{Real Vehicles with different Sensors} %\framesubtitle{xxx}
+\begin{itemize}
+\item \ldots
+\end{itemize} 
+\end{frame}
 
 
+% - Demo 4: "All in one."
+%   - Setup: 3xRV, 3xVV, 9xVV-Point
+%   - ...
+%\subsection{Demo 4 - All in One}
 
+\begin{frame}\frametitle{All in One} %\framesubtitle{xxx}
+\begin{itemize}
+\item \ldots
+\end{itemize} 
+\end{frame}
 
+% - Future Work
+%   - Aufw‰ndigere Mapping-Algorithmen
+%   - Optimierung Netzwerkverkehr
+%   - Video-Sensor
+%   - Geo-Location: Vergleich RV-Position zu VV-Sollwert
+%   - RV-Flugpl‰ne aus VV-Programmen zusammenstellen
+\section{Future Work}
 
+\begin{frame}\frametitle{Future Work} %\framesubtitle{xxx}
+\begin{itemize}
+\item more sophisticated mapping algorithms
+\item optimized network traffic
+\item video sensor support
+\item \ldots
+\end{itemize} 
+\end{frame}
+ 
 
-
-
+% - Q & A Session
 \section{Questions and Answers}
 
 \begin{frame}
@@ -197,6 +268,33 @@ Test
 	\end{center}
 \end{frame}
 
-
+% Sample Frame:
+% \begin{frame}
+% \frametitle{Introduction}
+% %\framesubtitle{xxx}
+% 
+% Test $\displaystyle{x = (x_n)_{n\in\mathds{N}_0}}$
+% 
+% Test
+% \begin{equation}
+% 	x : \mathds{N}_0 \rightarrow \mathds{C}
+% \end{equation}
+% 
+% \pause
+% 
+% Test
+% \begin{equation}
+% 	\mathcal{Z}\{x\} =
+% 	X(z) := \sum_{n=0}^\infty x_n\cdot z^{-n} ~, \qquad z\in \mathds{C}
+% \end{equation}
+% 
+% \pause
+% \vspace{0.5cm}
+% $\displaystyle{X(z)}$ ist f\"ur die $\displaystyle{z\in\mathds{C}}$ definiert, f\"ur die die
+% unendliche Reihe konvergiert.
+% 
+% %$\displaystyle{\sum_{k=0}^\infty x_k\cdot z^{-k}}$ konvergent ist.
+% 
+% \end{frame}
 
 \end{document}

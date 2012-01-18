@@ -152,18 +152,27 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 	}
 	
 	protected void migrate(String sourceEngineUrl, String vehicleName, String targetEngineUrl) {
+		
+		if (sourceEngineUrl.equals(targetEngineUrl)) {
+			LOG.debug("Migration cancelled, because source engine is target engine: " + targetEngineUrl);
+			return;
+		}
 
 		String migrationUrl = sourceEngineUrl
 				+ "/vehicle/text/vehicleMigration?vehicleIDs=" + vehicleName
 				+ "&vehicleDst=" + targetEngineUrl
 				+ "/vehicle/text/vehicleUpload";
-		LOG.info("random migration: " + migrationUrl);
+		LOG.info("Migration: " + migrationUrl);
 
 		try {
 			String ret = HttpQueryUtils.simpleQuery(migrationUrl);
-			LOG.info("random migration succeeded. " + migrationUrl + ", " + ret);
+			if ("OK".equals(ret)) {
+				LOG.info("Migration succeeded. " + migrationUrl + ", " + ret);
+			} else {
+				LOG.error("Migration failed. " + migrationUrl + ", " + ret);
+			}
 		} catch (IOException ex) {
-			LOG.error("random migration railed. " + migrationUrl, ex);
+			LOG.error("Migration failed. " + migrationUrl, ex);
 		}
 
 	}

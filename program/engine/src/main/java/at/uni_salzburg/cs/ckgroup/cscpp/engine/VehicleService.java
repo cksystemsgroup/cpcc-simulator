@@ -194,6 +194,10 @@ public class VehicleService extends DefaultService {
 				}
 			}
 			
+			if (textMode) {
+				emitPlainText(response, "OK");
+				return;
+			}
 			nextPage = request.getContextPath() + "/vehicle.tpl";
 			
 		} else if (ACTION_VEHICLE_SUSPEND.equals(action)) {

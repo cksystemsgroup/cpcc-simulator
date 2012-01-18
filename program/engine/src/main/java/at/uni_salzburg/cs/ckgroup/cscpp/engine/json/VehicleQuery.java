@@ -37,6 +37,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class VehicleQuery implements IQuery {
 
+	private static final String PROP_VEHICLE_LOCAL_NAME = "name";
 	private static final String PROP_VEHICLE_STATE = "state";
 	private static final String PROP_VEHICLE_LATITUDE = "latitude";
 	private static final String PROP_VEHICLE_LONGITUDE = "longitude";
@@ -48,8 +49,14 @@ public class VehicleQuery implements IQuery {
 	
 	@SuppressWarnings("serial")
 	private Map<String,String> actionsMap = new HashMap<String, String>() {{
-		put("TEMPERATURE", "temperature");
+		put("AIRPRESSURE", "airPressure");
+		put("ALTITUDE", "altitude");
+		put("COURSE", "course");
 		put("PICTURE", "photo");
+		put("RANDOM", "random");
+		put("SONAR", "sonar");
+		put("SPEED", "speed");
+		put("TEMPERATURE", "temperature");
 	}};
 
 	public void setVehicleMap(Map<String, IVirtualVehicle> vehicleMap) {
@@ -64,9 +71,13 @@ public class VehicleQuery implements IQuery {
 			if (vehicle.isFrozen()) {
 				continue;
 			}
+			
 			Map<String, Object> props = new LinkedHashMap<String, Object>();
-			for (Entry<Object, Object> e : vehicle.getProperties().entrySet())
+			for (Entry<Object, Object> e : vehicle.getProperties().entrySet()) {
 				props.put((String)e.getKey(), e.getValue());
+			}
+			
+			props.put(PROP_VEHICLE_LOCAL_NAME, vehicle.getWorkDir().getName());
 			
 			if(vehicle.isProgramCorrupted()) {
 				props.put(PROP_VEHICLE_STATE, "corrupt");

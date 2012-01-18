@@ -23,8 +23,9 @@ package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -91,7 +92,7 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy#getListOfAvailableSensors()
 	 */
 	@Override
-	public List<String> getListOfAvailableSensors() throws ParseException {
+	public Set<String> getAvailableSensors() throws ParseException {
 		String jsonString = getSensorValue("sensors");
 		if (jsonString == null) {
 			return null;
@@ -100,7 +101,7 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		JSONParser parser = new JSONParser();
 		@SuppressWarnings("unchecked")
 		List<Object> list = (List<Object>)parser.parse(jsonString);
-		List<String> result = new ArrayList<String>();
+		Set<String> result = new HashSet<String>();
 		for (Object entry : list) {
 			result.add(entry.toString());
 		}

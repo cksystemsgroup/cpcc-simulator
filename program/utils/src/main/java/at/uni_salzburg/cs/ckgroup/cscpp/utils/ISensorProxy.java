@@ -21,7 +21,7 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
 import java.io.InputStream;
-import java.util.List;
+import java.util.Set;
 
 import org.json.simple.parser.ParseException;
 
@@ -84,6 +84,6 @@ public interface ISensorProxy {
 	/**
 	 * @return the list of available sensors.
 	 */
-	List<String> getListOfAvailableSensors() throws ParseException;
+	Set<String> getAvailableSensors() throws ParseException;
 	
 }

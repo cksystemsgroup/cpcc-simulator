@@ -88,9 +88,10 @@ public class EngineRegister extends Thread {
 		    	registrationOk = true;
 		    	return;
 			}
+			LOG.error("Mapper registration failed. " + registrationUrl + " -- rc=" + ret);
 		} catch (IOException ex) {
+			LOG.error("Mapper registration failed. " + registrationUrl, ex);
 		}
-		LOG.info("Mapper registration failed. " + registrationUrl);
     }
 
 	public String getRegistrationUrl() {

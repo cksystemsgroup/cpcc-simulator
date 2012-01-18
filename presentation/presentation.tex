@@ -154,6 +154,38 @@ Department of Computer Sciences\\
 
 \begin{frame}\frametitle{Virtual Vehicle Program} %\framesubtitle{xxx}
 \begin{itemize}
+\item ability to suspend
+\item state is serialized
+\item information is persisted to file
+\item migration can be performed
+\item virtual vehicle can resume
+\end{itemize} 
+\end{frame}
+
+\begin{frame}\frametitle{Virtual Vehicle Language} %\framesubtitle{xxx}
+\begin{itemize}
+\item list of commands
+\item command consits of a point and a list of actions
+\item point contains latitude, longitude, altitude
+\item specification of tolerance
+\end{itemize} 
+\end{frame}
+
+\begin{frame}\frametitle{Virtual Vehicle Sample Program} %\framesubtitle{xxx}
+\texttt{\\
+Point 47.82201946 13.04082647 1.00 tolerance 12.3\\
+Picture \\
+Temperature\\
+\\
+Point 47.82203026 13.04084659 25.00 tolerance 100 \\
+Temperature\\
+\\
+Point 47.82211311 13.04076076 30.00 tolerance 1.2\\
+Picture} 
+\end{frame}
+
+\begin{frame}\frametitle{Scanner \& Parser} %\framesubtitle{xxx}
+\begin{itemize}
 \item \ldots
 \end{itemize} 
 \end{frame}
@@ -247,7 +279,8 @@ Department of Computer Sciences\\
 \item more sophisticated mapping algorithms
 \item optimized network traffic
 \item video sensor support
-\item \ldots
+\item geo-location
+\item flight plan generation
 \end{itemize} 
 \end{frame}
  

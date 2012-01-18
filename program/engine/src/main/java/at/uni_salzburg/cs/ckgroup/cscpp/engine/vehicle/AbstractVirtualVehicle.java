@@ -199,7 +199,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 			vehicleLog = new PrintWriter(new FileWriter(new File(workDir, LOG_PATH), true));
 		}
 		
-		if (frozen) {
+		if (frozen || completed) {
 			return;
 		}
 		

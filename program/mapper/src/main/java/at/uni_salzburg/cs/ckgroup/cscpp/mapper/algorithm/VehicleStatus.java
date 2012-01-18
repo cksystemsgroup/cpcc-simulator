@@ -20,8 +20,6 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
-import java.nio.channels.AsynchronousCloseException;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -34,6 +32,7 @@ public class VehicleStatus implements JSONAware {
 		NONE, SUSPENDED, ACTIVE, CORRUPT, COMPLETED
 	};
 	
+	private String name;
 	private String id;
 	private Status state;
 	private PolarCoordinate position = null;
@@ -41,6 +40,7 @@ public class VehicleStatus implements JSONAware {
 	private String[] actions = null;
 	
 	public VehicleStatus(JSONObject obj) {
+		name = (String)obj.get("name");
 		id = (String)obj.get("vehicle.id");
 		state = Status.valueOf(((String)obj.get("state")).toUpperCase());
 		if (state == Status.ACTIVE || state == Status.SUSPENDED) {
@@ -56,6 +56,10 @@ public class VehicleStatus implements JSONAware {
 				actions[k] = (String)as.get(k);
 			}
 		}
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getId() {
@@ -82,6 +86,7 @@ public class VehicleStatus implements JSONAware {
 	@Override
 	public String toJSONString() {
 		JSONObject obj = new JSONObject();
+		obj.put("name", name);
 		obj.put("vehicle.id", id);
 		obj.put("state", state.toString().toLowerCase());
 		if (position != null) {

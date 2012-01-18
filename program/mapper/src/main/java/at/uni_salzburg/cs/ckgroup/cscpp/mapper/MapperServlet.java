@@ -25,8 +25,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.ServletConfig;
@@ -65,6 +67,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	private File configFile;
 	private File registryFile;
 	private Map<String, RegData> regdata;
+	private Set<String> centralEngines;
 	private IMappingAlgorithm mappingAlgorithm;
 
 	private ServiceEntry[] services = {
@@ -78,6 +81,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	public void init (ServletConfig servletConfig) throws ServletException {
 		this.servletConfig = servletConfig;
 		regdata = Collections.synchronizedMap(new TreeMap<String, RegData>());
+		centralEngines = Collections.synchronizedSet(new HashSet<String>());
 		super.init();
 		myInit();
 	}
@@ -94,6 +98,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			
 			servletConfig.getServletContext().setAttribute("configuration", configuration);	
 			servletConfig.getServletContext().setAttribute("regdata", regdata);
+			servletConfig.getServletContext().setAttribute("centralEngines", centralEngines);
 			
 			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
 			configuration.setWorkDir (contexTempDir);
@@ -104,7 +109,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			reloadConfigFile();
 			
 			String algorithmName = props.getProperty(PROP_MAPPER_ALGORITHM, "random");
-			mappingAlgorithm = MappingAlgrithmBuilder.build(algorithmName.trim(), regdata);
+			mappingAlgorithm = MappingAlgrithmBuilder.build(algorithmName.trim(), regdata, centralEngines);
 			servletConfig.getServletContext().setAttribute("mappingAlgorithm", mappingAlgorithm);
 			
 		} catch (IOException e) {

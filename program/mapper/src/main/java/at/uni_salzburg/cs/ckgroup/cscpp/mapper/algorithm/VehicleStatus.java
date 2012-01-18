@@ -20,6 +20,11 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -37,7 +42,7 @@ public class VehicleStatus implements JSONAware {
 	private Status state;
 	private PolarCoordinate position = null;
 	private double tolerance = Double.NaN;
-	private String[] actions = null;
+	private Set<String> actions = null;
 	
 	public VehicleStatus(JSONObject obj) {
 		name = (String)obj.get("name");
@@ -50,10 +55,9 @@ public class VehicleStatus implements JSONAware {
 			position = new PolarCoordinate(latitude, longitude, altitude);
 			tolerance = (Double)obj.get("tolerance");
 			JSONArray as = (JSONArray)obj.get("actions");
-//			actions = ((String)obj.get("actions")).trim().split("\\s*,\\s*");
-			actions = new String[as.size()];
+			actions = new HashSet<String>();
 			for (int k=0; k < as.size(); ++k) {
-				actions[k] = (String)as.get(k);
+				actions.add((String)as.get(k));
 			}
 		}
 	}
@@ -78,7 +82,7 @@ public class VehicleStatus implements JSONAware {
 		return tolerance;
 	}
 
-	public String[] getActions() {
+	public Set<String> getActions() {
 		return actions;
 	}
 
@@ -97,14 +101,9 @@ public class VehicleStatus implements JSONAware {
 		obj.put("tolerance", tolerance);
 		
 		if (actions != null) {
-			StringBuilder b = new StringBuilder();
-			boolean first = true;
-			for (String a : actions) {
-				if (!first)  b.append(',');
-				b.append(a);
-				first = false;
-			}
-			obj.put("actions", b.toString());
+			List<String> as = new ArrayList<String>();
+			as.addAll(actions);
+			obj.put("actions", as);
 		}
 		return obj.toJSONString();
 	}

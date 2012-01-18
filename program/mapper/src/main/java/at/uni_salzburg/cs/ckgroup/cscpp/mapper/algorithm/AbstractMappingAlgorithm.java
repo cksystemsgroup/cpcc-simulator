@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -35,7 +36,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
 public abstract class AbstractMappingAlgorithm extends Thread implements IMappingAlgorithm {
 	
-	Logger LOG = Logger.getLogger(AbstractMappingAlgorithm.class);
+	private static final Logger LOG = Logger.getLogger(AbstractMappingAlgorithm.class);
 	
 	private boolean running = false;
 	
@@ -43,15 +44,19 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 
 	private long cycleTime = 1000;
 	
-	protected Map<String,StatusProxy> statusProxyMap = new HashMap<String, StatusProxy>();
-	protected Map<String,Map<String,VehicleStatus>> virtualVehicleMap = new HashMap<String, Map<String,VehicleStatus>>(); 
-	
-	protected Map<String,RegData> registrationData;
+	private Map<String,StatusProxy> statusProxyMap = new HashMap<String, StatusProxy>();
+	private Map<String,Map<String,VehicleStatus>> virtualVehicleMap = new HashMap<String, Map<String,VehicleStatus>>(); 
+	private Map<String,RegData> registrationData;
+	private Set<String> centralEngines;
 	
 	public void setRegistrationData(Map<String, RegData> registrationData) {
 		this.registrationData = registrationData;
 	}
 
+	public void setCentralEngines(Set<String> centralEngines) {
+		this.centralEngines = centralEngines;
+	}
+	
 	@Override
 	public boolean isRunning() {
 		return running;
@@ -175,6 +180,22 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 			LOG.error("Migration failed. " + migrationUrl, ex);
 		}
 
+	}
+	
+	public Map<String, StatusProxy> getStatusProxyMap() {
+		return statusProxyMap;
+	}
+
+	public Map<String, Map<String, VehicleStatus>> getVirtualVehicleMap() {
+		return virtualVehicleMap;
+	}
+
+	public Map<String, RegData> getRegistrationData() {
+		return registrationData;
+	}
+
+	public String getCentralEngineUrl() {
+		return centralEngines.isEmpty() ? null : (String)centralEngines.toArray()[0];
 	}
 
 	public abstract void execute();

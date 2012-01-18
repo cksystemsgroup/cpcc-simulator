@@ -20,6 +20,9 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -31,7 +34,13 @@ public class VehicleStatusTestCase {
 	@Test
 	public void testCase01() throws ParseException {
 		String status = "{\"vehicle.id\":\"b2345527-2796-4ea9-b500-d842d6f2b638\",\"state\":\"active\",\"latitude\":47.82211311,\"longitude\":13.04076076,\"altitude\":30.0," +
-				"\"tolerance\":1.2,\"actions\":\"photo\"}";
+				"\"tolerance\":1.2,\"actions\":[\"photo\"]}";
+		@SuppressWarnings("serial")
+		Set<String> expectedSensors = new HashSet<String>() {{
+			add("photo");
+		}};
+		
+		
 		JSONParser parser = new JSONParser();
 		VehicleStatus s = new VehicleStatus((JSONObject)parser.parse(status));
 		Assert.assertEquals("b2345527-2796-4ea9-b500-d842d6f2b638", s.getId());
@@ -40,7 +49,9 @@ public class VehicleStatusTestCase {
 		Assert.assertEquals(13.04076076, s.getPosition().getLongitude(), 1E-9);
 		Assert.assertEquals(30.0, s.getPosition().getAltitude(), 1E-9);
 		Assert.assertEquals(1.2, s.getTolerance(), 1E-9);
-		Assert.assertArrayEquals(new String[]{"photo"}, s.getActions());
+		Assert.assertTrue(s.getActions().containsAll(expectedSensors));
+		Assert.assertTrue(expectedSensors.containsAll(s.getActions()));
+		System.out.println("testCase01-1: " + s.toJSONString());
 		
 		s = new VehicleStatus((JSONObject)parser.parse(s.toJSONString()));
 		Assert.assertEquals("b2345527-2796-4ea9-b500-d842d6f2b638", s.getId());
@@ -49,8 +60,8 @@ public class VehicleStatusTestCase {
 		Assert.assertEquals(13.04076076, s.getPosition().getLongitude(), 1E-9);
 		Assert.assertEquals(30.0, s.getPosition().getAltitude(), 1E-9);
 		Assert.assertEquals(1.2, s.getTolerance(), 1E-9);
-		Assert.assertArrayEquals(new String[]{"photo"}, s.getActions());
-		
+		Assert.assertTrue(s.getActions().containsAll(expectedSensors));
+		Assert.assertTrue(expectedSensors.containsAll(s.getActions()));
 	}
 
 	@Test
@@ -76,7 +87,12 @@ public class VehicleStatusTestCase {
 	@Test
 	public void testCase03() throws ParseException {
 		String status = "{\"vehicle.id\":\"c2345527-2796-4ea9-b500-d842d6f2b638\",\"state\":\"suspended\",\"latitude\":48.82211311,\"longitude\":18.04076076,\"altitude\":38.0," +
-				"\"tolerance\":8.2,\"actions\":\"temperature\"}";
+				"\"tolerance\":8.2,\"actions\":[\"temperature\"]}";
+		@SuppressWarnings("serial")
+		Set<String> expectedSensors = new HashSet<String>() {{
+			add("temperature");
+		}};
+		
 		JSONParser parser = new JSONParser();
 		VehicleStatus s = new VehicleStatus((JSONObject)parser.parse(status));
 		Assert.assertEquals("c2345527-2796-4ea9-b500-d842d6f2b638", s.getId());
@@ -85,7 +101,8 @@ public class VehicleStatusTestCase {
 		Assert.assertEquals(18.04076076, s.getPosition().getLongitude(), 1E-9);
 		Assert.assertEquals(38.0, s.getPosition().getAltitude(), 1E-9);
 		Assert.assertEquals(8.2, s.getTolerance(), 1E-9);
-		Assert.assertArrayEquals(new String[]{"temperature"}, s.getActions());
+		Assert.assertTrue(s.getActions().containsAll(expectedSensors));
+		Assert.assertTrue(expectedSensors.containsAll(s.getActions()));
 		
 		s = new VehicleStatus((JSONObject)parser.parse(s.toJSONString()));
 		Assert.assertEquals("c2345527-2796-4ea9-b500-d842d6f2b638", s.getId());
@@ -94,7 +111,8 @@ public class VehicleStatusTestCase {
 		Assert.assertEquals(18.04076076, s.getPosition().getLongitude(), 1E-9);
 		Assert.assertEquals(38.0, s.getPosition().getAltitude(), 1E-9);
 		Assert.assertEquals(8.2, s.getTolerance(), 1E-9);
-		Assert.assertArrayEquals(new String[]{"temperature"}, s.getActions());
+		Assert.assertTrue(s.getActions().containsAll(expectedSensors));
+		Assert.assertTrue(expectedSensors.containsAll(s.getActions()));
 	}
 	
 	@Test

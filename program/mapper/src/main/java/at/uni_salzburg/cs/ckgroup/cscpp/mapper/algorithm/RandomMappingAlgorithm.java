@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 
 public class RandomMappingAlgorithm extends AbstractMappingAlgorithm {
 
-	Logger LOG = Logger.getLogger(RandomMappingAlgorithm.class);
+	private static final Logger LOG = Logger.getLogger(RandomMappingAlgorithm.class);
 	
 	public static final int COUNTER_MAXIMUM = 5;
 	
@@ -36,7 +36,7 @@ public class RandomMappingAlgorithm extends AbstractMappingAlgorithm {
 	@Override
 	public void execute() {
 		
-		if (virtualVehicleMap.isEmpty()) {
+		if (getVirtualVehicleMap().isEmpty()) {
 			LOG.info("No migration because of empty virtual vehicle map.");
 			return;
 		}
@@ -86,8 +86,8 @@ public class RandomMappingAlgorithm extends AbstractMappingAlgorithm {
 	}
 
 	private Entry<String, Map<String, VehicleStatus>> getRandomEngine () {
-		int engineNumber = (int)(Math.random() * virtualVehicleMap.size());
-		for (Entry<String, Map<String, VehicleStatus>> v : virtualVehicleMap.entrySet())
+		int engineNumber = (int)(Math.random() * getVirtualVehicleMap().size());
+		for (Entry<String, Map<String, VehicleStatus>> v : getVirtualVehicleMap().entrySet())
 			if (engineNumber-- <= 0)
 				return v;
 		return null;

@@ -21,6 +21,7 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 
@@ -31,7 +32,7 @@ public class MappingAlgrithmBuilder {
 	public static final String SIMPLE = "simple";
 	public static final String RANDOM = "random";
 	
-	public static IMappingAlgorithm build(String algorithmName, Map<String, RegData> regdata) throws ServletException {
+	public static IMappingAlgorithm build(String algorithmName, Map<String, RegData> regdata, Set<String> centralEngines) throws ServletException {
 		
 		AbstractMappingAlgorithm algorithm = null;
 		
@@ -45,6 +46,7 @@ public class MappingAlgrithmBuilder {
 		
 		if (algorithm != null) {
 			algorithm.setRegistrationData(regdata);
+			algorithm.setCentralEngines(centralEngines);
 			algorithm.start();
 		}
 		

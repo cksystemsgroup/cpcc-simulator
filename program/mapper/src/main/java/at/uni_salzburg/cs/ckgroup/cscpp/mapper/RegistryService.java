@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -86,6 +87,10 @@ public class RegistryService extends DefaultService{
 		        	// No sensors available, which is OK. This is a central engine.
 		        	LOG.info("Sucessful registration: central engine='" + eng_uri + "'");
 					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null));
+					
+					@SuppressWarnings("unchecked")
+					Set<String> centralEngines = (Set<String>)config.getServletContext().getAttribute("centralEngines");
+					centralEngines.add(eng_uri.trim());
 		        	
 		        } else {
 		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
@@ -103,9 +108,9 @@ public class RegistryService extends DefaultService{
 		        	LOG.info("Retrieving available sensors:");		        
 			        SensorProxy sensorProxy = new SensorProxy();
 			        sensorProxy.setPilotUrl(pilot_uri);
-			        List<String> sensors = null;
+			        Set<String> sensors = null;
 					try {
-						sensors = sensorProxy.getListOfAvailableSensors();
+						sensors = sensorProxy.getAvailableSensors();
 	
 				        for (String sensor : sensors) {
 				        	LOG.info("Sensor: " + sensor);

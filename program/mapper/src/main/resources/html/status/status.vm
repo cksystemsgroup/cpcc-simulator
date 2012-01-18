@@ -28,7 +28,11 @@
 #foreach( $key in $keySet )
 #set( $rd = $reg.get($key) )
 					<tr>
+#if( $rd.isCentralEngine() )
+						<td style="color: brown;">Engine URL: <a href="$key">$key</a> <br/>
+#else
 						<td>Engine URL: <a href="$key">$key</a> <br/>
+#end
 #if( $rd.getPilotUri() )
 Pilot URL: <a href="$rd.getPilotUri()">$rd.getPilotUri()</a> <br/>
 #end

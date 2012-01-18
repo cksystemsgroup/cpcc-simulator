@@ -26,77 +26,73 @@ import at.uni_salzburg.cs.ckgroup.course.WGS84;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.VehicleStatus.Status;
 import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 
 
 public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
 
-	Logger LOG = Logger.getLogger(SimpleMappingAlgorithm.class);
+	private static final Logger LOG = Logger.getLogger(SimpleMappingAlgorithm.class);
 	private IGeodeticSystem geodeticSystem = new WGS84();
-	private String central_engine;
 	
 	@Override
 	public void execute() {
                 
-		if (virtualVehicleMap.isEmpty()) {
+		if (getVirtualVehicleMap().isEmpty()) {
 			LOG.info("No migration because of empty virtual vehicle map.");
 			return;
 		}
                 
-		if(statusProxyMap.isEmpty()) {
+		if(getStatusProxyMap().isEmpty()) {
 			LOG.info("No migration because of empty status proxy map.");
 			return;
 		}
                 
-		for (Map.Entry<String, Map<String, VehicleStatus>> vehicle : virtualVehicleMap.entrySet()) {
+		for (Map.Entry<String, Map<String, VehicleStatus>> vehicle : getVirtualVehicleMap().entrySet()) {
 		    
-			if(vehicle == null)
+			if(vehicle == null || vehicle.getValue().isEmpty()) {
 				continue;
-			else if(vehicle.getValue().isEmpty())
-				continue;
-			else {
-				String eng_url = vehicle.getKey();
-				Map<String, VehicleStatus> vstat_map = vehicle.getValue();
+			}
+			
+			String eng_url = vehicle.getKey();
+			Map<String, VehicleStatus> vstat_map = vehicle.getValue();
 
-				for (Map.Entry<String, VehicleStatus> vstat : vstat_map.entrySet()) {
-					VehicleStatus vs = (VehicleStatus) vstat.getValue();
-					String vv = vs.getName();
+			for (Map.Entry<String, VehicleStatus> vstat : vstat_map.entrySet()) {
+				VehicleStatus vs = (VehicleStatus) vstat.getValue();
+				String vv = vs.getName();
 
-					if (vs.getState() == Status.COMPLETED) {
-						if (central_engine != null) {
-							migrate(eng_url, vv, central_engine);
-						}
-						continue;
-					}
-
-					String[] actions = vs.getActions();
-					PolarCoordinate pos = vs.getPosition();
-					double tol = vs.getTolerance();
-
-					String eng_uri_new = getEngine(pos, tol, actions);
-
-					if (eng_uri_new == null) {
-						continue;
-					}
-
-					if (eng_uri_new.equalsIgnoreCase(eng_url)) {
-						continue;
+				if (vs.getState() == Status.COMPLETED) {
+					if (getCentralEngineUrl() != null) {
+						migrate(eng_url, vv, getCentralEngineUrl());
 					} else {
-						migrate(eng_url, vv, eng_uri_new);
+						LOG.info("Can not migrate completed VV " + vv + " to a central engine.");
 					}
+					continue;
 				}
 
+				Set<String> actions = vs.getActions();
+				PolarCoordinate pos = vs.getPosition();
+				double tol = vs.getTolerance();
+
+				String eng_uri_new = getEngine(pos, tol, actions);
+
+				if (eng_uri_new == null || eng_uri_new.equalsIgnoreCase(eng_url)) {
+					continue;
+				}
+				
+				migrate(eng_url, vv, eng_uri_new);
 			}
 		}
 	}
         
-    private String getEngine(PolarCoordinate pos, double tol, String[] sensors) {
+    private String getEngine(PolarCoordinate pos, double tol, Set<String> actions) {
     	if (pos == null) {
     		return null;
     	}
         CartesianCoordinate virtualPosCart = geodeticSystem.polarToRectangularCoordinates(pos);
         
-        for(Map.Entry<String,StatusProxy> sp :statusProxyMap.entrySet()) {
+        for(Map.Entry<String,StatusProxy> sp :getStatusProxyMap().entrySet()) {
             String v = sp.getKey();
             StatusProxy s = sp.getValue();
             PolarCoordinate cur = s.getCurrentPosition();
@@ -106,17 +102,16 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
                 CartesianCoordinate currentPosCart = geodeticSystem.polarToRectangularCoordinates(cur);
                 CartesianCoordinate nextPosCart = geodeticSystem.polarToRectangularCoordinates(nxt);
                 if(isNear(currentPosCart, nextPosCart, virtualPosCart, tol)) {
-                    RegData re_val = registrationData.get(v);
+                    RegData re_val = getRegistrationData().get(v);
                     if(re_val != null) {
-                        String[] sens_v = re_val.getSensors().toArray(new String[0]);
-                        for(int i = 0; i < sens_v.length; i++) {
-                            if(sensors.toString().contains(sens_v[i]))
-                                return v;
-                        }
+                    	for (String a : actions) {
+                    		if (re_val.getSensors().contains(a)) {
+                    			return v;
+                    		}
+                    	}
                     }
                 }    
             }
-            else if (central_engine == null) central_engine = v;
         }
         return null;
     }

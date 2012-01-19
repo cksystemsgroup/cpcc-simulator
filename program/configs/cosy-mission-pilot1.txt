@@ -2,7 +2,7 @@
 ## @(#) set course trajectory 0
 ##
 go auto
-takeoff 1 for 5s
+takeoff 1m for 5s
 fly to(47.82201946,13.04082647,1.00)abs precision 1m 0.1mps
 fly to(47.82203026,13.04084659,25.00)abs precision 1m 5.1mps
 fly to(47.82211311,13.04076076,30.00)abs precision 1m 5.2mps

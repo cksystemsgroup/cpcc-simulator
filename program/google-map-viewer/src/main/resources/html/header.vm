@@ -3,6 +3,7 @@
 			<h1><a href="index.tpl">GM-Viewer</a></h1>
 			<p><a href="http://cs.uni-salzburg.at/~ck/group/">ESE CPCC Project</a></p>
 		</div>
+<!--
 		<div id="menu">
 			<ul>
 				<li class="current_page_item"><a href="#">Status</a></li>
@@ -10,5 +11,6 @@
 				<li><a href="snoop">Snoop</a></li>
 			</ul>
 		</div>
+-->
 	</div>
 	<!-- end #header -->

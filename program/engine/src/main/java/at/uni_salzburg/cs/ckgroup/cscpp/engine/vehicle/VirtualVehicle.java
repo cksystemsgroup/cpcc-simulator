@@ -1,7 +1,7 @@
 /*
  * @(#) VirtualVehicle.java
  *
- * This code is part of the JNavigator project.
+ * This code is part of the ESE CPCC project.
  * Copyright (c) 2011  Clemens Krainer, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
@@ -174,32 +174,21 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		{
 			currentCommand.execute(sensorProxy);
 			
-			if (listIter.hasNext()) {
-				currentCommand = listIter.next();
-			} else {
-				try {
-					setCompleted();
-				} catch (IOException e) {
-					LOG.error("Can not set vehicle " + getWorkDir() + " to completed.", e);
+			if (currentCommand.is_finished()) {
+				if (listIter.hasNext()) {
+					currentCommand = listIter.next();
+				} else {
+					try {
+						setCompleted();
+					} catch (IOException e) {
+						LOG.error("Can not set vehicle " + getWorkDir() + " to completed.", e);
+					}
 				}
 			}
+
+			storeVehicleState();
 		}
 		
-		storeVehicleState();
-		
-		
-//		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
-//		Double courseOverGround = sensorProxy.getCourseOverGround();
-//		Double speedOverGround = sensorProxy.getSpeedOverGround();
-//		Double airPressure = sensorProxy.getSensorValueAsDouble(SensorProxy.SENSOR_NAME_AIR_PRESSURE);
-//		Integer random = sensorProxy.getSensorValueAsInteger(SensorProxy.SENSOR_NAME_RANDOM);
-//		String sonar = sensorProxy.getSensorValue(SensorProxy.SENSOR_NAME_SONAR);
-//		InputStream photo = sensorProxy.getSensorValueAsStream(SensorProxy.SENSOR_NAME_PHOTO);
-//		
-//		LOG.error("VirtualVehicle.execute() is not implemented yet! position=" + currentPosition +
-//				", alt=" + altitudeOverGround + ", course=" + courseOverGround +
-//				", speed=" + speedOverGround
-//				);
 	}
 	
 	
@@ -233,7 +222,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			return -1;
 		
 		int next = listIter.nextIndex();
-		return next == commandList.size() ? -1 : next-1;
+		return next > commandList.size() ? -1 : next-1;
 	}
 	
 	/* (non-Javadoc)

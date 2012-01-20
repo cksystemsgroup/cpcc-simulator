@@ -19,16 +19,18 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
 import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.VehicleStatus.Status;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
 
 
 public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
@@ -48,84 +50,83 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
 			LOG.info("No migration because of empty status proxy map.");
 			return;
 		}
-                
-		for (Map.Entry<String, Map<String, VehicleStatus>> vehicle : getVirtualVehicleMap().entrySet()) {
-		    
-			if(vehicle == null || vehicle.getValue().isEmpty()) {
+		
+		List<VehicleInfo> vehicleList = getVirtualVehicleList();
+		
+		for (VehicleInfo vehicleInfo : vehicleList) {
+
+			String vv = vehicleInfo.getVehicleName();
+			String eng_url = vehicleInfo.getEngineUrl();
+			VehicleStatus vs = vehicleInfo.getVehicleStatus();
+					
+			if (vs.getState() == Status.COMPLETED) {
+				if (getCentralEngineUrl() != null) {
+					migrate(eng_url, vv, getCentralEngineUrl());
+				} else {
+					LOG.debug("Can not migrate completed VV " + vv + " to a central engine.");
+				}
 				continue;
 			}
 			
-			String eng_url = vehicle.getKey();
-			Map<String, VehicleStatus> vstat_map = vehicle.getValue();
-
-			for (Map.Entry<String, VehicleStatus> vstat : vstat_map.entrySet()) {
-				VehicleStatus vs = (VehicleStatus) vstat.getValue();
-				String vv = vs.getName();
-
-				if (vs.getState() == Status.COMPLETED) {
-					if (getCentralEngineUrl() != null) {
-						migrate(eng_url, vv, getCentralEngineUrl());
-					} else {
-						LOG.info("Can not migrate completed VV " + vv + " to a central engine.");
-					}
-					continue;
-				}
-
-				Set<String> actions = vs.getActions();
-				PolarCoordinate pos = vs.getPosition();
-				double tol = vs.getTolerance();
-
-				String eng_uri_new = getEngine(pos, tol, actions);
-
-				if (eng_uri_new == null || eng_uri_new.equalsIgnoreCase(eng_url)) {
-					continue;
-				}
-				
-				migrate(eng_url, vv, eng_uri_new);
+			Set<String> actions = vs.getActions();
+			PolarCoordinate pos = vs.getPosition();
+			double tol = vs.getTolerance();
+			
+			String eng_uri_new = getEngine(pos, tol, actions);
+			if (eng_uri_new == null || eng_uri_new.equalsIgnoreCase(eng_url)) {
+				continue;
 			}
+			
+			migrate(eng_url, vv, eng_uri_new);
 		}
+		
 	}
         
     private String getEngine(PolarCoordinate pos, double tol, Set<String> actions) {
     	if (pos == null) {
     		return null;
     	}
+        Double minimumTime = Double.MAX_VALUE;
+        String engineUrl = null;
         CartesianCoordinate virtualPosCart = geodeticSystem.polarToRectangularCoordinates(pos);
         
-        for(Map.Entry<String,StatusProxy> sp :getStatusProxyMap().entrySet()) {
+        for(Map.Entry<String,StatusProxy> sp : getStatusProxyMap().entrySet()) {
             String v = sp.getKey();
             StatusProxy s = sp.getValue();
+            
             PolarCoordinate cur = s.getCurrentPosition();
             PolarCoordinate nxt = s.getNextPosition();
-            
-            if(cur != null && nxt != null) {
+            Double velocity = s.getVelocity();
+            if(cur != null && nxt != null && velocity != null) {
                 CartesianCoordinate currentPosCart = geodeticSystem.polarToRectangularCoordinates(cur);
                 CartesianCoordinate nextPosCart = geodeticSystem.polarToRectangularCoordinates(nxt);
-                if(isNear(currentPosCart, nextPosCart, virtualPosCart, tol)) {
+                Double timeToPoint = isNear(currentPosCart, nextPosCart, virtualPosCart, tol, velocity);
+                
+                if(timeToPoint != null && timeToPoint < minimumTime) {
+            		minimumTime = timeToPoint;
                     RegData re_val = getRegistrationData().get(v);
                     if(re_val != null) {
                     	for (String a : actions) {
                     		if (re_val.getSensors().contains(a)) {
-                    			return v;
+                    			engineUrl = v;
+                    			break;
                     		}
                     	}
                     }
                 }    
             }
         }
-        return null;
+
+        return engineUrl;
     }
         
-    private boolean isNear(CartesianCoordinate current, CartesianCoordinate next, CartesianCoordinate point, double tol) {
+    private Double isNear(CartesianCoordinate current, CartesianCoordinate next, CartesianCoordinate point, double tol, double velocity) {
         // direction vec = next - current
         CartesianCoordinate dir = next.subtract(current);
         // d = |dir x (point - current)| / |dir|
         double d = (dir.crossProduct((current.subtract(point))).norm()) / dir.norm();
         
-        if(d <= tol)
-            return true;
-        else
-            return false;
+        return d <= tol ? point.subtract(current).norm()/velocity : null;
     }
 	
 }

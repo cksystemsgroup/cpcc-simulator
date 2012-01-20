@@ -21,7 +21,9 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -45,7 +47,8 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 	private long cycleTime = 1000;
 	
 	private Map<String,StatusProxy> statusProxyMap = new HashMap<String, StatusProxy>();
-	private Map<String,Map<String,VehicleStatus>> virtualVehicleMap = new HashMap<String, Map<String,VehicleStatus>>(); 
+	private Map<String,Map<String,VehicleStatus>> virtualVehicleMap = new HashMap<String, Map<String,VehicleStatus>>();
+	private List<VehicleInfo> virtualVehicleList = new ArrayList<VehicleInfo>();
 	private Map<String,RegData> registrationData;
 	private Set<String> centralEngines;
 	
@@ -136,6 +139,7 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 
 		JSONParser parser = new JSONParser();
 		virtualVehicleMap.clear();
+		virtualVehicleList.clear();
 		for (RegData rd : registrationData.values()) {
 			String key = rd.getEngineUri();
 			String engineVehicleURL = key + "/json/vehicle";
@@ -149,7 +153,14 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 			for (Object o : obj.entrySet()) {
 				@SuppressWarnings("unchecked")
 				Entry<String, JSONObject> entry = (Entry<String, JSONObject>) o;
-				vehicles.put(entry.getKey(), new VehicleStatus(entry.getValue()));
+				VehicleStatus status = new VehicleStatus(entry.getValue());
+				vehicles.put(entry.getKey(), status);
+				
+				VehicleInfo data = new VehicleInfo();
+				data.setVehicleName(entry.getKey());
+				data.setEngineUrl(rd.getEngineUri());
+				data.setVehicleStatus(status);
+				virtualVehicleList.add(data);
 			}
 			
 			virtualVehicleMap.put(key, vehicles);
@@ -188,6 +199,10 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 
 	public Map<String, Map<String, VehicleStatus>> getVirtualVehicleMap() {
 		return virtualVehicleMap;
+	}
+
+	public List<VehicleInfo> getVirtualVehicleList() {
+		return virtualVehicleList;
 	}
 
 	public Map<String, RegData> getRegistrationData() {

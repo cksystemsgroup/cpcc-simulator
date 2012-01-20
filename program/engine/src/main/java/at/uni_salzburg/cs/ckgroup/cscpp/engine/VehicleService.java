@@ -154,8 +154,6 @@ public class VehicleService extends DefaultService {
 			
 			
 		} else if (ACTION_VEHICLE_MIGRATION.equals(action)) {
-			LOG.error("Virtual Vehicle migration not implemented yet.");
-			
 			// * get upload-URL
 			// * suspend vehicle
 			// * zip vehicle to file

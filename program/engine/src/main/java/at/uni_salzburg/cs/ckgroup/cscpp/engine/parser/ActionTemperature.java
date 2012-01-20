@@ -1,7 +1,7 @@
 /*
  * @(#) ActionTemperature.java
  *
- * This code is part of the JNavigator project.
+ * This code is part of the ESE CPCC project.
  * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,10 +36,14 @@ public class ActionTemperature extends AbstractAction implements Serializable
 	}
 
 	@Override
-	public boolean execute(ISensorProxy sprox) 
-	{
-		temperature = sprox.getSensorValueAsDouble(ISensorProxy.SENSOR_NAME_TEMPERATURE);
-		saveTimestamp();
+	protected boolean retrieveValue(ISensorProxy sprox) {
+		
+		Double sensorValue = sprox.getSensorValueAsDouble(ISensorProxy.SENSOR_NAME_TEMPERATURE);
+		if (sensorValue == null) {
+			return false;
+		}
+		
+		temperature = sensorValue;
 		return true;
 	}
 	

@@ -1,7 +1,7 @@
 /*
  * @(#) ActionTemperature.java
  *
- * This code is part of the JNavigator project.
+ * This code is part of the ESE CPCC project.
  * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.Serializable;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
+
 
 public abstract class AbstractAction implements IAction, Serializable
 {
@@ -34,13 +36,25 @@ public abstract class AbstractAction implements IAction, Serializable
 		return timestamp;
 	}
 	
-	protected void saveTimestamp()
-	{
-		timestamp = System.currentTimeMillis();
-	}
-
 	@Override
 	public boolean isComplete() {
 		return timestamp > 0;
 	}
+	
+	@Override
+	public final boolean execute(ISensorProxy sprox) {
+		
+		if (isComplete()) {
+			return true;
+		}
+		
+		if (retrieveValue(sprox)) {
+			timestamp = System.currentTimeMillis();
+			return true;
+		}
+		
+		return false;
+	}
+
+	protected abstract boolean retrieveValue(ISensorProxy sprox);
 }

@@ -1,7 +1,7 @@
 /*
  * @(#) ActionPicture.java
  *
- * This code is part of the JNavigator project.
+ * This code is part of the ESE CPCC project.
  * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,19 +30,19 @@ import java.util.Locale;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 public class ActionPicture extends AbstractAction implements Serializable {
-
+	
 	private static final long serialVersionUID = -6396710753568266987L;
 	private String filename = null;
 	private File dataDir;
 
 	@Override
-	public boolean execute(ISensorProxy sprox) 
+	protected boolean retrieveValue(ISensorProxy sprox) 
 	{
-		InputStream instream = sprox
-				.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
-		if (instream == null)
+		InputStream instream = sprox.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
+		if (instream == null) {
 			return false;
-
+		}
+		
 		try 
 		{
 			File f = File.createTempFile("img", ".png", dataDir);
@@ -56,15 +56,14 @@ public class ActionPicture extends AbstractAction implements Serializable {
 				o.write(tmp, 0, l);
 			}
 			o.close();
-			saveTimestamp();
+			return true;
 		} 
 		catch (IOException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return true;
+		return false;
 	}
 	
 	@Override

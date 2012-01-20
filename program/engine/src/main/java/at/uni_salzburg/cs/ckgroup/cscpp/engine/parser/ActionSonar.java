@@ -1,7 +1,7 @@
 /*
  * @(#) ActionPicture.java
  *
- * This code is part of the JNavigator project.
+ * This code is part of the ESE CPCC project.
  * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,14 +35,10 @@ public class ActionSonar extends AbstractAction implements Serializable {
 	}
 	
 	@Override
-	public boolean execute(ISensorProxy sprox) 
-	{
+	protected boolean retrieveValue(ISensorProxy sprox) {
+		
 		sonar = sprox.getSensorValue(ISensorProxy.SENSOR_NAME_SONAR);
-		if (sonar == null)
-			return false;
-			
-		saveTimestamp();
-		return true;
+		return sonar != null;
 	}
 	
 	@Override

@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -187,6 +188,9 @@ public class SensorProxy extends Thread implements ISensorProxy {
 
 		try {
 			response = httpclient.execute(httpget);
+			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				throw new IOException(String.format("%d -- %s", response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase())); 
+			}
 			HttpEntity entity = response.getEntity();
 			return entity.getContent();
 		} catch (Exception e) {

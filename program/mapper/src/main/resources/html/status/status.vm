@@ -29,7 +29,7 @@
 #set( $rd = $reg.get($key) )
 					<tr>
 #if( $rd.isCentralEngine() )
-						<td style="color: brown;">Engine URL: <a href="$key">$key</a> <br/>
+						<td style="color: brown;">Central Engine URL: <a href="$key">$key</a> <br/>
 #else
 						<td>Engine URL: <a href="$key">$key</a> <br/>
 #end

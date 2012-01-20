@@ -1,0 +1,15 @@
+##
+## @(#) set course RV-1
+##
+go auto
+takeoff 1 for 5s
+fly to(47.82202306,13.04081976,20.00)abs precision 1m 2.0mps
+fly to(47.82205187,13.04087073,20.00)abs precision 1m 2.0mps
+fly to(47.82203747,13.04296553,20.00)abs precision 1m 2.0mps
+fly to(47.82182136,13.04295480,20.00)abs precision 1m 2.0mps
+fly to(47.82184477,13.04088950,20.00)abs precision 1m 2.0mps
+fly to(47.82199064,13.04082245,20.00)abs precision 1m 2.0mps
+hover for 10s
+land
+go manual
+

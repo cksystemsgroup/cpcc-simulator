@@ -20,6 +20,7 @@ function updateMap() {
 			// obsolete one
 			markers[m].setMap(null);
 			loadWaypoints = true;
+			markers[m] = null;
 		}
 	}
 	
@@ -41,6 +42,7 @@ function updateMap() {
 }
 
 function updatePointsOfInterest () {
+	
 	var vehicleMap = {};
 	for (id in vehicles) {
 		var vs = vehicles[id].vehicles;
@@ -60,6 +62,7 @@ function updatePointsOfInterest () {
 		} else {
 			// obsolete one
 			pointsOfInterest[id].setMap(null);
+			pointsOfInterest[id] = null;
 		}
 	}
 	
@@ -70,6 +73,7 @@ function updatePointsOfInterest () {
 			// update position
 			pointsOfInterest[id].setPosition(point);
 			pointsOfInterest[id].setVehicle(v);
+			pointsOfInterest[id].show();
 		} else {
 			// new one!
 //			pointsOfInterest[id] = new google.maps.Marker({
@@ -81,6 +85,7 @@ function updatePointsOfInterest () {
 //			});
 			pointsOfInterest[id] = new VvPointOverlay(point, map);
 			pointsOfInterest[id].setVehicle(v);
+			pointsOfInterest[id].show();
 		}
 	}
 }

@@ -41,6 +41,19 @@ Available sensors:
 #set( $first = true )
 #set( $su = $rd.getPilotUri() + "/sensor" )
 #foreach( $sensor in $rd.getSensors() )#if( !$first ),#{end} <a href="$su/$sensor">$sensor</a>#set( $first = false )#end
+#set( $vehMap = $algo.getVirtualVehicleMap().get($key) )
+#if( $vehMap.size() > 0 )
+<br/>Vehicles: 
+#set( $fvs = 1 )
+#foreach( $vehicleStatus in $vehMap.values() )
+#if( $fvs == 1 )
+#set( $fvs = 0 )
+#else
+,
+#end
+<a href="$key/vehicleDetail.tpl?vehicle=$vehicleStatus.getName()">$vehicleStatus.getId()</a>
+#end
+#end
 #end
 						</td>
 					</tr>

@@ -197,6 +197,7 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 		return statusProxyMap;
 	}
 
+	@Override
 	public Map<String, Map<String, VehicleStatus>> getVirtualVehicleMap() {
 		return virtualVehicleMap;
 	}

@@ -20,7 +20,7 @@ function updateMap() {
 			// obsolete one
 			markers[m].setMap(null);
 			loadWaypoints = true;
-			markers[m] = null;
+			delete markers[m];
 		}
 	}
 	
@@ -62,7 +62,7 @@ function updatePointsOfInterest () {
 		} else {
 			// obsolete one
 			pointsOfInterest[id].setMap(null);
-			pointsOfInterest[id] = null;
+			delete pointsOfInterest[id];
 		}
 	}
 	
@@ -76,13 +76,6 @@ function updatePointsOfInterest () {
 			pointsOfInterest[id].show();
 		} else {
 			// new one!
-//			pointsOfInterest[id] = new google.maps.Marker({
-//				map: map,
-//				position: point,
-//				clickable: false,
-//				title: id,
-//				visible: true
-//			});
 			pointsOfInterest[id] = new VvPointOverlay(point, map);
 			pointsOfInterest[id].setVehicle(v);
 			pointsOfInterest[id].show();

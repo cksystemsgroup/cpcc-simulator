@@ -1,0 +1,22 @@
+##
+## @(#) set course RV-4.3
+##
+go auto
+takeoff 1 for 5s
+fly to(47.82197714,13.04075673,20.00)abs precision 1m 5.0mps
+fly to(47.82195643,13.04075941,20.00)abs precision 1m 5.0mps
+fly to(47.82164937,13.04076746,20.00)abs precision 1m 5.0mps
+fly to(47.82158363,13.04542780,20.00)abs precision 1m 5.0mps
+fly to(47.82086325,13.04539561,20.00)abs precision 1m 5.0mps
+fly to(47.82089927,13.04123282,20.00)abs precision 1m 5.0mps
+fly to(47.82004560,13.04122075,20.00)abs precision 1m 5.0mps
+fly to(47.81999157,13.04541171,20.00)abs precision 1m 5.0mps
+fly to(47.81919192,13.04542243,20.00)abs precision 1m 5.0mps
+fly to(47.81927116,13.04016531,20.00)abs precision 1m 5.0mps
+fly to(47.82174211,13.04036915,20.00)abs precision 1m 5.0mps
+fly to(47.82195823,13.04073796,20.00)abs precision 1m 5.0mps
+fly to(47.82198434,13.04074332,20.00)abs precision 1m 5.0mps
+hover for 20s
+land
+go manual
+

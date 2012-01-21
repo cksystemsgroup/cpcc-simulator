@@ -90,8 +90,10 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 					break;
 			}
 			
-			if (currentCommand==null || currentCommand.is_finished())
+			if (currentCommand==null || currentCommand.is_finished()) {
+				currentCommand = null;
 				setCompleted();
+			}
 			
 			programCorrupted = false;
 
@@ -178,6 +180,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 				if (listIter.hasNext()) {
 					currentCommand = listIter.next();
 				} else {
+					currentCommand = null;
 					try {
 						setCompleted();
 					} catch (IOException e) {
@@ -218,7 +221,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 */
 	@Override
 	public int getCurrentCommandIndex() {
-		if (listIter == null || commandList == null)
+		if (listIter == null || commandList == null || currentCommand == null)
 			return -1;
 		
 		int next = listIter.nextIndex();

@@ -67,11 +67,16 @@
 #if( $vehicle.isProgramCorrupted() )
 				<div class="vvProgramError">This virtual vehicle program is corrupt!</div>
 #else
-				Program:
+				<p/>
 #end
 			</div>
 			
 			<table class="vvProgram">
+				<thead>
+					<tr>
+						<th>Virtual Vehicle Program</th>
+					</tr>
+				</thead>
 				<tbody>
 #set( $fmt = $servletConfig.getServletContext().getAttribute("timeFormatter") )
 #set( $currentIndex = $vehicle.getCurrentCommandIndex() )

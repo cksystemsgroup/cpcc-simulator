@@ -504,27 +504,47 @@ a:hover {
 
 /* Below this line are the addons by ckrainer */
 
+table.sensors {
+	width: 100%;
+}
+
 table.sensors tr:nth-child(odd) td {
-        background-color: #e6e6e6;
-        /* background-color: #FCF6CF; */
-        padding: 1px 3px;
+	background-color: #e6e6e6;
+	/* background-color: #FCF6CF; */
+	padding: 1px 3px;
 }
+
 table.sensors tr:nth-child(even) td {
-        background-color: #e5decb;
-        /* background-color: #FEFEF2; */
-        padding: 1px 3px;
+	background-color: #e5decb;
+	/* background-color: #FEFEF2; */
+	padding: 1px 3px;
 }
-/*
+
 table.sensors thead {
-        border-top: 0px solid #000066;
+/* 	border-top: 0px solid #000066; */
 }
-*/
+
 table.sensors thead tr {
     background-color: #e5decb;
 }
 
 table.vvProgram {
 /* 	font-family: monospace; */
+	width: 100%;
+}
+
+table.vvProgram thead tr {
+    background-color: #e5decb;
+}
+
+table.vvProgram tr:nth-child(odd) td {
+	background-color: #e6e6e6;
+	padding: 1px 3px;
+}
+
+table.vvProgram tr:nth-child(even) td {
+	background-color: #e5decb;
+	padding: 1px 3px;
 }
 
 tr.vvProgramLine {

@@ -151,11 +151,15 @@ Department of Computer Sciences\\
 \end{frame}
 
 \begin{frame}\frametitle{Introduction}\framesubtitle{System Overview}
-	{\includegraphics[width=11.5cm]{SystemOverview.pdf}}
+	\begin{center}
+		{\includegraphics[width=10cm]{SystemOverview.pdf}}
+	\end{center}
 \end{frame}
 
 \begin{frame}\frametitle{Introduction}\framesubtitle{Sensor Simulation}
-	{\includegraphics[width=11.5cm]{SensorSimulation.pdf}}
+	\begin{center}
+		{\includegraphics[width=12cm]{SensorSimulation-2.pdf}}
+	\end{center}
 \end{frame}
 
 % - Real Vehicles
@@ -164,21 +168,53 @@ Department of Computer Sciences\\
 %   - Sensoren
 \section{Real Vehicles}
 
-\begin{frame}\frametitle{Sensor Simulation} %\framesubtitle{xxx}
-	\begin{itemize}
-		\item \ldots
-		\item \ldots
-	\end{itemize} 
+\begin{frame}\frametitle{Real Vehicles}\framesubtitle{Vehicle Configuration}
+plant.simulated = true \\
+plant.type = MockJAviator \\
+plant.listener = udp://localhost:9011 \\
+plant.location.system.type = gpssim \\
+plant.location.system.listener = tcp://localhost:9012 \\
+plant.location.system.update.rate = 10 \\
+ \\
+controller.simulated = true \\
+controller.type = JControl \\
+ \\
+pilot.type = JPilot \\
+pilot.name = Pilot One \\
+pilot.controller.connector = udp://localhost:9014
 \end{frame}
 
-\begin{frame}\frametitle{Flight Plan} %\framesubtitle{xxx}
-	\begin{itemize}
-		\item real vehicles follow strict flight plans
-		\item \ldots
-	\end{itemize} 
+
+\begin{frame}\frametitle{Real Vehicles}\framesubtitle{Sensor Configuration}
+sensor.list = gps, temp, photo \\
+\\
+sensor.gps.name = GPS receiver \\
+sensor.gps.path = position \\
+sensor.gps.uri = gps:/// \\
+\\
+sensor.temp.name = thermometer \\
+sensor.temp.path = temperature \\
+sensor.temp.uri = rand:///18/22 \\
+\\
+sensor.photo.name = belly mounted photo camera \\
+sensor.photo.path = photo \\
+sensor.photo.uri = x11:///:21
 \end{frame}
 
 
+\begin{frame}\frametitle{Real Vehicles}\framesubtitle{Vehicle Control Language}
+\#\# \\
+\#\# @(\#) real vehicle set course \\
+\#\# \\
+go auto \\
+takeoff 1m for 5s \\
+fly to (47.82204197, 13.04086670, 20.00)abs precision 1m 2.0mps \\
+fly to (47.82206088, 13.04092035, 20.00)abs precision 1m 2.0mps \\
+fly to (47.82195102, 13.04488063, 20.00)abs precision 1m 2.0mps \\
+hover for 20s \\
+land \\
+go manual
+\end{frame}
 
 
 % - Vehicle Virtualisierung
@@ -188,7 +224,7 @@ Department of Computer Sciences\\
 %   - Scanner, Parser
 \section{Vehicle Virtualization}
 
-\begin{frame}\frametitle{Virtual Vehicle Program} %\framesubtitle{xxx}
+\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Virtual Vehicle Program}
 \begin{itemize}
 \item ability to suspend
 \item state is serialized
@@ -198,7 +234,7 @@ Department of Computer Sciences\\
 \end{itemize} 
 \end{frame}
 
-\begin{frame}\frametitle{Virtual Vehicle Language} %\framesubtitle{xxx}
+\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Virtual Vehicle Language}
 \begin{itemize}
 \item list of commands
 \item command consits of a point and a list of actions
@@ -207,7 +243,7 @@ Department of Computer Sciences\\
 \end{itemize} 
 \end{frame}
 
-\begin{frame}\frametitle{Virtual Vehicle Sample Program} %\framesubtitle{xxx}
+\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Virtual Vehicle Sample Program}
 \texttt{\\
 Point 47.82201946 13.04082647 1.00 tolerance 12.3\\
 Picture \\
@@ -220,7 +256,7 @@ Point 47.82211311 13.04076076 30.00 tolerance 1.2\\
 Picture} 
 \end{frame}
 
-\begin{frame}\frametitle{Scanner \& Parser} %\framesubtitle{xxx}
+\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Scanner \& Parser}
 \begin{itemize}
 \item \ldots
 \end{itemize} 
@@ -232,22 +268,17 @@ Picture}
 %   - Ansto� der Migration
 \section{Mapping}
 
-\begin{frame}\frametitle{Engine Registration} %\framesubtitle{xxx}
-\begin{itemize}
-\item \ldots
-\end{itemize} 
+\begin{frame}\frametitle{Mapper}\framesubtitle{Engine Registration}
+	\begin{itemize}
+		\item \ldots
+	\end{itemize} 
 \end{frame}
 
-% - Erk�rung User-Interface:
-%   - GM-View
-\section{User Interface}
-
-\begin{frame}\frametitle{Google Maps Viewer} %\framesubtitle{xxx}
-\begin{itemize}
-\item \ldots
-\end{itemize} 
+\begin{frame}\frametitle{Mapper}\framesubtitle{Mapping Algorithm}
+	\begin{itemize}
+		\item \ldots
+	\end{itemize} 
 \end{frame}
-
 
 \section{Live Demonstration}
 % - Demo 1: "VV sammelt Daten"
@@ -256,10 +287,17 @@ Picture}
 %   - VV sammelt die Daten ein
 %\subsection{Demo 1 - Data Collection}
 
-\begin{frame}\frametitle{Data Collection} %\framesubtitle{xxx}
-\begin{itemize}
-\item \ldots
-\end{itemize} 
+\begin{frame}\frametitle{Live Demonstration}\framesubtitle{Demo 1: Data Collection}
+% Flying time 00:04:43
+	\begin{itemize}
+		\item one flying real vehicle
+		\item one virtual vehicle that collects data at four locations
+		\item no migration
+	\end{itemize}
+	\vspace{0.5cm}
+	\begin{center}
+		{\includegraphics[width=10cm]{demo1.png}}
+	\end{center}
 \end{frame}
 
 % - Demo 2: "VV wird migriert"
@@ -269,10 +307,17 @@ Picture}
 %     ein, wird migriert und macht am RV2 weiter.
 %\subsection{Demo 2 - Migration}
 
-\begin{frame}\frametitle{Virtual Vehicle Migration} %\framesubtitle{xxx}
-\begin{itemize}
-\item \ldots
-\end{itemize} 
+\begin{frame}\frametitle{Live Demonstration}\framesubtitle{Demo 2: Virtual Vehicle Migration}
+% Flying time 00:05:55
+	\begin{itemize}
+		\item two flying real vehicles
+		\item one virtual vehicle that collects data at five locations
+		\item migration among both real vehicles
+	\end{itemize}
+	\vspace{0.5cm}
+	\begin{center}
+		{\includegraphics[width=10cm]{demo2.png}}
+	\end{center}
 \end{frame}
 
 % - Demo 3: "RVs haben unterschiedliche Sensoren"
@@ -284,10 +329,16 @@ Picture}
 %     restlichen Daten ein.
 %\subsection{Demo 3 - Sensor Variety}
 
-\begin{frame}\frametitle{Real Vehicles with different Sensors} %\framesubtitle{xxx}
-\begin{itemize}
-\item \ldots
-\end{itemize} 
+\begin{frame}\frametitle{Live Demonstration}\framesubtitle{Demo 3: Real Vehicles with different Sensors}
+	\begin{itemize}
+		\item three flying real vehicles carrying different sensors
+		\item one virtual vehicle that collects data at two locations
+		\item migration among all real vehicles
+	\end{itemize}
+	\vspace{0.5cm}
+	\begin{center}
+		{\includegraphics[width=10cm]{demo3.png}}
+	\end{center}
 \end{frame}
 
 
@@ -296,10 +347,15 @@ Picture}
 %   - ...
 %\subsection{Demo 4 - All in One}
 
-\begin{frame}\frametitle{All in One} %\framesubtitle{xxx}
-\begin{itemize}
-\item \ldots
-\end{itemize} 
+\begin{frame}\frametitle{Live Demonstration}\framesubtitle{Demo 4: Complex Scenario}
+	\begin{itemize}
+		\item three flying real vehicles
+		\item four virtual vehicle that collect data
+		\item migration among all real vehicles
+	\end{itemize}
+	\begin{center}
+		{\includegraphics[width=7.7cm]{demo4.png}}
+	\end{center}
 \end{frame}
 
 % - Future Work
@@ -312,11 +368,11 @@ Picture}
 
 \begin{frame}\frametitle{Future Work} %\framesubtitle{xxx}
 	\begin{itemize}
-		\item more sophisticated mapping algorithms
+		\item more subtle mapping algorithms
 		\item network traffic optimizations
 		\item video sensor support
 		\item extended geo-location
-		\item flight plan generation
+		\item flight plan generation based on virtual vehicle programs
 	\end{itemize}
 \end{frame}
  
@@ -336,34 +392,5 @@ Picture}
 		\end{tabular}
 	\end{center}
 \end{frame}
-
-% Sample Frame:
-% \begin{frame}
-% \frametitle{Introduction}
-% %\framesubtitle{xxx}
-% 
-% Test $\displaystyle{x = (x_n)_{n\in\mathds{N}_0}}$
-% 
-% Test
-% \begin{equation}
-% 	x : \mathds{N}_0 \rightarrow \mathds{C}
-% \end{equation}
-% 
-% \pause
-% 
-% Test
-% \begin{equation}
-% 	\mathcal{Z}\{x\} =
-% 	X(z) := \sum_{n=0}^\infty x_n\cdot z^{-n} ~, \qquad z\in \mathds{C}
-% \end{equation}
-% 
-% \pause
-% \vspace{0.5cm}
-% $\displaystyle{X(z)}$ ist f\"ur die $\displaystyle{z\in\mathds{C}}$ definiert, f\"ur die die
-% unendliche Reihe konvergiert.
-% 
-% %$\displaystyle{\sum_{k=0}^\infty x_k\cdot z^{-k}}$ konvergent ist.
-% 
-% \end{frame}
 
 \end{document}

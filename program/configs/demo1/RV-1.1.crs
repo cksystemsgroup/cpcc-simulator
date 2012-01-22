@@ -1,5 +1,5 @@
 ##
-## @(#) set course RV 1
+## @(#) set course RV 1.1
 ##
 go auto
 takeoff 1m for 5s

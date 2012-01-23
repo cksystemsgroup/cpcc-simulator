@@ -276,16 +276,60 @@ Picture
 %   - Ansto� der Migration
 \subsection{Mapping}
 
-\begin{frame}\frametitle{Mapper}\framesubtitle{Engine Registration}
+\begin{frame}\frametitle{Mapper}
 	\begin{itemize}
-		\item \ldots
+		\item maps virtual vehicles to real vehicles 
+		\item invokes migration
+		\item two components:
+			\begin{itemize}
+				\item engine registration
+				\item mapping algorithm
+			\end{itemize}
 	\end{itemize} 
 \end{frame}
 
-\begin{frame}\frametitle{Mapper}\framesubtitle{Mapping Algorithm}
+\begin{frame}\frametitle{Mapper}\framesubtitle{Engine Registration}
 	\begin{itemize}
-		\item \ldots
+		\item engine registers itself with registration service
+		\item service fetches useful information:
+		\begin{itemize}
+			\item sensors
+			\item waypoints
+		\end{itemize}
 	\end{itemize} 
+\end{frame}
+
+\begin{frame}\frametitle{Mapper}\framesubtitle{Mapper}
+	\begin{itemize}
+		\item periodic
+		\item fetches status of all virtual vehicles
+		\begin{itemize}
+			\item next action point
+			\item and its actions
+		\end{itemize}
+		\item status of all real vehicles
+		\begin{itemize}
+			\item current position
+			\item next position
+			\item velocity
+		\end{itemize}
+		\item two algorithms:
+		\begin{itemize}
+			\item random mapping algorithm
+			\item simple mapping algorithm
+		\end{itemize}
+	\end{itemize} 
+\end{frame}
+
+\begin{frame}\frametitle{Mapper}\framesubtitle{Simple Mapping Algorithm}
+	\begin{tabbing}
+	\textbf{for} \= \textbf{all} virtual vehicles \textbf{do} \\[.25cm]
+	\> \textbf{if}  \= virtual vehicle program is complete \\
+	\> \>	\textbf{then} invoke migration to central engine \\[.25cm]
+	\>	\textbf{else} \= find real vehicle with at least one needed sensor \\
+	\> \>	\textbf{and} distance CN to P < tolerance \\[.25cm]
+	\>	\textbf{if} found vehicle \textbf{then} invoke migration to it \\
+	\end{tabbing}
 \end{frame}
 
 \section{Live Demonstration}

@@ -8,29 +8,32 @@
 \usepackage[utf8]{inputenc}
 \usepackage{etex}
 
-\mode<presentation>
-{
-\usetheme{Boadilla}
-%\usetheme{Dresden}
-%\usetheme{Madrid}
-%\usetheme{Singapore}
-
-\usecolortheme{wolverine}
-%\usecolortheme{crane}
-%\usecolortheme{dove}
-%\usecolortheme{seagull}
-%\usecolortheme{seahorse}
-%\usecolortheme{rose}
-
-\setbeamerfont{title}{shape=\itshape,family=\rmfamily}
-%\setbeamercolor{title}{fg=red!80!black}
-%\setbeamercolor{title}{fg=red!80!black,bg=red!20!white}
-
-\usefonttheme{serif}
-%\usefonttheme{structuresmallcapsserif}
-
-\setbeamercovered{transparent}
-}
+%http://www.informatik.uni-freiburg.de/~frank/latex-kurs/latex-kurs-3/Latex-Kurs-3.html
+\usepackage{beamerthemeshadow}
+\beamersetuncovermixins{\opaqueness<1>{25}}{\opaqueness<2->{15}}
+% \mode<presentation>
+% {
+% \usetheme{Boadilla}
+% %\usetheme{Dresden}
+% %\usetheme{Madrid}
+% %\usetheme{Singapore}
+% 
+% \usecolortheme{wolverine}
+% %\usecolortheme{crane}
+% %\usecolortheme{dove}
+% %\usecolortheme{seagull}
+% %\usecolortheme{seahorse}
+% %\usecolortheme{rose}
+% 
+% \setbeamerfont{title}{shape=\itshape,family=\rmfamily}
+% %\setbeamercolor{title}{fg=red!80!black}
+% %\setbeamercolor{title}{fg=red!80!black,bg=red!20!white}
+% 
+% \usefonttheme{serif}
+% %\usefonttheme{structuresmallcapsserif}
+% 
+% \setbeamercovered{transparent}
+% }
 
 
 \usepackage[english]{babel}
@@ -56,7 +59,7 @@
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
 %\author{F.~Author\inst{1} \and S.~Another\inst{2}}
-\author{M. Kleber, C. Krainer, A. Schr\"ocker, B. Zechmeister}
+\author[M. Kleber, C. Krainer, A. Schr\"ocker, B. Zechmeister]{Michael Kleber, Clemes Krainer,\\ Andreas Schr\"ocker, Bernhard Zechmeister}
 
 % - Use the \inst command only if there are several affiliations.
 % - Keep it simple, no one is interested in your street address.
@@ -124,6 +127,8 @@ Department of Computer Sciences\\
 \section{Introduction}
 %\subsection[Short First Subsection Name]{First Subsection Name}
 
+\subsection{Project Description}
+
 \begin{frame}\frametitle{Introduction}\framesubtitle{Task}
 	\begin{itemize}
 		\item simulation of physical helicopter swarms
@@ -150,6 +155,8 @@ Department of Computer Sciences\\
 	\end{itemize} 
 \end{frame}
 
+\subsection{System Overview}
+
 \begin{frame}\frametitle{Introduction}\framesubtitle{System Overview}
 	\begin{center}
 		{\includegraphics[width=10cm]{SystemOverview.pdf}}
@@ -162,11 +169,13 @@ Department of Computer Sciences\\
 	\end{center}
 \end{frame}
 
+\section {Implementation}
+
 % - Real Vehicles
 %   - Flugplan / VCL
 %   - Simulation
 %   - Sensoren
-\section{Real Vehicles}
+\subsection{Real Vehicles}
 
 \begin{frame}\frametitle{Real Vehicles}\framesubtitle{Vehicle Configuration}
 plant.simulated = true \\
@@ -222,7 +231,7 @@ go manual
 %   - Status / Serialisierung / Migration
 %   - VV-Language: Command = Point + Actions
 %   - Scanner, Parser
-\section{Vehicle Virtualization}
+\subsection{Vehicle Virtualization}
 
 \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Virtual Vehicle Program}
 \begin{itemize}
@@ -244,7 +253,7 @@ go manual
 \end{frame}
 
 \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Virtual Vehicle Sample Program}
-\texttt{\\
+\\
 Point 47.82201946 13.04082647 1.00 tolerance 12.3\\
 Picture \\
 Temperature\\
@@ -253,7 +262,7 @@ Point 47.82203026 13.04084659 25.00 tolerance 100 \\
 Temperature\\
 \\
 Point 47.82211311 13.04076076 30.00 tolerance 1.2\\
-Picture} 
+Picture
 \end{frame}
 
 \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Scanner \& Parser}
@@ -266,7 +275,7 @@ Picture}
 %   - Registrierung der Engines
 %   - Algorithmen: Random, Simple
 %   - Ansto� der Migration
-\section{Mapping}
+\subsection{Mapping}
 
 \begin{frame}\frametitle{Mapper}\framesubtitle{Engine Registration}
 	\begin{itemize}
@@ -285,7 +294,7 @@ Picture}
 %   - Setup: 1xRV, 1xVV, 2xVV-Points
 %   - RV fliegt die VV-Points ab
 %   - VV sammelt die Daten ein
-%\subsection{Demo 1 - Data Collection}
+\subsection{Demo 1 - Data Collection}
 
 \begin{frame}\frametitle{Live Demonstration}\framesubtitle{Demo 1: Data Collection}
 % Flying time 00:04:43
@@ -305,7 +314,7 @@ Picture}
 %   - Je ein RV fliegt einen VV-Point an
 %   - VV sammelt am RV1 die ersten VV-Point Daten
 %     ein, wird migriert und macht am RV2 weiter.
-%\subsection{Demo 2 - Migration}
+\subsection{Demo 2 - Virtual Vehicle Migration}
 
 \begin{frame}\frametitle{Live Demonstration}\framesubtitle{Demo 2: Virtual Vehicle Migration}
 % Flying time 00:05:55
@@ -327,7 +336,7 @@ Picture}
 %     ein, wird migriert auf RV2, sammelt weiter Daten
 %     ein, wird migriert auf RV3 und sammelt die
 %     restlichen Daten ein.
-%\subsection{Demo 3 - Sensor Variety}
+\subsection{Demo 3 - Real Vehicles with different Sensors}
 
 \begin{frame}\frametitle{Live Demonstration}\framesubtitle{Demo 3: Real Vehicles with different Sensors}
 	\begin{itemize}
@@ -345,17 +354,23 @@ Picture}
 % - Demo 4: "All in one."
 %   - Setup: 3xRV, 3xVV, 9xVV-Point
 %   - ...
-%\subsection{Demo 4 - All in One}
+\subsection{Demo 4 - Complex Scenario}
 
 \begin{frame}\frametitle{Live Demonstration}\framesubtitle{Demo 4: Complex Scenario}
-	\begin{itemize}
-		\item three flying real vehicles
-		\item four virtual vehicle that collect data
-		\item migration among all real vehicles
-	\end{itemize}
-	\begin{center}
-		{\includegraphics[width=7.7cm]{demo4.png}}
-	\end{center}
+	\begin{columns}
+		\begin{column}{5cm}
+		\begin{itemize}
+			\item three flying real vehicles
+			\item four virtual vehicle that collect data
+			\item migration among all real vehicles
+		\end{itemize}
+		\end{column}
+		\begin{column}{8cm}
+		\begin{center}
+			{\includegraphics[width=7.7cm]{demo4.png}}
+		\end{center}
+		\end{column}
+	\end{columns}
 \end{frame}
 
 % - Future Work
@@ -364,7 +379,9 @@ Picture}
 %   - Video-Sensor
 %   - Geo-Location: Vergleich RV-Position zu VV-Sollwert
 %   - RV-Flugpl�ne aus VV-Programmen zusammenstellen
-\section{Future Work}
+\section{Conclusion}
+
+\subsection{Future Work}
 
 \begin{frame}\frametitle{Future Work} %\framesubtitle{xxx}
 	\begin{itemize}
@@ -378,7 +395,7 @@ Picture}
  
 
 % - Q & A Session
-\section{Questions and Answers}
+\subsection{Questions and Answers}
 
 \begin{frame}
 	\frametitle<presentation>{Questions \& Answers}

@@ -46,8 +46,8 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	
 	Logger LOG = Logger.getLogger(VirtualVehicle.class);
 	
-	private List<Command> commandList;
-    private boolean programCorrupted = true;
+	private VirtualVehicleState state = new VirtualVehicleState();
+	private boolean programCorrupted = true;
         
     private ListIterator<Command> listIter;
     private Command currentCommand;
@@ -76,10 +76,10 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 				Scanner sc = new Scanner(program.getAbsolutePath());
 				Parser pa = new Parser(dataDir);
 	
-				commandList = pa.run(sc);
+				state.commandList = pa.run(sc);
 			}
 			
-			listIter = commandList.listIterator();
+			listIter = state.commandList.listIterator();
 			
 			// get first command which have to be executed
 			while (listIter.hasNext())
@@ -107,7 +107,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 
 	}
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	private boolean readVehicleState()
 	{
 		if (!vehicleStatus.exists() || vehicleStatus.length() == 0) {
@@ -119,8 +119,8 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		{
 			FileInputStream fin = new FileInputStream(vehicleStatus);
 			ObjectInputStream objStream = new ObjectInputStream(fin);
-			commandList = (List<Command>)objStream.readObject();
-			for (Command cmd : commandList) {
+			state = (VirtualVehicleState)objStream.readObject();
+			for (Command cmd : state.commandList) {
 				for (IAction action : cmd.get_actions()) {
 					if (action instanceof ActionPicture) {
 						((ActionPicture)action).setDataDir(dataDir);
@@ -143,7 +143,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		{
 			FileOutputStream fout = new FileOutputStream(vehicleStatus);
 			ObjectOutputStream objStream = new ObjectOutputStream(fout);
-			objStream.writeObject(commandList);
+			objStream.writeObject(state);
 		} 
 		catch (IOException e) 
 		{
@@ -158,6 +158,10 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	public void execute() 
 	{
 		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
+		
+		//save waypoint to track
+		state.track.add(new Waypoint(currentPosition)); 
+		
 		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 		if (currentPosition == null || isCompleted() || currentCommand == null || altitudeOverGround == null)
 			return;
@@ -195,17 +199,9 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	}
 	
 	
-	public VirtualVehicleState getState() {
-		VirtualVehicleState vss = new VirtualVehicleState();
-
-		for (Command cmd : commandList) {
-			if (cmd.is_finished())
-				vss.CommandsExecuted++;
-			else
-				vss.CommandsToExecute++;
-		}
-
-		return vss;
+	public VirtualVehicleState getState() 
+	{
+		return state;
 	}
 
 	/* (non-Javadoc)
@@ -213,7 +209,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 */
 	@Override
 	public List<Command> getCommandList() {
-		return commandList;
+		return state.commandList;
 	}
 	
 	/* (non-Javadoc)
@@ -221,11 +217,11 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 */
 	@Override
 	public int getCurrentCommandIndex() {
-		if (listIter == null || commandList == null || currentCommand == null)
+		if (listIter == null || state.commandList == null || currentCommand == null)
 			return -1;
 		
 		int next = listIter.nextIndex();
-		return next > commandList.size() ? -1 : next-1;
+		return next > state.commandList.size() ? -1 : next-1;
 	}
 	
 	/* (non-Javadoc)

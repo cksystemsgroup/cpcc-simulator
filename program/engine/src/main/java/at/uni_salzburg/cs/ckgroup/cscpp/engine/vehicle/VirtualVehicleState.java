@@ -18,19 +18,50 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
- package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
+package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
-public class VirtualVehicleState 
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
+
+public class VirtualVehicleState  implements Serializable
 {
-	public int CommandsExecuted;
-	public int CommandsToExecute;
-	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2475790607625163260L;
+
 	// TODO add all info which is needed
-	
-	public VirtualVehicleState()
+
+	public VirtualVehicleState() 
 	{
-		CommandsExecuted = 0;
-		CommandsToExecute = 0;
+
+	}
+
+	public List<Command> commandList;
+
+	public int CommandsExecuted() {
+		int commandsExecuted = 0;
+		for (Command cmd : commandList) {
+			if (cmd.is_finished())
+				commandsExecuted++;
+
+		}
+		return commandsExecuted;
+	}
+
+	public int CommandsToExecute() {
+
+		int commandsToExecute = 0;
+		for (Command cmd : commandList) {
+			if (!cmd.is_finished())
+				commandsToExecute++;
+		}
+		return commandsToExecute;
 	}
 	
-}	
+	public List<Waypoint> track = new LinkedList<Waypoint>();
+}

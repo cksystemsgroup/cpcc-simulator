@@ -159,8 +159,11 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	{
 		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
 		
+		//TODO: get the hostname of the real vehicle 
+		String host = "";
+		
 		//save waypoint to track
-		state.track.add(new Waypoint(currentPosition)); 
+		state.track.add(new Waypoint(currentPosition,host)); 
 		
 		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 		if (currentPosition == null || isCompleted() || currentCommand == null || altitudeOverGround == null)

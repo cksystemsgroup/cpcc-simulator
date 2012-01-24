@@ -48,7 +48,7 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{pictex}
-\usepackage{dsfont}
+%\usepackage{dsfont}
 \usepackage{ulem}
 
 
@@ -264,11 +264,52 @@ Point 47.82211311 13.04076076 30.00 tolerance 1.2\\
 Picture
 \end{frame}
 
-\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Scanner \& Parser}
+\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Scanner}
 \begin{itemize}
-\item \ldots
+\item Lookahead of one
+\item double and integers
+\item keywords and variables
+\item easy to add keywords - (prepared for adding if, else, while, for ...)
 \end{itemize} 
 \end{frame}
+
+\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Parser}
+\begin{itemize}
+\item process symbols of scanner
+\item parser handles 
+\begin{itemize}
+  \item command (position, actions)
+  \item position (point, tolerance)
+  \item point (lat. long. alt.)
+  \item actions  
+\end{itemize} 
+\item error handling
+\begin{itemize}
+  \item throws parser exception with description
+  \item stop parsing
+\end{itemize} 
+\end{itemize} 
+\end{frame}
+
+\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Saving State}
+\begin{itemize}
+\item java serialisation used
+\item file with state
+\item list of commands with actions serialized
+\item already collected data in seperate file
+\end{itemize} 
+\end{frame}
+
+\begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Execution of VV}
+\begin{itemize}
+\item VV are dispatched through 
+\item execute function
+\item read state, execute, store state
+\item partial execution of commands supported
+\end{itemize} 
+\end{frame}
+
+
 
 % - Mapping
 %   - Registrierung der Engines

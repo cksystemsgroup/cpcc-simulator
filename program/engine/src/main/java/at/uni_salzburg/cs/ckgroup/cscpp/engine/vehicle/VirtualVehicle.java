@@ -139,6 +139,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	
 	private void storeVehicleState()
 	{
+		super.saveState();
 		try 
 		{
 			FileOutputStream fout = new FileOutputStream(vehicleStatus);

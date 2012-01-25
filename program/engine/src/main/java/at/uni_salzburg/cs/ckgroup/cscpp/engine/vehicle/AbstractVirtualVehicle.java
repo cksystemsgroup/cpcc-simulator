@@ -22,6 +22,7 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -38,6 +39,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
@@ -49,6 +51,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public static final String LOG_PATH = "vehicle.log";
 	public static final String PROPERTY_PATH = "vehicle.properties";
 	public static final String STATUS_PATH = "vehicle.status";
+	public static final String STATUS_TXT_PATH = "vehicle-status.txt";
 	public static final String DATA_SUBDIR = "data";
 	public static final long timerDelay = 500;
 	public static final long timerPeriod = 1000;
@@ -83,6 +86,11 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 */
 	protected File vehicleStatus;
 	
+	/**
+	 * The virtual vehicle status as a text file.
+	 */
+	protected File vehicleStatusTxt;
+
 	/**
 	 * The properties of the virtual vehicle.
 	 */
@@ -142,6 +150,8 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		if (!vehicleStatus.exists()) {
 			vehicleStatus.createNewFile();
 		}
+		
+		vehicleStatusTxt = new File(workDir, STATUS_TXT_PATH);
 		
 		properties = new Properties();
 		File propsFile = new File(workDir, PROPERTY_PATH);
@@ -372,6 +382,18 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public String getLog() throws IOException {
 		File logFile = new File(workDir, LOG_PATH);
 		return FileUtils.loadFileAsString(logFile);
+	}
+	
+	protected void saveState() {
+		try {
+			PrintWriter pw = new PrintWriter(vehicleStatusTxt);
+			for (Command command : getCommandList()) {
+				pw.println(command.toString());
+			}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			LOG.error("Can not save state of vehicle " + workDir, e);
+		}
 	}
 	
 	private static class MyTimerTask extends TimerTask {

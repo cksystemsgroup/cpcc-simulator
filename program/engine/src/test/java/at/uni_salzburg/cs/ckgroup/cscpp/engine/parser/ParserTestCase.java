@@ -39,7 +39,7 @@ public class ParserTestCase {
 		Assert.assertEquals("Number of commands", 3, lst.size());
 
 		for (int k=0; k < lst.size(); ++ k) {
-			System.out.println(lst.get(k).toString().toString());
+			System.out.println(lst.get(k).toString());
 			Assert.assertEquals("Command #"+k, expectedResult_01[k], lst.get(k).toString());
 		}
 		

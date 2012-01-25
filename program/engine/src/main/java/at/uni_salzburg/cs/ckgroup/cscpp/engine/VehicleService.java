@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
@@ -132,7 +133,13 @@ public class VehicleService extends DefaultService {
 				@SuppressWarnings("unchecked")
 				Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
 				vehicleMap.put(workDir.getName(), vehicle);
-				vehicle.resume();
+				
+				Object cnf = config.getServletContext().getAttribute("configuration");
+				IConfiguration configuration = (IConfiguration)cnf;
+				
+				if (configuration.isPilotAvailable()) {
+					vehicle.resume();
+				}
 				
 			} else {
 				emit422(request, response);
@@ -302,6 +309,8 @@ public class VehicleService extends DefaultService {
 
 	private void migrateVehicle(ServletConfig config, String uploadUrl, String name) throws IOException {
 		IVirtualVehicle vehicle = getVehicle(config, name);
+		Object cnf = config.getServletContext().getAttribute("configuration");
+		IConfiguration configuration = (IConfiguration)cnf;
 		Object vhl = config.getServletContext().getAttribute("vehicleMap");
 		@SuppressWarnings("unchecked")
 		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
@@ -316,14 +325,18 @@ public class VehicleService extends DefaultService {
 			LOG.info("migrateVehicle: id=" + name + ", rc=" + rc[0] + " -- " + rc[1]);
 			if (!"200".equals(rc[0])) {
 				vehicleMap.put(name, vehicle);
-				vehicle.resume();
+				if (configuration.isPilotAvailable()) {
+					vehicle.resume();
+				}
 				throw new IOException(rc[0] + " -- " + rc[1] + " -- " + rc[2]);
 			}
 			File workDir = vehicle.getWorkDir();
 			FileUtils.removeRecursively(workDir);
 		} catch (IOException e) {
 			vehicleMap.put(name, vehicle);
-			vehicle.resume();
+			if (configuration.isPilotAvailable()) {
+				vehicle.resume();
+			}
 			throw e;
 		}
 	}

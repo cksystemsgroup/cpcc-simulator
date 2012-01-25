@@ -202,8 +202,9 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			if (vehicle == null) {
 				try {
 					vehicle = vehicleBuilder.build(vehicleDir);
-					if (!vehicle.isActive())
+					if (!vehicle.isActive() && configuration.isPilotAvailable()) {
 						vehicle.resume();
+					}
 					vehicleMap.put(vehicleDir.getName(),vehicle);
 				} catch (IOException e) {
 					vehicleMap.remove(vehicleDir.getName());

@@ -158,25 +158,32 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	@Override
 	public void execute() 
 	{
+		//get current position
 		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
-		
-		//TODO: get the hostname of the real vehicle 
-		String host = "";
-		
-		//save waypoint to track
-		state.track.add(new Waypoint(currentPosition,host)); 
-		
 		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 		if (currentPosition == null || isCompleted() || currentCommand == null || altitudeOverGround == null)
 			return;
-		
 		currentPosition.setAltitude(altitudeOverGround.doubleValue());
 		CartesianCoordinate currentPosCartesian = geodeticSystem.polarToRectangularCoordinates(currentPosition);
 		
+		//save waypoint to track
+		String host = ""; //hostname of the real vehicle 
+		//TODO: get the hostname of the real vehicle 
+		int minWaypointDist = 10; //minimal dictance between 2 waypoints
+		if(	//save first waypoint
+			state.track.size() == 0 ||
+			//save waypoint when moved more than minWaypointDist
+			currentPosCartesian.subtract(geodeticSystem.polarToRectangularCoordinates(state.track.get(state.track.size()-1).pos)).norm() > minWaypointDist ||
+			//save waypoint when hostname has changed
+			!host.equals(state.track.get(state.track.size()-1).host))
+		{
+			state.track.add(new Waypoint(currentPosition,host)); 
+		}
+		
+		//check if command position is reached
 		Position pos = currentCommand.get_position();
 		PolarCoordinate commandPosition = pos.getPt();
 		CartesianCoordinate commandPosCartesian = geodeticSystem.polarToRectangularCoordinates(commandPosition);
-		
 		double distance = commandPosCartesian.subtract(currentPosCartesian).norm();
 		boolean at_pos = distance <= pos.getTolerance();
 		

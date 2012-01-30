@@ -1,0 +1,7 @@
+##
+## @(#) set course RV 1.2
+##
+go auto
+land
+go manual
+

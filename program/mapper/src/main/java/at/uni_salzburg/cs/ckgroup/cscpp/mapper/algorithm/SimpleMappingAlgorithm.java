@@ -121,20 +121,24 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
     }
         
     private Double isNear(CartesianCoordinate current, CartesianCoordinate next, CartesianCoordinate point, double tol, double velocity) {
-        // direction vec = next - current
-        CartesianCoordinate dir = next.subtract(current);
-        // CN = c + t*dir -> t
-        double t = ((current.multiply(dir)*(-1)) + (point.multiply(dir)) / dir.multiply(dir));
-        // t in CN -> L
-        CartesianCoordinate l = new CartesianCoordinate(current.getX() + t*dir.getX(), current.getY() + t*dir.getY(), current.getZ() + t*dir.getZ());
-        
-        if(current.norm() <= l.norm() && l.norm() <= next.norm()) {
-            // d = | P - L |
-            double d = point.subtract(l).norm();
-            
-            return d <= tol ? point.subtract(current).norm()/velocity : null;
-        }
-        else return null;
+    	// direction vec = next - current
+    	CartesianCoordinate dir = next.subtract(current);
+    	CartesianCoordinate pmc = current.subtract(point);
+        // d = |dir x (point - current)| / |dir|
+        double d = (dir.crossProduct(pmc).norm()) / dir.norm();
+        return d <= tol && dir.multiply(pmc) < 0 ? point.subtract(current).norm()/velocity : null;
+//        // CN = c + t*dir -> t
+//        double t = ((current.multiply(dir)*(-1)) + (point.multiply(dir)) / dir.multiply(dir));
+//        // t in CN -> L
+//        CartesianCoordinate l = new CartesianCoordinate(current.getX() + t*dir.getX(), current.getY() + t*dir.getY(), current.getZ() + t*dir.getZ());
+//        
+//        if(current.norm() <= l.norm() && l.norm() <= next.norm()) {
+//            // d = | P - L |
+//            double d = point.subtract(l).norm();
+//            
+//            return d <= tol ? point.subtract(current).norm()/velocity : null;
+//        }
+//        else return null;
     }
 	
 }

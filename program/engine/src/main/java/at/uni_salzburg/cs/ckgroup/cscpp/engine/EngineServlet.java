@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -63,7 +64,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	private Properties props = new Properties ();
 	private VirtualVehicleBuilder vehicleBuilder = new VirtualVehicleBuilder();
 	private Configuration configuration = new Configuration();
-	private Map<String,IVirtualVehicle> vehicleMap = new HashMap<String,IVirtualVehicle>();
+	private Map<String,IVirtualVehicle> vehicleMap = Collections.synchronizedMap(new HashMap<String,IVirtualVehicle>());
 	private SensorProxy sensorProxy = new SensorProxy();
 	private File contexTempDir;
 	private File configFile;

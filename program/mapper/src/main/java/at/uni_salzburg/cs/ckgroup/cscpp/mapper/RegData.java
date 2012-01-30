@@ -37,11 +37,14 @@ public class RegData implements JSONAware {
     
 	private static final Logger LOG = Logger.getLogger(RegData.class);
 	
+	private static final int MAX_ACCESS_ERRORS = 5;
+	
     private String eng_uri;
     private String pilotUri;
     private List<WayPoint> waypoints;
     private Set<String> sensors;
     private boolean centralEngine;
+    private int accessErrors = 0;
     
     public RegData(String eu, String pu, List<WayPoint> wp, Set<String> sensors2) {
         eng_uri = eu;
@@ -96,6 +99,14 @@ public class RegData implements JSONAware {
 
 	public boolean isCentralEngine() {
 		return centralEngine;
+	}
+	
+	public boolean isMaxAccessErrorsLimitReached() {
+		return ++accessErrors > MAX_ACCESS_ERRORS;
+	}
+	
+	public void resetAccessErrors() {
+		accessErrors = 0;
 	}
 
 	@SuppressWarnings("unchecked")

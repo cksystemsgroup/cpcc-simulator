@@ -135,16 +135,30 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 		}
 	}
 		
-	private void getEngineStatii() throws IOException, ParseException {
-
+	private void getEngineStatii() throws ParseException {
+		
+		List<String> toBeUnregistered = new ArrayList<String>();
+		
 		JSONParser parser = new JSONParser();
 		virtualVehicleMap.clear();
 		virtualVehicleList.clear();
 		for (RegData rd : registrationData.values()) {
 			String key = rd.getEngineUri();
 			String engineVehicleURL = key + "/json/vehicle";
-			String position = HttpQueryUtils.simpleQuery(engineVehicleURL);
-			if (position.trim().isEmpty()) {
+			
+			String position = null;
+			try {
+				position = HttpQueryUtils.simpleQuery(engineVehicleURL);
+			} catch (IOException e) {
+				LOG.error("Can not query Engine at " + key, e);
+				if (!rd.isMaxAccessErrorsLimitReached()) {
+					continue;
+				} else {
+					toBeUnregistered.add(key);
+				}
+			}
+			
+			if (position == null || position.trim().isEmpty()) {
 				continue;
 			}
 			JSONObject obj = (JSONObject)parser.parse(position);
@@ -164,6 +178,11 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 			}
 			
 			virtualVehicleMap.put(key, vehicles);
+		}
+		
+		for (String engineUrl : toBeUnregistered) {
+			LOG.info("Unregistering extinct Engine at " + engineUrl);
+			registrationData.remove(engineUrl);
 		}
 	}
 	

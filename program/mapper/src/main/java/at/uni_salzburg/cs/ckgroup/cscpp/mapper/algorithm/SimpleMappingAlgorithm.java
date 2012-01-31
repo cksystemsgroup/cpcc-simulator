@@ -127,6 +127,7 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
         // d = |dir x (point - current)| / |dir|
         double d = (dir.crossProduct(pmc).norm()) / dir.norm();
         return d <= tol && dir.multiply(pmc) < 0 ? point.subtract(current).norm()/velocity : null;
+//		return d <= tol && dir.multiply(pmc) < 0 && dir.norm() + tol >= pmc.norm() ? point.subtract(current).norm()/velocity : null;
 //        // CN = c + t*dir -> t
 //        double t = ((current.multiply(dir)*(-1)) + (point.multiply(dir)) / dir.multiply(dir));
 //        // t in CN -> L

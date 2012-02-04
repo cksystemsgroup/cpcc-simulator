@@ -121,13 +121,26 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
     }
         
     private Double isNear(CartesianCoordinate current, CartesianCoordinate next, CartesianCoordinate point, double tol, double velocity) {
-    	// direction vec = next - current
+    	// Are we in the tolerance sphere ?
+    	CartesianCoordinate pmc = point.subtract(current);
+    	double pmcNorm = pmc.norm();
+    	if (pmcNorm <= tol) {
+    		return pmcNorm / velocity;
+    	}
+    	
+    	// Are we heading towards the VV point?
     	CartesianCoordinate dir = next.subtract(current);
-    	CartesianCoordinate pmc = current.subtract(point);
-        // d = |dir x (point - current)| / |dir|
-        double d = (dir.crossProduct(pmc).norm()) / dir.norm();
-        return d <= tol && dir.multiply(pmc) < 0 ? point.subtract(current).norm()/velocity : null;
-//		return d <= tol && dir.multiply(pmc) < 0 && dir.norm() + tol >= pmc.norm() ? point.subtract(current).norm()/velocity : null;
+    	if (dir.multiply(pmc) < 0) {
+    		return null;
+    	}
+    	
+    	// We are heading towards the VV point, but do we reach it?
+    	double dirNorm = dir.norm();
+        double d = dir.crossProduct(pmc).norm() / dirNorm;
+        return pmcNorm <= dirNorm + tol && d <= tol ? pmcNorm / velocity : null;
+        
+//        // direction vec = next - current
+//        CartesianCoordinate dir = next.subtract(current);
 //        // CN = c + t*dir -> t
 //        double t = ((current.multiply(dir)*(-1)) + (point.multiply(dir)) / dir.multiply(dir));
 //        // t in CN -> L

@@ -7,12 +7,37 @@
 Thist chapter \ldots
 
 \section{System Overview}
+
+Figure~\ref{fig:SystemOverview} presents an overview of the complete system containing
+one simulated \ac{RV} and the ground station.
+
+The simulated \ac{RV} mainly comprises an Apache Tomcat web container, which executes a
+Pilot web pplication and an Engine web application.
+%
+The Pilot web application consists of model helicopter plant simulator, that is, the MockJAviator,
+a flight control system, an auto pilot, and a sensor simulator.
+The MockJAviator emulates the helicopter's flight dynamics and \ac{IMU},
+the flight control system operates attitude and altitude of the simulated vehicle, 
+and the autopilot stirs the simulated vehicle along a \ac{VCL} script defined trajectory.
+The sensor simulator supports GPS reveivers, belly mounted photo cameras, thermometers, barometers, and sonar sensors. 
 \begin{figure}[h]
 	\begin{center}
 		{\includegraphics[width=10cm]{SystemOverview.pdf}}
 	\end{center}
 	\caption{System Overview.\label{fig:SystemOverview}}
 \end{figure}
+
+The ground station executes an Apache Tomcat web container, which runs a Google Maps Viewer
+web application, a Engine web application, and a Mapper web application.
+%
+The Google Maps Viewer web application allows an operator to supervise ongoing missions.
+%
+The ground station Engine web application provides a \ac{VV RTE} for uploading and downloading \acp{VV}. 
+%
+Registry and mapping algorithm are the main components of the Mapper web application.
+The mapping algorithm assigns \acp{VV} to \acp{RV}, based on fight plans and available sensors.
+%
+Each Engine web application registers with the Mapper's registry.
 
 
 \section{Sensor Simulation}

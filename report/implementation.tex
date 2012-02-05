@@ -19,7 +19,8 @@ a flight control system, an auto pilot, and a sensor simulator.
 The MockJAviator emulates the helicopter's flight dynamics and \ac{IMU},
 the flight control system operates attitude and altitude of the simulated vehicle, 
 and the autopilot stirs the simulated vehicle along a \ac{VCL} script defined trajectory.
-The sensor simulator supports GPS reveivers, belly mounted photo cameras, thermometers, barometers, and sonar sensors. 
+The sensor simulator supports GPS reveivers, belly mounted cameras, thermometers, barometers,
+and sonar sensors.
 \begin{figure}[h]
 	\begin{center}
 		{\includegraphics[width=10cm]{SystemOverview.pdf}}
@@ -41,13 +42,43 @@ Each Engine web application registers with the Mapper's registry.
 
 
 \section{Sensor Simulation}
+Figure~\ref{fig:SensorSimulation} visualizes the simulation of sensors.
+%
+The current implementation supports belly mounted cameras, random number generators for emulating thermometers and
+barometers, GPS position sensors, and sonar sensors.
 
+ 
 \begin{figure}[h]
 	\begin{center}
 		{\includegraphics[width=11.6cm]{SensorSimulation-3.pdf}}
 	\end{center}
 	\caption{Sensor Simulation.\label{fig:SensorSimulation}}
 \end{figure}
+
+
+The belly mounted camera delivers a Google Maps satellite image indicating the position of the simulated vehicle by a
+visual marker, exemplified by Figure~\ref{fig:BellyMountedCamera}.
+To achieve this, the Pilot web application supplies a JavaScript enhanced HTML page.
+\begin{figure}[h]
+	\begin{center}
+		{\includegraphics[width=6cm]{bmc-photo-cosy.png}}
+	\end{center}
+	\caption{A photo captured by the belly mounted camera.\label{fig:BellyMountedCamera}}
+\end{figure}
+
+Once the Firefox web browser selects this page, the embedded JavaScript program periodically polls the Pilot web
+application for the vehicle's current position. After that, the JavaScript program slides the center of the
+displayed satellite view to this position and repositions the marker.
+To allow several belly mounted cameras beeing simulated on the same machine, the utilized web browsers use \ac{Xvfb}
+devices as output screens.
+%
+Whenever the belly mounted camera needs to deliver a photo, it applies the \texttt{xwd} utility to take a snapshot
+of the corresponding \ac{Xvfb} device, converts this snapshot to an image in PNG format by using program
+\texttt{convert}, and delivers it via \ac{HTTP}.
+
+Thermometer and air pressure sensors apply random number generators to simulate values.
+The position sensor queries the GPS receiver simulator for the current position of the vehicle, and the sonar
+sensor reads the current altitude over ground from the instantiated MockJAviator.
 
 
 \section{Section}

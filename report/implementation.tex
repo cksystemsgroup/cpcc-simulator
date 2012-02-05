@@ -4,6 +4,27 @@
 
 \chapter{Implementation}
 
+Thist chapter \ldots
+
+\section{System Overview}
+\begin{figure}[h]
+	\begin{center}
+		{\includegraphics[width=10cm]{SystemOverview.pdf}}
+	\end{center}
+	\caption{System Overview.\label{fig:SystemOverview}}
+\end{figure}
+
+
+\section{Sensor Simulation}
+
+\begin{figure}[h]
+	\begin{center}
+		{\includegraphics[width=11cm]{SensorSimulation-2.pdf}}
+	\end{center}
+	\caption{Sensor Simulation.\label{fig:SensorSimulation}}
+\end{figure}
+
+
 \section{Section}
 
 \subsection{Subtitle}
@@ -21,7 +42,7 @@ the migration of virtual vehicles based on a mapping decision made by a mapper a
 to the mapper itself with its mapping algorithms, a registration service is present. The servlet can be suspended and stores all
 registration information persistent in a file, otherwise registered engines would be lost. This is important because only registered 
 engines are considered during the mapping process.
-\\
+
 \subsection{Registration Service}
 An engine registers itself with the registration service upon start up using its ID. If the registration was successful, the service
 fetches some useful information and stores these together with the engine id. The fetched information are sensors and 
@@ -29,7 +50,7 @@ way points (flight plan), in our case, these are static informations. If a regis
 keeps trying to register until it succeeds or it is terminated.
 
 \subsection{Mapper}
-The mapper itself is cyclic. It has a working and a sleeping cycle. \\\\
+The mapper itself is cyclic. It has a working and a sleeping cycle. \\
 The working cycle consists of three steps:
 \begin{tabbing}
 1. fetch status \= of all virtual vehicles from all registered engines \\

@@ -80,6 +80,127 @@ Thermometer and air pressure sensors apply random number generators to simulate 
 The position sensor queries the GPS receiver simulator for the current position of the vehicle, and the sonar
 sensor reads the current altitude over ground from the instantiated MockJAviator.
 
+\section{Configuration}
+This section covers the configuration of the web applications Pilot, Engine, Mapper, and GM-Viewer.
+
+\subsection{Pilot Web Application}
+The configuration of the Pilot web application consists of three parts. The first part is the configuration of the
+simulated model helicopter hardware, the second part is the configuration of simulated sensors, and the third
+part is the assigned \ac{VCL} script.
+
+Listing~\ref{lst:virtHWconfig} depicts a fully simulated \ac{RV}. With the property \texttt{plant.simulated} equal
+to \texttt{true}, the Pilot web application simulates the model helicopter's flight dynamics of the physical body
+including the \ac{IMU}.
+The simulated model helicopter of type \texttt{MockJAviator} 
+awaits instructions via \acs{UDP} on address \texttt{localhost} port \texttt{9011} from a controller that
+operates attitude and altitude. 
+\lstset{tabsize=3,language=Tex}
+\begin{lstlisting}[caption={Virtual Hardware Configuration Example},mathescape=true,label=lst:virtHWconfig]{Name}
+plant.simulated = true
+plant.type = MockJAviator
+plant.listener = udp://localhost:9011
+plant.location.system.type = gpssim
+plant.location.system.listener = tcp://localhost:9012
+plant.location.system.update.rate = 10
+
+controller.simulated = true
+controller.type = JControl
+
+pilot.type = JPilot
+pilot.name = Pilot One
+pilot.controller.connector = udp://localhost:9014
+\end{lstlisting}
+The simulated model helicopter has a simulated GPS receiver onboard, which listens on \texttt{localhost} port
+\texttt{9012} for \acs{TCP} clients. It delivers the vehicle positions at a rate of 10 updates per second.  
+
+In the configuration, shown in Listing~\ref{lst:virtHWconfig}, the
+Pilot web application also emulates the controller for operating attitude and altitude. The controller uses
+the property \texttt{plant.location.system.listener} to determine how to access the helicopter plant, and
+uses the property \texttt{pilot.controller.connector} to identify the parameters for configuring a connection
+for incoming commands.
+
+The properties prefixed by \texttt{pilot} shows the type and name of the autopilot component, as well as
+define the connection to the attitude and altitude controller.
+
+Listing~\ref{lst:virtSensorConfig} depicts the configuration of simulated sensors. Property \texttt{sensor.list}
+defines the sensors to be simulated. The names in this list prepended by \texttt{sensor} are part of the 
+configuration that follows.
+\lstset{tabsize=3,language=Tex}
+\begin{lstlisting}[caption={Sensor Configuration Example},mathescape=true,label=lst:virtSensorConfig]{Name}
+sensor.list = gps, sonar, temp, photo
+
+sensor.gps.name = GPS receiver
+sensor.gps.path = position
+sensor.gps.uri = gps:///
+
+sensor.sonar.name = Sonar
+sensor.sonar.path = sonar
+sensor.sonar.uri = sonar:///
+
+sensor.temp.name = Thermometer
+sensor.temp.path = temperature
+sensor.temp.uri = rand:///18/22
+
+sensor.photo.name = Belly Mounted Photo Camera
+sensor.photo.path = photo
+sensor.photo.uri = x11:///:21
+\end{lstlisting}
+Each sensor configuration defines a \texttt{name}, a \texttt{path}, and an \texttt{uri} parameter.
+The parameter \texttt{name} of a sensor simply indicates its name and has no other impact whatsoever.
+The parameter \texttt{path} is a suffix to an \acs{URL} dependent on the deployment context of the corresponding
+Pilot web application. Let's assume, for example, the Pilot web application is deployed in a
+web container's context \texttt{/pilot} listening on machine \texttt{nanook} port \texttt{9010}.
+To access the Pilot web application, an operator uses the \acs{URL} \texttt{http://nanook:9010/pilot}. In this
+example the \acs{URL} to access the above configured belly mounted photo camera is
+\texttt{http://nanook:9010/pilot/sensor/photo}. 
+
+Listing~\ref{lst:VclExample} illustrates a \ac{VCL} script example. 
+The character \texttt{\#} indicates lines containing comments.
+%
+The first command in this example, ``\texttt{go auto}'', switches the vehicle into autopilot mode. Without
+this command, all following commands are ignored. Command ``\texttt{takeoff}'' starts the vehicle's engines
+and lifts it off the ground to an altitude of \unit{1}{\meter} within \unit{5}{\second}.
+%
+The ``\texttt{fly to}'' commands define waypoints the vehicle has to traverse by specifying latitude, longitude,
+and altitude above ground in absolute values. Additionally, this commands define a certain precision to
+determine when a waypoint has been reached, e.g., a sphere of \unit{1}{\meter} radius. Furthermore, this commands
+assign an average velocity to approach waypoints, e.g., \unit{2}{\meter\per\second}.
+% 
+\lstset{tabsize=3,language=Tex}
+\begin{lstlisting}[caption={Vehicle Control Language Example},mathescape=true,label=lst:VclExample]{Name}
+##
+## @(#) real vehicle set course example
+##
+go auto
+takeoff 1m for 5s
+fly to (47.82204197, 13.04086670, 20)abs precision 1m 2mps
+fly to (47.82206088, 13.04092035, 20)abs precision 1m 2mps
+fly to (47.82195102, 13.04488063, 20)abs precision 1m 2mps
+hover for 20s
+land
+go manual
+\end{lstlisting}
+%
+After all waypoints have been traversed, command ``\texttt{hover}'' instructs the vehicle to hover at
+the last waypoint for, in this example, \unit{20}{\second}. After that, command ``\texttt{land}'' directs
+the vehicle to land. Finally, command ``\texttt{go manual}'' switches back to manual control.
+
+\subsection{Engine Web Application}
+
+
+
+
+
+
+\subsection{Mapper Web Application}
+
+
+
+
+\subsection{GM-Viewer Web Application}
+
+
+
 
 \section{Section}
 

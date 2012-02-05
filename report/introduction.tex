@@ -4,16 +4,35 @@
 
 \chapter{Introduction}
 
-\section{Section}
+Our goal was to build a simulation system that demonstrates information-acquisition-as-a-service
+of mobile sensor networks for \ac{CPCC} as proposed in \cite{HotCloud10}.
+Based on the JNavigator project \cite{CKrainer2009} our implementation provides
+\begin{itemize}
+	\item the simulation of physical helicopter swarms,
+	\item the simulation of sensors,
+	\item the virtual abstraction of autonomous vehicles (virtual vehicles), and
+	\item the migration of virtual vehicles among flying physical helicopters (real vehicles).
+\end{itemize} 
 
-\subsection{Subtitle}
+We consider this project as a first step into the domain of information-acquisition-as-a-service
+and therefore allow the following limitations:
+\begin{itemize}
+	\item Real vehicles follow strict flight plans.
+	\item There are no network bandwith limits.
+	\item There are no processing power limits.
+\end{itemize} 
 
-Plain text.
+% leave the following items to future work:
 
-\subsection{Another subtitle}
+In this project,
+\begin{itemize}
+	\item we apply HTTP as protocol for sensor abstraction and data exchange,
+	\item we use Java as programming language,
+	\item we implement the software as web applications, and
+	\item we utilize Apache Tomcat as web server and servlet container.
+\end{itemize} 
 
-More plain text.
-
-Test citation \cite{APRES08} and \cite{DATE08} and \cite{JTRES09}.
-
-Text acronyms \ac{RV} and again \ac{RV}.
+This document describes the highlights of the implemented software.
+Chapter 2 reveals the implementation details,
+chapter 3 describes the project results,
+and chapter 4 summarises this paper by depicting proposals for future enhancements.

@@ -342,7 +342,7 @@ Engines are considered during the mapping process.
 An Engine registers itself with the registration service upon start up using its ID. If the registration was successful, the service
 fetches some useful information and stores these together with the Engine ID. The fetched information are sensors and 
 way points (flight plan), in our case, these are static informations. If a registration attempt was not successful, the Engine 
-keeps trying to register until it succeeds or it is terminated.
+keeps trying to register until it succeeds.
 
 \subsection{Mapper}
 The mapper itself is cyclic. It has a working and a sleeping cycle.

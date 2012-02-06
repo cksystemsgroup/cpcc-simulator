@@ -268,7 +268,7 @@ Picture
 \end{lstlisting}
 
 %Scanner
-
+. . .
 % \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Scanner}
 % \begin{itemize}
 % \item lookahead of one
@@ -279,7 +279,7 @@ Picture
 % \end{frame}
 
 %Parser
-
+. . .
 % \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Parser}
 % \begin{itemize}
 % \item process symbols of scanner
@@ -303,7 +303,7 @@ Picture
 %suspend, persist, migrate resume, cyber/physical mobility
 Virtual vehicles have the ability to suspend while they are executing their job. In this mode the entire internal state information is persisted to a file. While beeing in the suspended state it is possible to migrate the virtual vehicle to another real vehicle host and resume the operation there. 
 
-
+. . .
 
 % 
 % \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Saving State}
@@ -325,7 +325,9 @@ Virtual vehicles have the ability to suspend while they are executing their job.
 % \end{frame}
 
 \subsection{Types of Mobility}
-The migration process is denominated as \emph{cyber mobility} because no real vehicle movement is taking place when the virtual vehicle changes its position. On the other side movements that are carried out on board of a not changing real vehicle host are known as \emph{physical mobilty}.
+The migration process is denominated as \emph{cyber mobility} because no real vehicle movement is taking place when the virtual vehicle changes its location. On the other side movements that are carried out on board of a not changing real vehicle host are known as \emph{physical mobilty}.
+
+Each virtual vehicle records its movements. This historical track is represented by a list of waypoints. Each waypoint contains a timestamp, the geographic location and the name of the host. The host name is neccessay to differ between cyber mobility and physical mobilty. Waypoints are stored when a virtual vehicle executes a cycle and its location has changed more than a specific distance (physical mobilty) or its host has changed (cyber mobility). With the information that is stored in the track detailed analysis of virtual vehicle moving behaviour will be possible.
 
 
 

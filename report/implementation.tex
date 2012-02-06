@@ -321,12 +321,15 @@ Listing~\ref{lst:simpleMappingAlgorithm} reveals the simple mapping algorithm as
 for all virtual vehicles do
 	if virtual vehicle program is complete
 	then
-		invoke migration to central Engine
+		invoke migration to central engine
 	else
 		find fastest real vehicle with at least one needed sensor
 		and distance CurrentToNext to ActionPoint < tolerance
 	endif
-	if found vehicle then invoke migration to it endif
+	if found vehicle 
+	then 
+		invoke migration to it 
+	endif
 endfor
 \end{lstlisting}
 

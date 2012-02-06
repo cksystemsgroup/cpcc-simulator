@@ -242,15 +242,77 @@ pilot.two.vehicle.status.url = \
 
 
 
-\section{Section}
+\section{Real Vehicles}
 
-\subsection{Subtitle}
 
-Plain text.
+\section{Vehicle Virtualization}
 
-\subsection{Another subtitle}
+%VV intro, suspend, persist, migrate resume, cyber/physical mobility
+A virtual vehicle is a software implementation providing an isolated environment to the end user of the service. Virtual vehicles are hosted on real vehicles and provide an abstracted interface to the host's functionality. Virtual vehicles have the ability to suspend while they are executing their job. In this mode the entire internal state information is persisted to a file. While beeing in the suspended state it is possible to migrate the virtual vehicle to another real vehicle host and resume the operation there. The migration process is denominated as \emph{cyber mobility} because no real vehicle movement is taking place when the virtual vehicle changes its position. On the other side movements that are carried out on board of a not changing real vehicle host are known as \emph{physical mobilty}.
 
-More plain text.
+%VV language
+For abstraction of services to end users a dedicated virtual vehicle program language has been defined. The language is targeted to be simple in usage. In Listing~\ref{lst:vvProgram} a sample program is shown. The program represents a list of commands. Each command consists of a point and a list of actions that have to be executed at this point. The point definition contains the geographic location (latitude, longitude, altitude) and the specification of a tolerance radius. The tolerance radius defines a sphere around the point in which the actions have to be performed.
+
+\begin{lstlisting}[caption={Virtual Vehicle Sample Program},mathescape=true,label=lst:vvProgram]{Name}
+Point 47.82201946 13.04082647 1.00 tolerance 12.3
+Picture
+Temperature
+
+Point 47.82203026 13.04084659 25.00 tolerance 100
+Temperature
+
+Point 47.82211311 13.04076076 30.00 tolerance 1.2
+Picture
+\end{lstlisting}
+
+
+% \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Scanner}
+% \begin{itemize}
+% \item lookahead of one
+% \item double and integers
+% \item keywords and variables
+% \item easy to add keywords - (prepared for adding if, else, while, for ...)
+% \end{itemize} 
+% \end{frame}
+% 
+% \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Parser}
+% \begin{itemize}
+% \item process symbols of scanner
+% \item parser handles 
+% \begin{itemize}
+%   \item command (position, actions)
+%   \item position (point, tolerance)
+%   \item point (lat. long. alt.)
+%   \item actions  
+% \end{itemize} 
+% \item error handling
+% \begin{itemize}
+%   \item throws parser exception with description
+%   \item stop parsing
+% \end{itemize} 
+% \end{itemize} 
+% \end{frame}
+% 
+% \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Saving State}
+% \begin{itemize}
+% \item java serialisation used
+% \item file with state
+% \item list of commands with actions serialized
+% \item already collected data in seperate file
+% \end{itemize} 
+% \end{frame}
+% 
+% \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Execution of VV}
+% \begin{itemize}
+% \item VV are dispatched through 
+% \item execute function
+% \item read state, execute, store state
+% \item partial execution of commands supported
+% \end{itemize} 
+% \end{frame}
+
+
+
 
 
 \section{Mapping}

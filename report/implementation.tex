@@ -4,14 +4,14 @@
 
 \chapter{Implementation}
 
-Thist chapter presens the implementation of our system.
+This chapter presents the implementation of our system.
 After outlining the structural elements, it briefly describes the simulation of sensors and explains
-configuration parameters. Then, this chapter describes vehicle virtualzation, and elaborates on cyber-mobility.
+configuration parameters. Then, this chapter describes vehicle virtualization, and elaborates on cyber-mobility.
 
 \section{System Overview}
 
 Figure~\ref{fig:SystemOverview} presents an overview of the complete system containing
-the ground station and one simulated helicopter refered to as \ac{RV}.
+the ground station and one simulated helicopter referred to as \ac{RV}.
 
 The simulated \ac{RV} mainly comprises an Apache Tomcat web container, which executes a
 Pilot web application and an Engine web application.
@@ -21,7 +21,7 @@ a flight control system, an auto pilot, and a sensor simulator.
 The MockJAviator emulates the helicopter's flight dynamics and \ac{IMU},
 the flight control system operates attitude and altitude of the simulated vehicle, 
 and the autopilot stirs the simulated vehicle along a \ac{VCL} script defined trajectory.
-The sensor simulator supports GPS reveivers, belly mounted cameras, thermometers, barometers,
+The sensor simulator supports GPS receivers, belly mounted cameras, thermometers, barometers,
 and sonar sensors.
 \begin{figure}[h]
 	\begin{center}
@@ -71,7 +71,7 @@ To achieve this, the Pilot web application supplies a JavaScript enhanced HTML p
 Once the Firefox web browser selects this page, the embedded JavaScript program periodically polls the Pilot web
 application for the vehicle's current position. After that, the JavaScript program slides the center of the
 displayed satellite view to this position and repositions the marker.
-To allow several belly mounted cameras beeing simulated on the same machine, the utilized web browsers use \ac{Xvfb}
+To allow several belly mounted cameras being simulated on the same machine, the utilized web browsers use \ac{Xvfb}
 devices as output screens.
 %
 Whenever the belly mounted camera needs to deliver a photo, it applies the \texttt{xwd} utility to take a snapshot
@@ -249,13 +249,20 @@ pilot.two.vehicle.status.url = \
 \section{Vehicle Virtualization}
 
 %VV intro
-A virtual vehicle is a software implementation providing an isolated environment to the end user of the service. Virtual vehicles are hosted on real vehicles and offer an abstracted interface to the host's functionality. It should be possible for the end user to specify the behaviour of virtual vehicles and the jobs that should be executed on them.
+A \acf{VV} is a software implementation providing an isolated environment to the end user of the service. \acp{VV} are
+hosted on \acfp{RV} and offer an abstracted interface to the host's functionality. It should be possible for the end
+user to specify the behavior of \acp{VV} and the jobs that should be executed on them.
 
-\subsection{Virtual Vehicle Language}
+\subsection{Virtual Vehicle Programming Language}
 
 %VV language
-For abstraction of services to end users a dedicated virtual vehicle program language has been defined. The language is targeted to be simple in usage. In Listing~\ref{lst:vvProgram} a sample program is shown. The program represents a list of commands. Each command consists of a point and a list of actions that have to be executed at this point. The point definition contains the geographic location (latitude, longitude, altitude) and the specification of a tolerance radius. The tolerance radius defines a sphere around the point in which the actions have to be performed.
+For abstraction of services to end users a dedicated \ac{VV} programming language has been defined. The language
+is targeted to be simple in usage. Listing~\ref{lst:vvProgram} shows a program example. The program represents a
+list of commands. Each command consists of a point and a list of actions that have to be executed at this point. The
+point definition contains the geographic location (latitude, longitude, altitude) and the specification of a tolerance
+radius. The tolerance radius defines a sphere around the point in which the actions have to be performed.
 
+\lstset{tabsize=3,language=Tex}
 \begin{lstlisting}[caption={Virtual Vehicle Sample Program},mathescape=true,label=lst:vvProgram]{Name}
 Point 47.82201946 13.04082647 1.00 tolerance 12.3
 Picture
@@ -268,69 +275,67 @@ Point 47.82211311 13.04076076 30.00 tolerance 1.2
 Picture
 \end{lstlisting}
 
-\subsection{Parsing Virtual Vehicle Language}
+\subsection{Parsing Virtual Vehicle Programs}
+When a \ac{VV} is activated the program file is read and parsed. The implemented scanner allows extending the 
+language by adding control structures like ``if~(\ldots)~else'' or ``for~(\ldots)'' loops. Keywords can be added easily and
+parsing of doubles, integers, and identifier is already implemented. 
+%
+Parsing is done based on on the EBNF specification, shown in Listing~\ref{lst:vvEBNF}.
 
-When a virtual vehicle is set up the program file is read and parsed. The implemented scanner is prepared to extend the 
-language with control structures like ``if (...) else'' or ``for (...)'' loops. Keywords can be easily added and doubles, integers 
-and identifier already implemented. 
-
-Parsing is done based on on the following EBNF specification: 
-
-\texttt{ \\
-Command = Position Action-List \\
-Position = Point Tolerance\\
-Point = ``Point`` double double double \\
-Tolerance = ``Tolerance'' double \\
-Action-List = Action \{Action\} \\
-Action = ``Temperature''\textbar ``Picture'' \textbar ``Airpressure'' \textbar ``Altitude'' \textbar ``Speed'' \\
-}
-
-If an error occurs during the parsing of the program file an exception is thrown. With the exception and detailed error description is provided. 
-Parsing is stopped and the rest of the file ignored. If the file was successfully parsed then the parser returns a list of command objects. Each of 
-this objects include a position object and a list of actions. A position includes a point with a tolerance as described above.
+\lstset{tabsize=3,language=Tex}
+\begin{lstlisting}[caption={Virtual Vehicle EBNF},mathescape=true,label=lst:vvEBNF]{Name}
+Command = Position Action-List
+Position = Point Tolerance
+Point = "Point" double double double
+Tolerance = "Tolerance" double
+Action-List = Action {Action}
+Action = "Temperature" | "Picture" | "Airpressure" |
+	"Altitude" | "Speed"
+\end{lstlisting}
 
 
-\subsection{Executing a Virtual Vehicle Program}
+%If an error occurs during the parsing of the program file an exception is thrown. With the exception and detailed error
+% description is provided. Parsing is stopped and the rest of the file ignored.
+%If the file was successfully parsed then the parser returns a list of command objects.
+%Each of this objects include a position object and a list of actions.
 
-A real Vehicle can host one or more Virtual Vehicles. The VV on a real vehilces are scheduled in round robin manner for execution. When a VV is the first time scheduled it takes the first command
-from the command list, which was returned from the parser, and start executing this command. A command can be executed if the position of the real vehicle is equal to the position specified in the command and the 
-actions (taking a picture, measuring the temperature, ...) could be done. \\
-If it's not possible to finish a command, cause of wrong position or actions can not be done, the VV is suspended.
+If an error occurs during program parsing, the parser stops and throws an exception. For easier debugging, the exception
+contains a detailed error description. If the parser succeeds parsing the program, it returns a list of command objects.
+Each of this objects contains a position and a list of actions.
+A position includes a point with a tolerance as described above.
+
+\subsection{Executing Virtual Vehicle Programs}
+
+A \ac{RV} can host one or more \ac{VV}. The \acp{VV} on a \ac{RV} are scheduled in round robin manner for
+execution. When a \ac{VV} is the first time scheduled, it takes the first command from the command list, which was
+returned from the parser, and starts executing this command. A command can be executed if the position of the \ac{RV} is
+equal to the position specified in the command and the actions (taking a picture, measuring the temperature, ...) could be done.
+If it's not possible to finish a command, because of a wrong position or actions can not be done, the \ac{VV} keeps
+active.
+
 
 \subsection{Migration}
 
-%suspend, persist, migrate resume, cyber/physical mobility
-Virtual vehicles have the ability to suspend while they are executing their job. In this mode the entire internal state 
-information is persisted to a file. While beeing in the suspended state it is possible to migrate the virtual 
-vehicle to another real vehicle host and resume the operation there. \\
-To store the state the java serialisation is used. The hole command list is serialized to a file. That means the allready finished commands 
-and the command which have to be executed. The results of the executed actions are stored in differnt files. After migration when the
-state is read back the VV looks at the command list and begin again to execute commands. All commands which are already executed are skipped. The VV 
-continue with the first unfinished command. Unfinished could also mean that some of the actions where already executed.
+\acp{VV} have the ability to suspend while they are executing their job. In this mode the entire internal state 
+information is persisted to a file. While being in the suspended state it is possible to migrate the \ac{VV} to another
+\ac{RV} host and resume the operation there. To store the state the Java serialization is used. The whole command
+list is serialized to a file. That means the already finished commands and the command that have to be executed. The
+results of the executed actions are stored in different files. After migration when the state is read back the \ac{VV}
+looks at the command list and begin again to execute commands. All commands which are already executed are skipped. The
+\ac{VV} continue with the first unfinished command. Unfinished could also mean that some of the actions where already
+executed.
 
-% 
-% \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Saving State}
-% \begin{itemize}
-% \item java serialisation used
-% \item file with state
-% \item list of commands with actions serialized
-% \item already collected data in seperate file
-% \end{itemize} 
-% \end{frame}
-
-% \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Execution of VV}
-% \begin{itemize}
-% \item VV are dispatched through 
-% \item execute function
-% \item read state, execute, store state
-% \item partial execution of commands supported
-% \end{itemize} 
-% \end{frame}
 
 \subsection{Types of Mobility}
-The migration process is denominated as \emph{cyber mobility} because no real vehicle movement is taking place when the virtual vehicle changes its location. On the other side movements that are carried out on board of a not changing real vehicle host are known as \emph{physical mobilty}.
+The migration process is denominated as \emph{cyber mobility}, because no real vehicle movement is taking place when the
+\ac{VV} changes its location. On the other side movements that are carried out on board of a not changing \ac{RV} host
+are known as \emph{physical mobility}.
 
-Each virtual vehicle records its movements. This historical track is represented by a list of waypoints. Each waypoint contains a timestamp, the geographic location and the name of the host. The host name is neccessay to differ between cyber mobility and physical mobilty. Waypoints are stored when a virtual vehicle executes a cycle and its location has changed more than a specific distance (physical mobilty) or its host has changed (cyber mobility). With the information that is stored in the track detailed analysis of virtual vehicle moving behaviour will be possible.
+Each \ac{mobility} records its movements. This historical track is represented by a list of waypoints. Each waypoint
+contains a timestamp, the geographic location and the name of the host. The host name is necessary to differ between
+cyber mobility and physical mobility. Waypoints are stored when a \ac{VV} executes a cycle and its location has
+changed more than a specific distance (physical mobility) or its host has changed (cyber mobility). With the information
+that is stored in the track detailed analysis of \ac{VV} moving behavior will be possible.
 
 
 
@@ -344,34 +349,18 @@ Engines are considered during the mapping process.
 \subsection{Registration Service}
 An Engine registers itself with the registration service upon start up using its ID. If the registration was successful, the service
 fetches some useful information and stores these together with the Engine ID. The fetched information are sensors and 
-way points (flight plan), in our case, these are static informations. If a registration attempt was not successful, the Engine 
-keeps trying to register until it succeeds.
+way points (flight plan), in our case, these is static information. If a registration attempt was not successful, the
+Engine keeps trying to register until it succeeds.
 
 \subsection{Mapper}
-The mapper itself is cyclic. It has a working and a sleeping cycle.
-The working cycle consists of three steps:
-
-% \begin{tabbing}
-% 1. fetch status \= of all virtual vehicles from all registered Engines \\
-% \>	the status message includes: \= \\ 
-% \> \>					the next action point \\ 
-% \> \>					and its actions \\[0.25cm]
-% 2. fetch status \= of all real vehicles (on which an Engine is running) \\
-% \>	the message includes:  \\
-% \> \>				the current position \\
-% \> \> 				the next position \\
-% \> \>				and the velocity \\[0.25cm]
-% 3. execute the mapping algorithm \\
-% \end{tabbing}
+The mapper periodically executes the following three steps: 
 
 \begin{enumerate}
   \item Fetch the status of all \acp{VV} from all registered Engines.
-  
   The status message includes the next action point, and its unfinished actions.
   
   \item Fetch the status of all \acp{RV} on which an Engine is running.
-  
-  The message includes the current position, the next position, and the average velocity
+  The returned message includes the current position, the next position, and the average velocity
   
   \item Execute the mapping algorithm.
 \end{enumerate}
@@ -385,15 +374,6 @@ It randomly selects two different Engines. If one of these has a \ac{VV}, then t
 migrated to the other Engine.
 
 \subsubsection{Simple Mapping Algorithm}
-
-% 	\begin{tabbing}
-% 	\textbf{for} \= \textbf{all} virtual vehicles \textbf{do} \\[.25cm]
-% 	\> \textbf{if}  \= virtual vehicle program is complete \\
-% 	\> \>	\textbf{then} invoke migration to central Engine \\[.25cm]
-% 	\>	\textbf{else} \= find fastest real vehicle with at least one needed sensor \\
-% 	\> \>	\textbf{and} distance CurrentToNext to ActionPoint \begin{math}< \end{math} tolerance \\[.25cm]
-% 	\>	\textbf{if} found vehicle \textbf{then} invoke migration to it \\
-% 	\end{tabbing}
 
 Listing~\ref{lst:simpleMappingAlgorithm} reveals the simple mapping algorithm as pseudo code. 
 
@@ -414,23 +394,27 @@ for all virtual vehicles do
 endfor
 \end{lstlisting}
 
-Fastest vehicle means: the vehicle with the shortest flight time from its current position to the action point (thus: higher precision \begin{math} \rightarrow \end{math} faster)
-of the virtual vehicle. 
+The fastest vehicle is the vehicle with the shortest flight time from its current position to the action
+point of the \ac{VV}.
+%(thus: higher precision \begin{math} \rightarrow \end{math} faster) of the virtual vehicle. 
 
 
-Illustration of line segment to action point distance:
+Figure~\ref{fig:intersectionExample} shows the current flight path, the current location $C$ of a \ac{RV} and the 
+end point of the current flight plan segment $N$.
+% Illustration of line segment to action point distance:
 \begin{figure}[h]
 	\begin{center}
 		{
             \includegraphics[width=12cm]{dist.eps}
         }
 	\end{center}
-	\caption{Intersection of flight path and next action point.\label{fig:intersection example}}
+	\caption{Intersection of flight path and next action point.\label{fig:intersectionExample}}
 \end{figure}
-This example shows the current flight path of a real vehicle and the next action point of a virtual vehicle
-The flight path intersects with the tolerance sphere of action point P, thus the distance is smaller then the tolerance and
-the real vehicle became a candidate for migration.
-%
-conclusion:
-A virtual vehicle stays on a real vehicle or the central Engine as long as there is no suitable real vehicle, but such a vehicle can't 
-be hidden by a non suitable vehicle.
+% This example 
+The flight path $\displaystyle{\overrightarrow{CN}}$ intersects with the tolerance sphere of action point $AP$, thus
+the distance is smaller than the tolerance and the \ac{RV} is a candidate for migration.
+
+With this behavior of the algorithm, a \ac{VV} stays on a \ac{RV} or the central Engine until a \ac{RV}
+enters a flight plan segment that satisfies the \ac{VV}'s sensor and location requirements.
+
+

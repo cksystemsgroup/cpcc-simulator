@@ -268,43 +268,45 @@ Point 47.82211311 13.04076076 30.00 tolerance 1.2
 Picture
 \end{lstlisting}
 
-%Scanner
-. . .
-% \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Scanner}
-% \begin{itemize}
-% \item lookahead of one
-% \item double and integers
-% \item keywords and variables
-% \item easy to add keywords - (prepared for adding if, else, while, for ...)
-% \end{itemize} 
-% \end{frame}
+\subsection{Parsing Virtual Vehicle Language}
 
-%Parser
-. . .
-% \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Parser}
-% \begin{itemize}
-% \item process symbols of scanner
-% \item parser handles 
-% \begin{itemize}
-%   \item command (position, actions)
-%   \item position (point, tolerance)
-%   \item point (lat. long. alt.)
-%   \item actions  
-% \end{itemize} 
-% \item error handling
-% \begin{itemize}
-%   \item throws parser exception with description
-%   \item stop parsing
-% \end{itemize} 
-% \end{itemize} 
-% \end{frame}
+When a virtual vehicle is set up the program file is read and parsed. The implemented scanner is prepared to extend the 
+language with control structures like ``if (...) else'' or ``for (...)'' loops. Keywords can be easily added and doubles, integers 
+and identifier already implemented. 
+
+Parsing is done based on on the following EBNF specification: 
+
+\texttt{ \\
+Command = Position Action-List \\
+Position = Point Tolerance\\
+Point = ``Point`` double double double \\
+Tolerance = ``Tolerance'' double \\
+Action-List = Action \{Action\} \\
+Action = ``Temperature''\textbar ``Picture'' \textbar ``Airpressure'' \textbar ``Altitude'' \textbar ``Speed'' \\
+}
+
+If an error occurs during the parsing of the program file an exception is thrown. With the exception and detailed error description is provided. 
+Parsing is stopped and the rest of the file ignored. If the file was successfully parsed then the parser returns a list of command objects. Each of 
+this objects include a position object and a list of actions. A position includes a point with a tolerance as described above.
+
+
+\subsection{Executing a Virtual Vehicle Program}
+
+A real Vehicle can host one or more Virtual Vehicles. The VV on a real vehilces are scheduled in round robin manner for execution. When a VV is the first time scheduled it takes the first command
+from the command list, which was returned from the parser, and start executing this command. A command can be executed if the position of the real vehicle is equal to the position specified in the command and the 
+actions (taking a picture, measuring the temperature, ...) could be done. \\
+If it's not possible to finish a command, cause of wrong position or actions can not be done, the VV is suspended.
 
 \subsection{Migration}
 
 %suspend, persist, migrate resume, cyber/physical mobility
-Virtual vehicles have the ability to suspend while they are executing their job. In this mode the entire internal state information is persisted to a file. While beeing in the suspended state it is possible to migrate the virtual vehicle to another real vehicle host and resume the operation there. 
-
-. . .
+Virtual vehicles have the ability to suspend while they are executing their job. In this mode the entire internal state 
+information is persisted to a file. While beeing in the suspended state it is possible to migrate the virtual 
+vehicle to another real vehicle host and resume the operation there. \\
+To store the state the java serialisation is used. The hole command list is serialized to a file. That means the allready finished commands 
+and the command which have to be executed. The results of the executed actions are stored in differnt files. After migration when the
+state is read back the VV looks at the command list and begin again to execute commands. All commands which are already executed are skipped. The VV 
+continue with the first unfinished command. Unfinished could also mean that some of the actions where already executed.
 
 % 
 % \begin{frame}\frametitle{Vehicle Virtualization}\framesubtitle{Saving State}

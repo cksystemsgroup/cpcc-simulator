@@ -415,6 +415,20 @@ endfor
 Fastest vehicle means: the vehicle with the shortest flight time from its current position to the action point (thus: higher precision \begin{math} \rightarrow \end{math} faster)
 of the virtual vehicle. 
 
+
+Illustration of line segment to action point distance:
+\begin{figure}[h]
+	\begin{center}
+		{
+            \includegraphics[width=12cm]{dist.eps}
+        }
+	\end{center}
+	\caption{Intersection of flight path and next action point.\label{fig:intersection example}}
+\end{figure}
+This example shows the current flight path of a real vehicle and the next action point of a virtual vehicle
+The flight path intersects with the tolerance sphere of action point P, thus the distance is smaller then the tolerance and
+the real vehicle became a candidate for migration.
+%
 conclusion:
 A virtual vehicle stays on a real vehicle or the central Engine as long as there is no suitable real vehicle, but such a vehicle can't 
 be hidden by a non suitable vehicle.

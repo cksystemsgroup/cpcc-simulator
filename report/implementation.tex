@@ -4,17 +4,19 @@
 
 \chapter{Implementation}
 
-Thist chapter \ldots
+Thist chapter presens the implementation of our system.
+After outlining the structural elements, it briefly describes the simulation of sensors and explains
+configuration parameters. Then, this chapter describes vehicle virtualzation, and elaborates on cyber-mobility.
 
 \section{System Overview}
 
 Figure~\ref{fig:SystemOverview} presents an overview of the complete system containing
-one simulated \ac{RV} and the ground station.
+the ground station and one simulated helicopter refered to as \ac{RV}.
 
 The simulated \ac{RV} mainly comprises an Apache Tomcat web container, which executes a
-Pilot web pplication and an Engine web application.
+Pilot web application and an Engine web application.
 %
-The Pilot web application consists of model helicopter plant simulator, that is, the MockJAviator,
+The Pilot web application consists of a model helicopter plant simulator, that is, the MockJAviator,
 a flight control system, an auto pilot, and a sensor simulator.
 The MockJAviator emulates the helicopter's flight dynamics and \ac{IMU},
 the flight control system operates attitude and altitude of the simulated vehicle, 
@@ -188,9 +190,9 @@ land
 go manual
 \end{lstlisting}
 %
-After all waypoints have been traversed, command ``\texttt{hover}'' instructs the vehicle to hover at
-the last waypoint for, in this example, \unit{20}{\second}. After that, command ``\texttt{land}'' directs
-the vehicle to land. Finally, command ``\texttt{go manual}'' switches back to manual control.
+As soon as all waypoints have been traversed, command ``\texttt{hover}'' instructs the vehicle to hold its
+position at the last waypoint for, in this example, \unit{20}{\second}. After that, command ``\texttt{land}''
+directs the vehicle to land. Finally, command ``\texttt{go manual}'' switches back to manual control.
 
 
 \subsection{Engine Web Application}
@@ -242,7 +244,6 @@ pilot.two.vehicle.status.url = \
 
 
 
-\section{Real Vehicles}
 
 
 \section{Vehicle Virtualization}

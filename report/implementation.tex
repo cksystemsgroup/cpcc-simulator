@@ -29,6 +29,9 @@ and sonar sensors.
 	\end{center}
 	\caption{System Overview.\label{fig:SystemOverview}}
 \end{figure}
+The Engine web application consists of a \ac{VV RTE} and a sensor proxy. The \ac{VV RTE}
+handles \ac{VV} execution and the sensor proxy abstracts the access to sensors, as well as
+optimizes the network traffic for accessing the sensors.
 
 The ground station executes an Apache Tomcat web container, which runs a Google Maps Viewer
 web application, a Engine web application, and a Mapper web application.
@@ -58,8 +61,8 @@ barometers, GPS position sensors, and sonar sensors.
 \end{figure}
 
 
-The belly mounted camera delivers a Google Maps satellite image indicating the position of the simulated vehicle by a
-visual marker, exemplified by Figure~\ref{fig:BellyMountedCamera}.
+The belly mounted camera delivers a Google Maps satellite image indicating the position of the simulated vehicle by
+means of a visual marker, exemplified by Figure~\ref{fig:BellyMountedCamera}.
 To achieve this, the Pilot web application supplies a JavaScript enhanced HTML page.
 \begin{figure}[h]
 	\begin{center}
@@ -76,7 +79,7 @@ devices as output screens.
 %
 Whenever the belly mounted camera needs to deliver a photo, it applies the \texttt{xwd} utility to take a snapshot
 of the corresponding \ac{Xvfb} device, converts this snapshot to an image in PNG format by using program
-\texttt{convert}, and delivers it via \ac{HTTP}.
+\texttt{convert}, and delivers it via the \ac{HTTP}.
 
 Thermometer and air pressure sensors apply random number generators to simulate values.
 The position sensor queries the GPS receiver simulator for the current position of the vehicle, and the sonar
@@ -121,7 +124,7 @@ the property \texttt{plant.location.system.listener} to determine how to access 
 uses the property \texttt{pilot.controller.connector} to identify the parameters for configuring a connection
 for incoming commands.
 
-The properties prefixed by \texttt{pilot} shows the type and name of the autopilot component, as well as
+The properties prefixed by \texttt{pilot} show the type and name of the autopilot component, as well as
 define the connection to the attitude and altitude controller.
 
 Listing~\ref{lst:virtSensorConfig} depicts the configuration of simulated sensors. Property \texttt{sensor.list}
@@ -150,7 +153,7 @@ sensor.photo.uri = x11:///:21
 sensor.photo.type = snapshot
 \end{lstlisting}
 Each sensor configuration defines a \texttt{name}, a \texttt{path}, and an \texttt{uri} parameter.
-The parameter \texttt{name} of a sensor simply indicates its name and has no other impact whatsoever.
+The parameter \texttt{name} of a sensor simply indicates its name, which is used for visualization only.
 The parameter \texttt{path} is a suffix to an \acs{URL} dependent on the deployment context of the corresponding
 Pilot web application. Let's assume, for example, the Pilot web application is deployed in a
 web container's context \texttt{/pilot} listening on machine \texttt{nanook} port \texttt{9010}.
@@ -198,8 +201,8 @@ directs the vehicle to land. Finally, command ``\texttt{go manual}'' switches ba
 \subsection{Engine Web Application}
 
 As depicted in Listing~\ref{lst:engineConfig}, the Engine web application configuration consists
-of two parameters. Parameter ``\texttt{pilot.url}'' specifies the Pilot web application the Engine
-travels with, and parameter ``\texttt{mapper.registry.url}'' defines the Mapper registry service to
+of two parameters. Parameter \texttt{pilot.url} specifies the Pilot web application the Engine
+travels with, and parameter \texttt{mapper.registry.url} defines the Mapper registry service to
 register with.
 \lstset{tabsize=3,language=Tex}
 \begin{lstlisting}[caption={Engine Configuration Example},mathescape=true,label=lst:engineConfig]{Name}
@@ -211,12 +214,12 @@ mapper.registry.url = http://localhost:9040/mapper/registry
 
 \subsection{Mapper Web Application}
 Since every Engine web application registers with the Mapper, the Mapper web application needs no
-configuration parameters.
+configuration parameters. The selection of mapping algorithms is built-in and not for configuration yet.
 
 
 
 \subsection{GM-Viewer Web Application}
-Currently, our Google Maps Viewer web application needs to know every Pilot web application
+Currently, the Google Maps Viewer web application needs to know every Pilot web application
 and every Engine web application. As shown in Listing~\ref{lst:gmViewerConfig}, the \acs{JSON} \cite{RFC_4627}
 query service \acsp{URL} for the current position, the set course's list of waypoints, and the  
 list of currently assigned vehicles have to be configured for each \ac{RV} carrying a Pilot and an Engine.   
@@ -251,7 +254,7 @@ pilot.two.vehicle.status.url = \
 %VV intro
 A \acf{VV} is a software implementation providing an isolated environment to the end user of the service. \acp{VV} are
 hosted on \acfp{RV} and offer an abstracted interface to the host's functionality. It should be possible for the end
-user to specify the behavior of \acp{VV} and the jobs that should be executed on them.
+user to specify the behavior of \acp{VV} and the jobs that should be executed by them.
 
 \subsection{Virtual Vehicle Programming Language}
 
@@ -277,10 +280,10 @@ Picture
 
 \subsection{Parsing Virtual Vehicle Programs}
 When a \ac{VV} is activated the program file is read and parsed. The implemented scanner allows extending the 
-language by adding control structures like ``if~(\ldots)~else'' or ``for~(\ldots)'' loops. Keywords can be added easily and
-parsing of doubles, integers, and identifier is already implemented. 
+language by adding control structures like ``\texttt{if~(\ldots)~else}'' or ``\texttt{for~(\ldots)}'' loops. Keywords
+can be added easily and parsing of doubles, integers, and identifier is already implemented. 
 %
-Parsing is done based on on the EBNF specification, shown in Listing~\ref{lst:vvEBNF}.
+Parsing is done based on on the EBNF specification shown in Listing~\ref{lst:vvEBNF}.
 
 \lstset{tabsize=3,language=Tex}
 \begin{lstlisting}[caption={Virtual Vehicle EBNF},mathescape=true,label=lst:vvEBNF]{Name}
@@ -306,10 +309,11 @@ A position includes a point with a tolerance as described above.
 
 \subsection{Executing Virtual Vehicle Programs}
 
-A \ac{RV} can host one or more \ac{VV}. The \acp{VV} on a \ac{RV} are scheduled in round robin manner for
-execution. When a \ac{VV} is the first time scheduled, it takes the first command from the command list, which was
+A \ac{RV} can host one or more \ac{VV}. Each \acp{VV} executes in a separate thread.
+When a \ac{VV} is scheduled the first time, it takes the first command from its command list, which was
 returned from the parser, and starts executing this command. A command can be executed if the position of the \ac{RV} is
-equal to the position specified in the command and the actions (taking a picture, measuring the temperature, ...) could be done.
+within the tolerance sphere specified in its position, that means, the actions, like taking a picture, measuring the
+temperature, etc., can be performed.
 If it's not possible to finish a command, because of a wrong position or actions can not be done, the \ac{VV} keeps
 active.
 
@@ -319,37 +323,39 @@ active.
 \acp{VV} have the ability to suspend while they are executing their job. In this mode the entire internal state 
 information is persisted to a file. While being in the suspended state it is possible to migrate the \ac{VV} to another
 \ac{RV} host and resume the operation there. To store the state the Java serialization is used. The whole command
-list is serialized to a file. That means the already finished commands and the command that have to be executed. The
-results of the executed actions are stored in different files. After migration when the state is read back the \ac{VV}
-looks at the command list and begin again to execute commands. All commands which are already executed are skipped. The
-\ac{VV} continue with the first unfinished command. Unfinished could also mean that some of the actions where already
-executed.
+list is serialized to a file, that means the already finished commands and the command that have to be executed are
+written to disk. The results of the executed actions are stored in different files. After migration when the state is
+read back, the \ac{VV} looks at the command list and begins again to execute commands. All commands which are already
+executed are skipped. The \ac{VV} continues with the first unfinished command. Unfinished could also mean that some of
+the actions where already executed.
 
 
 \subsection{Types of Mobility}
-The migration process is denominated as \emph{cyber mobility}, because no real vehicle movement is taking place when the
-\ac{VV} changes its location. On the other side movements that are carried out on board of a not changing \ac{RV} host
+The migration process is denominated as \emph{cyber mobility}, because no real vehicle movement is taking place when a
+\ac{VV} changes its location. Movements that are carried out on board of a not changing \ac{RV} host
 are known as \emph{physical mobility}.
 
 Each \ac{VV} records its movements. This historical track is represented by a list of waypoints. Each waypoint
 contains a timestamp, the geographic location and the name of the host. The host name is necessary to differ between
 cyber mobility and physical mobility. Waypoints are stored when a \ac{VV} executes a cycle and its location has
 changed more than a specific distance (physical mobility) or its host has changed (cyber mobility). With the information
-that is stored in the track detailed analysis of \ac{VV} moving behavior will be possible.
+that is stored in the track detailed analysis of \ac{VV} moving behavior will be possible, which means that there is
+no way to access this data by now.
 
 
 
 \section{Mapping}
 The Mapper is responsible for automatically mapping \acp{VV} to \acp{RV}. To accomplish this, the mechanism invokes 
-the migration of \acp{VV} based on a mapping decision made by a mapping algorithm. The Mapper is a servlet and
-additionally to the Mapper itself with its mapping algorithm, a registration service is present. The servlet can be suspended and stores all
-registration information persistent in a file, otherwise registered Engines would be lost. This is important because only registered 
-Engines are considered during the mapping process.
+the migration of \acp{VV} based on a mapping decision made by a mapping algorithm.
+Additionally to the Mapper itself with its mapping algorithm, a registration service is present.
+
+The servlet stores all registration information persistent in a file, otherwise registered Engines would be lost in
+a restart. This is important because only registered Engines are considered during the mapping process.
 
 \subsection{Registration Service}
 An Engine registers itself with the registration service upon start up using its ID. If the registration was successful, the service
-fetches some useful information and stores these together with the Engine ID. The fetched information are sensors and 
-way points (flight plan), in our case, these is static information. If a registration attempt was not successful, the
+fetches some useful information and stores it together with the Engine ID. The fetched information are available sensors
+and way points (flight plan), in our case, these is static information. If a registration attempt was not successful, the
 Engine keeps trying to register until it succeeds.
 
 \subsection{Mapper}
@@ -357,10 +363,10 @@ The mapper periodically executes the following three steps:
 
 \begin{enumerate}
   \item Fetch the status of all \acp{VV} from all registered Engines.
-  The status message includes the next action point, and its unfinished actions.
+  The returned message includes the current active action point, and its unfinished actions.
   
   \item Fetch the status of all \acp{RV} on which an Engine is running.
-  The returned message includes the current position, the next position, and the average velocity
+  The returned message includes the current position, the next position, and the average velocity.
   
   \item Execute the mapping algorithm.
 \end{enumerate}
@@ -368,12 +374,13 @@ The mapper periodically executes the following three steps:
 At the time of writing, there are two algorithms available that can be set in the configuration file: a random
 mapping algorithm and a simple mapping algorithm.
 
-\subsubsection{Random Mapping Algorithm}
-This algorithm does not use any information concerning flight plans and available sensors.
-It randomly selects two different Engines. If one of these has a \ac{VV}, then this \ac{VV} will be
-migrated to the other Engine.
+\textbf{Random Mapping Algorithm}
 
-\subsubsection{Simple Mapping Algorithm}
+This algorithm does not use any information concerning flight plans and available sensors.
+It randomly selects two different Engines. If one of these has \acp{VV}, then it selects one of this \acp{VV}
+and initiates a migration to the other Engine.
+
+\textbf{Simple Mapping Algorithm}
 
 Listing~\ref{lst:simpleMappingAlgorithm} reveals the simple mapping algorithm as pseudo code. 
 
@@ -384,8 +391,9 @@ for all virtual vehicles do
 	then
 		invoke migration to central engine
 	else
-		find fastest real vehicle with at least one needed sensor
-		and distance CurrentToNext to ActionPoint < tolerance
+		find fastest real vehicle with at least one fitting
+		sensor and a distance between the line Current to Next
+		and ActionPoint smaller than the tolerance
 	endif
 	if found vehicle 
 	then 
@@ -399,8 +407,8 @@ point of the \ac{VV}.
 %(thus: higher precision \begin{math} \rightarrow \end{math} faster) of the virtual vehicle. 
 
 
-Figure~\ref{fig:intersectionExample} shows the current flight path, the current location $C$ of a \ac{RV} and the 
-end point of the current flight plan segment $N$.
+Figure~\ref{fig:intersectionExample} shows the current flight path of a \ac{RV}, its current location $C$,
+and the end point of the current flight plan segment $N$.
 % Illustration of line segment to action point distance:
 \begin{figure}[h]
 	\begin{center}
@@ -412,8 +420,11 @@ end point of the current flight plan segment $N$.
 \end{figure}
 % This example 
 The flight path $\displaystyle{\overrightarrow{CN}}$ intersects with the tolerance sphere of action point $AP$, thus
-the distance is smaller than the tolerance and the \ac{RV} is a candidate for migration.
-
+the distance is smaller than the tolerance and the \ac{RV} is a candidate for migration. With the given speed
+of the \ac{RV}, the mapping algorithm calculates the flying time of the \ac{RV} to reach action point $AP$. The
+algorithm selects the \ac{RV} with the smallest flying time to reach $AP$ as a migration target for the concerned
+\ac{VV}.
+%
 With this behavior of the algorithm, a \ac{VV} stays on a \ac{RV} or the central Engine until a \ac{RV}
 enters a flight plan segment that satisfies the \ac{VV}'s sensor and location requirements.
 

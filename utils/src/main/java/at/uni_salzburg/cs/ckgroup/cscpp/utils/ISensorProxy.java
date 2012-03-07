@@ -31,6 +31,7 @@ public interface ISensorProxy {
 	
 	String SENSOR_NAME_SONAR = "sonar";
 	String SENSOR_NAME_POSITION = "position";
+	String SENSOR_NAME_WAYPOINTS = "waypoints";
 	String SENSOR_NAME_RANDOM = "random";
 	String SENSOR_NAME_PHOTO = "photo";
 	String SENSOR_NAME_VIDEO = "video";
@@ -86,4 +87,8 @@ public interface ISensorProxy {
 	 */
 	Set<String> getAvailableSensors() throws ParseException;
 	
+	/**
+	 * @return the list of way-points as JSON string.
+	 */
+	String getWaypoints();
 }

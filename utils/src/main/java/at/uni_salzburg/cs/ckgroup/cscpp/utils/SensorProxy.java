@@ -56,6 +56,8 @@ public class SensorProxy extends Thread implements ISensorProxy {
 	private Double orientationOverGround = null;
 	
 	private Double altitudeOverGround = null;
+
+	private String waypoints = null;
 	
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.sensor.ISensorProxy#getCurrentPosition()
@@ -108,6 +110,14 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		}
 		
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy#getWaypointsAsString()
+	 */
+	@Override
+	public String getWaypoints() {
+		return waypoints ;
 	}
 	
 	/* (non-Javadoc)
@@ -219,6 +229,9 @@ public class SensorProxy extends Thread implements ISensorProxy {
 			String sonarString = getSensorValue(SENSOR_NAME_SONAR);
 			setSonar(sonarString);
 			
+			String wayPointString = getSensorValue(SENSOR_NAME_WAYPOINTS);
+			setWaypoints(wayPointString);
+			
 			try { Thread.sleep(CYCLE); } catch (InterruptedException e) { }
 		}
 	}
@@ -262,6 +275,13 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		}
 		
 		parseValues(altitudeString);
+	}
+	
+	/**
+	 * @param waypoints the current way-points as a string.
+	 */
+	public void setWaypoints(String waypoints) {
+		this.waypoints = waypoints;
 	}
 
 	/**

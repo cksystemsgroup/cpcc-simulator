@@ -20,15 +20,19 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.json;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Position;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
@@ -36,6 +40,8 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class VehicleQuery implements IQuery {
+	
+	private static final Logger LOG = Logger.getLogger(VehicleQuery.class);
 
 	private static final String PROP_VEHICLE_LOCAL_NAME = "name";
 	private static final String PROP_VEHICLE_STATE = "state";
@@ -44,6 +50,8 @@ public class VehicleQuery implements IQuery {
 	private static final String PROP_VEHICLE_ALTITUDE = "altitude";
 	private static final String PROP_VEHICLE_TOLERANCE = "tolerance";
 	private static final String PROP_VEHICLE_ACTIONS = "actions";
+	private static final String PROP_VEHICLE_ACTION_POINTS = "actionPoints";
+	private static final String PROP_VEHICLE_PATH = "vehiclePath";
 	
 	private Map<String, IVirtualVehicle> vehicleMap;
 	
@@ -63,6 +71,7 @@ public class VehicleQuery implements IQuery {
 		this.vehicleMap = vehicleMap;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String execute(IServletConfig config, String[] parameters) {
 
 		Map<String, Object> obj=new LinkedHashMap<String, Object>();
@@ -90,26 +99,13 @@ public class VehicleQuery implements IQuery {
 			}
 
 			if (vehicle.getCurrentCommand() != null) {
-				Position p = vehicle.getCurrentCommand().get_position();
-				props.put(PROP_VEHICLE_LATITUDE, Double.valueOf(p.getPt().getLatitude()));
-				props.put(PROP_VEHICLE_LONGITUDE, Double.valueOf(p.getPt().getLongitude()));
-				props.put(PROP_VEHICLE_ALTITUDE, Double.valueOf(p.getPt().getAltitude()));
+				Position p = vehicle.getCurrentCommand().getPosition();
+				props.put(PROP_VEHICLE_LATITUDE, Double.valueOf(p.getPoint().getLatitude()));
+				props.put(PROP_VEHICLE_LONGITUDE, Double.valueOf(p.getPoint().getLongitude()));
+				props.put(PROP_VEHICLE_ALTITUDE, Double.valueOf(p.getPoint().getAltitude()));
 				props.put(PROP_VEHICLE_TOLERANCE, Double.valueOf(p.getTolerance()));
 				
-				List<IAction> al = vehicle.getCurrentCommand().get_actions();
-//				StringBuilder b = new StringBuilder();
-//				boolean first = true;
-//				for (IAction action : al) {
-//					if (action.getTimestamp() <= 0) {
-//						continue;
-//					}
-//					if (!first) {
-//						b.append(",");
-//					}
-//					b.append(actionsMap.get(action.toString().toUpperCase()));
-//					first = false;
-//				}
-//				props.put(PROP_VEHICLE_ACTIONS, b.toString());
+				List<IAction> al = vehicle.getCurrentCommand().getActions();
 				JSONArray openActions = new JSONArray();
 				for (IAction action : al) {
 					if (!action.isComplete()) {
@@ -118,6 +114,29 @@ public class VehicleQuery implements IQuery {
 				}
 				props.put(PROP_VEHICLE_ACTIONS, openActions);
 			}
+			
+			JSONArray actionPoints = new JSONArray();
+			for (Command cmd : vehicle.getCommandList()) {
+				JSONObject p = new JSONObject();
+				p.put("latitude", cmd.getPosition().getPoint().getLatitude());
+				p.put("longitude", cmd.getPosition().getPoint().getLongitude());
+//				p.put("altitude", cmd.getPosition().getPt().getAltitude());
+				p.put("completed", Boolean.valueOf(cmd.isFinished()));
+				actionPoints.add(p);
+			}
+			props.put(PROP_VEHICLE_ACTION_POINTS, actionPoints);
+			
+			try {
+				String vehicleLog = vehicle.getLog();
+				VehicleLogConverter c = new VehicleLogConverter();
+				JSONArray a = c.convertToVirtualVehiclePath(vehicleLog);
+				props.put(PROP_VEHICLE_PATH, a);
+				
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				LOG.error("Can not read log of vehicle " + vehicle.getWorkDir().getName());
+			}
+			
 			obj.put(vehicle.getWorkDir().getName(), props);
 		}
 		

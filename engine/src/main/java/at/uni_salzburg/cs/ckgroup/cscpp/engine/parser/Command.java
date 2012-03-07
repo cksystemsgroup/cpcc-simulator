@@ -31,15 +31,15 @@ public class Command implements Serializable
 {
 	private static final long serialVersionUID = 424412301491147477L;
 	private Position position;
-	private List<IAction> lst_actions;
+	private List<IAction> actionList;
 	
 	private boolean finished;
 		
-	public Command(Position pos, List<IAction> actions)
+	public Command(Position position, List<IAction> actionList)
 	{
-		position = pos;
-		lst_actions = actions;
-		finished = false;
+		this.position = position;
+		this.actionList = actionList;
+		this.finished = false;
 	}
 	
 	@Override
@@ -50,7 +50,7 @@ public class Command implements Serializable
 		s.append(position.toString());
 		s.append("\n");
 		
-		for (IAction action : lst_actions) {
+		for (IAction action : actionList) {
 			s.append(action.toString());
 			s.append("\n");
 		}
@@ -58,17 +58,17 @@ public class Command implements Serializable
 		return s.toString();
 	}
 	
-	public Position get_position()
+	public Position getPosition()
 	{
 		return position;
 	}
 	
-	public List<IAction> get_actions()
+	public List<IAction> getActions()
 	{
-		return lst_actions;
+		return actionList;
 	}
 	
-	public boolean is_finished()
+	public boolean isFinished()
 	{
 		return finished;
 	}
@@ -78,7 +78,7 @@ public class Command implements Serializable
 		if (!finished)
 		{
 			IAction act = null;
-		    ListIterator<IAction> iter = lst_actions.listIterator();
+		    ListIterator<IAction> iter = actionList.listIterator();
 		    boolean allFinished = true;
 		    
 		    while (iter.hasNext())

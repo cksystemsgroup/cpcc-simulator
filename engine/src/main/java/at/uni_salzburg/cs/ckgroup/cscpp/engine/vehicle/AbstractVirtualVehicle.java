@@ -2,7 +2,7 @@
  * @(#) AbstractVirtualVehicle.java
  *
  * This code is part of the ESE CPCC project.
- * Copyright (c) 2011  Clemens Krainer
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -65,16 +63,6 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 * collected sensor data.
 	 */
 	protected File workDir;
-	
-	/**
-	 * The activity log of the vehicle.
-	 */
-	private PrintWriter vehicleLog = null;
-	
-	/**
-	 * Helper to render the date and time format in the vehicle log.
-	 */
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	/**
 	 * The virtual vehicle program to be executed.
@@ -133,6 +121,11 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	private volatile boolean frozen;
 	
 	/**
+	 * The current way-point list as a string.
+	 */
+	private String waypoints = null;
+		
+	/**
 	 * Construct a virtual vehicle instance.
 	 * 
 	 * @param workDir the working directory of this virtual vehicle.
@@ -167,8 +160,6 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		frozen = Boolean.valueOf(properties.getProperty(PROP_VEHICLE_FROZEN,"false"));
 
 		FileUtils.ensureDirectory(dataDir);
-		
-		vehicleLog = new PrintWriter(new FileWriter(new File(workDir, LOG_PATH), true));
 	}
 
 	/* (non-Javadoc)
@@ -176,24 +167,30 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 */
 	@Override
 	public void suspend() throws IOException {
-		LOG.info("Suspending vehicle " + workDir.getName());
+		boolean wasRunning = false;
+		
 		if (backGroundTimer != null) {
 			backGroundTimer.cancel();
+			backGroundTimer = null;
+			wasRunning = true;
 		}
-		backGroundTimer = null;
+		
 		if (backGroundTimerTask != null) {
 			backGroundTimerTask.cancel();
+			backGroundTimerTask = null;
+			wasRunning = true;
 		}
-		backGroundTimerTask = null;
 		
 		while (running) {
 			LOG.info("Waiting for current command to finish.");
 			try { Thread.sleep(1000); } catch (InterruptedException e) { }
 		}
-		
-		if (vehicleLog != null) {
-			vehicleLog.close();
-			vehicleLog = null;
+
+		if (wasRunning) {
+			LOG.info("Suspending vehicle " + workDir.getName());
+			logVehiclePosition("suspend");
+		} else {
+			LOG.info("Vvehicle " + workDir.getName() + " has already been suspended.");
 		}
 		
 		properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
@@ -204,20 +201,24 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 */
 	@Override
 	public void resume() throws IOException {
-		LOG.info("Resuming vehicle " + workDir.getName());
-		if (vehicleLog == null) {
-			vehicleLog = new PrintWriter(new FileWriter(new File(workDir, LOG_PATH), true));
-		}
-		
-		if (frozen || completed) {
+		if (frozen) {
+			LOG.info("Vehicle " + workDir.getName() + " is frozen, resuming cancelled.");
 			return;
 		}
-		
+
+		if (completed) {
+			LOG.info("Vehicle " + workDir.getName() + " is complete, resuming cancelled.");
+			return;
+		}
+
 		if (running || backGroundTimer != null) {
 			LOG.error("Vehicle is already running: " + workDir.getName());
 			throw new IOException("Program is running.");
 		}
+
+		LOG.info("Resuming vehicle " + workDir.getName());
 		
+		logVehiclePosition("resume");
 		backGroundTimer = new Timer();
 		backGroundTimerTask = new MyTimerTask(this);
 		backGroundTimer.schedule(backGroundTimerTask, timerDelay, timerPeriod);
@@ -241,6 +242,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		running = true;
 		
 		if (sensorProxy != null) {
+			logFlightSegmentChange();
 			try {
 				execute();
 			} catch (Throwable t) {
@@ -249,6 +251,21 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		}
 		
 		running = false;
+	}
+
+	/**
+	 * Log the current position, if the helicopter changes the flight segment.
+	 */
+	private void logFlightSegmentChange() {
+		String newWaypoints = sensorProxy.getWaypoints();
+		
+		if ((waypoints != null && newWaypoints == null) ||
+			(waypoints == null && newWaypoints != null) ||
+			(waypoints != null && newWaypoints != null && !waypoints.equals(newWaypoints)))
+		{
+			logVehiclePosition("position");
+		}
+		waypoints = newWaypoints;
 	}
 
 	/* (non-Javadoc)
@@ -282,6 +299,12 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 */
 	public abstract void execute();
 	
+	/**
+	 * Write the current position to the vehicle's log.
+	 * @param action the action the position is logged for. 
+	 */
+	public abstract void logVehiclePosition(String action);
+
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#isActive()
 	 */
@@ -361,29 +384,24 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		this.completed = true;
 	}
 	
-	public void addLogEntry(String entry) {
-		if (vehicleLog != null) {
-			vehicleLog.printf("%s %s",dateFormat.format(new Date()), entry);
-		} else {
-			LOG.error("Vehicle log is offline, can not log: '" + entry + "'");
-		}
+	public void addLogEntry(String entry) throws IOException {
+		PrintWriter vehicleLog = new PrintWriter(new FileWriter(new File(workDir, LOG_PATH), true));
+		vehicleLog.printf("%d %s\n",System.currentTimeMillis(), entry);
+		vehicleLog.close();
 	}
 
-	public void addLogEntry(String entry, Exception ex) {
-		if (vehicleLog != null) {
-			vehicleLog.printf("%s %s",dateFormat.format(new Date()), entry);
-			ex.printStackTrace(vehicleLog);
-			vehicleLog.flush();
-		} else {
-			LOG.error("Vehicle log is offline, can not log: '" + entry + "'", ex);
-		}
+	public void addLogEntry(String entry, Exception ex) throws IOException {
+		PrintWriter vehicleLog = new PrintWriter(new FileWriter(new File(workDir, LOG_PATH), true));
+		vehicleLog.printf("%d %s\n",System.currentTimeMillis(), entry);
+		ex.printStackTrace(vehicleLog);
+		vehicleLog.close();
 	}
 	
 	public String getLog() throws IOException {
 		File logFile = new File(workDir, LOG_PATH);
 		return FileUtils.loadFileAsString(logFile);
 	}
-	
+
 	protected void saveState() {
 		try {
 			PrintWriter pw = new PrintWriter(vehicleStatusTxt);

@@ -122,4 +122,11 @@ public interface IVirtualVehicle {
 	 */
 	String[] getDataFileNames();
 	
+	/**
+	 * Add an entry to the virtual vehicle log.
+	 * @param entry the message to be logged.
+	 * @throws IOException in case of logging fails.
+	 */
+	void addLogEntry(String entry) throws IOException;
+	
 }

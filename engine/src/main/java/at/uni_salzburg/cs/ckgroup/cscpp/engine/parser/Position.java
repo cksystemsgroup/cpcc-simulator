@@ -42,7 +42,7 @@ public class Position implements Serializable
 		tolerance = tol;
 	}
 
-	public PolarCoordinate getPt() {
+	public PolarCoordinate getPoint() {
 		return new PolarCoordinate(latitude, longitude, altitude);
 	}
 

@@ -137,6 +137,10 @@ public class VehicleService extends DefaultService {
 				Object cnf = config.getServletContext().getAttribute("configuration");
 				IConfiguration configuration = (IConfiguration)cnf;
 				
+				if (!vehicle.isCompleted()) {
+					vehicle.addLogEntry("upload to " + configuration.getWebApplicationBaseUrl());
+				}
+				
 				if (configuration.isPilotAvailable()) {
 					vehicle.resume();
 				}

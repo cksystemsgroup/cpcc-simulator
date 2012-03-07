@@ -28,6 +28,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
@@ -46,14 +47,14 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	
 	Logger LOG = Logger.getLogger(VirtualVehicle.class);
 	
-	private VirtualVehicleState state = new VirtualVehicleState();
 	private boolean programCorrupted = true;
         
     private ListIterator<Command> listIter;
+	private List<Command> commandList;
     private Command currentCommand;
 
     private IGeodeticSystem geodeticSystem = new WGS84();
-    
+    private String postponedLogging = null;
     
 	/**
 	 * Construct a virtual vehicle.
@@ -76,21 +77,21 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 				Scanner sc = new Scanner(program.getAbsolutePath());
 				Parser pa = new Parser(dataDir);
 	
-				state.commandList = pa.run(sc);
+				commandList = pa.run(sc);
 			}
 			
-			listIter = state.commandList.listIterator();
+			listIter = commandList.listIterator();
 			
 			// get first command which have to be executed
 			while (listIter.hasNext())
 			{
 				currentCommand = listIter.next();
 				
-				if (!currentCommand.is_finished())
+				if (!currentCommand.isFinished())
 					break;
 			}
 			
-			if (currentCommand==null || currentCommand.is_finished()) {
+			if (currentCommand==null || currentCommand.isFinished()) {
 				currentCommand = null;
 				setCompleted();
 			}
@@ -107,7 +108,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 
 	}
 
-//	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	private boolean readVehicleState()
 	{
 		if (!vehicleStatus.exists() || vehicleStatus.length() == 0) {
@@ -119,9 +120,9 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		{
 			FileInputStream fin = new FileInputStream(vehicleStatus);
 			ObjectInputStream objStream = new ObjectInputStream(fin);
-			state = (VirtualVehicleState)objStream.readObject();
-			for (Command cmd : state.commandList) {
-				for (IAction action : cmd.get_actions()) {
+			commandList = (List<Command>)objStream.readObject();
+			for (Command cmd : commandList) {
+				for (IAction action : cmd.getActions()) {
 					if (action instanceof ActionPicture) {
 						((ActionPicture)action).setDataDir(dataDir);
 					}
@@ -144,7 +145,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		{
 			FileOutputStream fout = new FileOutputStream(vehicleStatus);
 			ObjectOutputStream objStream = new ObjectOutputStream(fout);
-			objStream.writeObject(state);
+			objStream.writeObject(commandList);
 		} 
 		catch (IOException e) 
 		{
@@ -163,35 +164,24 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 		if (currentPosition == null || isCompleted() || currentCommand == null || altitudeOverGround == null)
 			return;
-		currentPosition.setAltitude(altitudeOverGround.doubleValue());
+		currentPosition = new PolarCoordinate(currentPosition.getLatitude(), currentPosition.getLongitude(), altitudeOverGround.doubleValue());
 		CartesianCoordinate currentPosCartesian = geodeticSystem.polarToRectangularCoordinates(currentPosition);
 		
-		//save waypoint to track
-		String host = ""; //hostname of the real vehicle 
-		//TODO: get the hostname of the real vehicle 
-		int minWaypointDist = 10; //minimal dictance between 2 waypoints
-		if(	//save first waypoint
-			state.track.size() == 0 ||
-			//save waypoint when moved more than minWaypointDist
-			currentPosCartesian.subtract(geodeticSystem.polarToRectangularCoordinates(state.track.get(state.track.size()-1).pos)).norm() > minWaypointDist ||
-			//save waypoint when hostname has changed
-			!host.equals(state.track.get(state.track.size()-1).host))
-		{
-			state.track.add(new Waypoint(currentPosition,host)); 
+		if (postponedLogging != null) {
+			logVehiclePosition(postponedLogging, currentPosition.getLatitude(), currentPosition.getLongitude(), altitudeOverGround);
+			postponedLogging = null;
 		}
 		
 		//check if command position is reached
-		Position pos = currentCommand.get_position();
-		PolarCoordinate commandPosition = pos.getPt();
+		Position position = currentCommand.getPosition();
+		PolarCoordinate commandPosition = position.getPoint();
 		CartesianCoordinate commandPosCartesian = geodeticSystem.polarToRectangularCoordinates(commandPosition);
 		double distance = commandPosCartesian.subtract(currentPosCartesian).norm();
-		boolean at_pos = distance <= pos.getTolerance();
 		
-		if (at_pos)
-		{
+		if (distance <= position.getTolerance()) {
 			currentCommand.execute(sensorProxy);
 			
-			if (currentCommand.is_finished()) {
+			if (currentCommand.isFinished()) {
 				if (listIter.hasNext()) {
 					currentCommand = listIter.next();
 				} else {
@@ -208,19 +198,13 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		}
 		
 	}
-	
-	
-	public VirtualVehicleState getState() 
-	{
-		return state;
-	}
 
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCommandList()
 	 */
 	@Override
 	public List<Command> getCommandList() {
-		return state.commandList;
+		return commandList;
 	}
 	
 	/* (non-Javadoc)
@@ -228,11 +212,11 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 */
 	@Override
 	public int getCurrentCommandIndex() {
-		if (listIter == null || state.commandList == null || currentCommand == null)
+		if (listIter == null || commandList == null || currentCommand == null)
 			return -1;
 		
 		int next = listIter.nextIndex();
-		return next > state.commandList.size() ? -1 : next-1;
+		return next > commandList.size() ? -1 : next-1;
 	}
 	
 	/* (non-Javadoc)
@@ -249,6 +233,26 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	@Override
 	public boolean isProgramCorrupted() {
 		return programCorrupted;
+	}
+
+	@Override
+	public void logVehiclePosition(String action) {
+		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
+		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
+		if (currentPosition == null || altitudeOverGround == null) {
+			postponedLogging = action;
+			return;
+		}
+		logVehiclePosition(action,currentPosition.getLatitude(), currentPosition.getLongitude(), altitudeOverGround);
+	}
+	
+	private void logVehiclePosition(String action, double latitude, double longitude, double altitude) {
+		String msg = String.format(Locale.US, "%s at (%.8f,%.8f,%.8f)", action, latitude, longitude, altitude);
+		try {
+			addLogEntry(msg);
+		} catch (IOException e) {
+			LOG.error("Can not write to virtual vehicle log: " + msg, e);
+		}
 	}
 
 }

@@ -46,7 +46,7 @@ public class VirtualVehicleState  implements Serializable
 	public int CommandsExecuted() {
 		int commandsExecuted = 0;
 		for (Command cmd : commandList) {
-			if (cmd.is_finished())
+			if (cmd.isFinished())
 				commandsExecuted++;
 
 		}
@@ -57,7 +57,7 @@ public class VirtualVehicleState  implements Serializable
 
 		int commandsToExecute = 0;
 		for (Command cmd : commandList) {
-			if (!cmd.is_finished())
+			if (!cmd.isFinished())
 				commandsToExecute++;
 		}
 		return commandsToExecute;

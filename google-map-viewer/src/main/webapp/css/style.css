@@ -517,6 +517,7 @@ td.pilot_symbol {
 	color: red;
 	font-weight: bolder;
 	vertical-align:top;
+	opacity: 1;
 }
 
 td.pilot_name_ground {
@@ -529,6 +530,7 @@ td.pilot_name_flying {
 
 td.pilot_info {
 	color: red;
+	vertical-align:top;
 }
 
 td.vehicle_info_active {

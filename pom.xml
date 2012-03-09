@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>at.uni-salzburg.cs.cpcc</groupId>
-	<artifactId>ese-project</artifactId>
+	<artifactId>cpcc-project</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Cyber Physical Cloud Computing Project</name>
@@ -34,46 +34,20 @@
 			</roles>
 			<organization>University of Salzburg</organization>
 		</developer>
-		<developer>
-			<id>aschroec</id>
-			<name>Andreas Schroecker</name>
-			<email>aschroec@cosy.sbg.ac.at</email>
-			<roles>
-				<role>Project Member</role>
-			</roles>
-			<organization>University of Salzburg</organization>
-		</developer>
-		<developer>
-			<id>bzechmei</id>
-			<name>Bernhard Zechmeister</name>
-			<email>bzechmei@cosy.sbg.ac.at</email>
-			<roles>
-				<role>Project Member</role>
-			</roles>
-			<organization>University of Salzburg</organization>
-		</developer>
-		<developer>
-			<id>mkleber</id>
-			<name>Michael Kleber</name>
-			<email>mkleber@cosy.sbg.ac.at</email>
-			<roles>
-				<role>Project Member</role>
-			</roles>
-			<organization>University of Salzburg</organization>
-		</developer>
-
 	</developers>
 
 	<modules>
 		<module>engine</module>
 		<module>mapper</module>
+		<module>mapper-algorithms</module>
+		<module>mapper-api</module>
 		<module>google-map-viewer</module>
 		<module>utils</module>
 	</modules>
 
 	<scm>
-		<connection>scm:svn:https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/program</connection>
-		<developerConnection>scm:svn:https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/program</developerConnection>
+		<connection>scm:svn:http://zoot.local/ese/svn/ESEP/trunk</connection>
+		<developerConnection>scm:svn:http://zoot.local/ese/svn/ESEP/trunk</developerConnection>
 	</scm>
 
 	<dependencyManagement>
@@ -388,6 +362,7 @@
 			<url>${inhouse_snapshot.maven.repository}</url>
 		</snapshotRepository>
 	</distributionManagement>
+<!--
 	<repositories>
 		<repository>
 			<snapshots>
@@ -397,7 +372,6 @@
 			<name>JNavigator Snapshots</name>
 			<url>http://cs.uni-salzburg.at/~ckrainer/maven2</url>
 		</repository>
-<!--
 		<repository>
 			<snapshots>
 				<enabled>true</enabled>
@@ -406,6 +380,6 @@
 			<name>Codehaus Snapshots</name>
 			<url>http://snapshots.repository.codehaus.org</url>
 		</repository>
--->
 	</repositories>
+-->
 </project>

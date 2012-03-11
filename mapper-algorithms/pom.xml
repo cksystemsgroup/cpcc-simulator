@@ -3,12 +3,12 @@
   <parent>
     <artifactId>cpcc-project</artifactId>
     <groupId>at.uni-salzburg.cs.cpcc</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>at.uni-salzburg.cs.cpcc.mapper</groupId>
   <artifactId>mapper-algorithms</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>VV Mapper Algorithms Module</name>
   <description>Cyber Physical Cloud Computing - Virtual Vehicle Mapper Algorithms Module</description>
 </project>

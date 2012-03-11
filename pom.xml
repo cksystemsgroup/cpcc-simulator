@@ -4,7 +4,7 @@
 	<groupId>at.uni-salzburg.cs.cpcc</groupId>
 	<artifactId>cpcc-project</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>Cyber Physical Cloud Computing Project</name>
 	<description>Cyber Physical Cloud Computing Project - Winterterm 2011/2012</description>
 
@@ -46,8 +46,8 @@
 	</modules>
 
 	<scm>
-		<connection>scm:svn:http://zoot.local/ese/svn/ESEP/trunk</connection>
-		<developerConnection>scm:svn:http://zoot.local/ese/svn/ESEP/trunk</developerConnection>
+		<connection>scm:svn:http://zoot.local/ese/svn/ESEP/tags/cpcc-project-0.0.1</connection>
+		<developerConnection>scm:svn:http://zoot.local/ese/svn/ESEP/tags/cpcc-project-0.0.1</developerConnection>
 	</scm>
 
 	<dependencyManagement>

@@ -21,8 +21,15 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.IMapperProxy;
 
 public class RealVehicleQuery implements IJsonQuery {
+
+	private IMapperProxy mapperProxy;
+
+	public RealVehicleQuery(IMapperProxy mapperProxy) {
+		this.mapperProxy = mapperProxy;
+	}
 
 	@Override
 	public String execute(IServletConfig config, String[] parameters) {
@@ -30,4 +37,8 @@ public class RealVehicleQuery implements IJsonQuery {
 		return null;
 	}
 
+//	@Override
+//	public void setMapperProxy(IMapperProxy mapperProxy) {
+//		this.mapperProxy = mapperProxy;
+//	}
 }

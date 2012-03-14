@@ -20,6 +20,8 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ import javax.servlet.ServletException;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
 
+@Deprecated
 public class MappingAlgrithmBuilder {
 	
 	public static final String SIMPLE = "simple";
@@ -36,11 +39,18 @@ public class MappingAlgrithmBuilder {
 		
 		AbstractMappingAlgorithm algorithm = null;
 		
-		if (SIMPLE.equals(algorithmName))
+		if (SIMPLE.equals(algorithmName)) {
 			algorithm = new SimpleMappingAlgorithm();
-		else if (RANDOM.equals(algorithmName))
+		} else if (RANDOM.equals(algorithmName)) {
 			algorithm = new RandomMappingAlgorithm();
-		
+		} else {
+			try {
+				algorithm = constructClassFromConfiguration(algorithmName);
+			} catch (Exception e) {
+				throw new ServletException("Can not load class " + algorithmName + " as mapping algorithm.", e);
+			}
+		}
+	
 		if (algorithm == null)
 			throw new ServletException("Unknown mapping algorithm: " + algorithmName);
 		
@@ -51,6 +61,21 @@ public class MappingAlgrithmBuilder {
 		}
 		
 		return algorithm;
+	}
+	
+	private static AbstractMappingAlgorithm constructClassFromConfiguration (String className) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		Class<?> algorithmClass = Class.forName (className);
+		Class<?> parameterTypes[] = new Class[0];
+		Constructor<?> ctor = algorithmClass.getConstructor(parameterTypes);
+		Object algorithm = null;
+
+		algorithm = ctor.newInstance((Object[])null);
+		
+		if (algorithm instanceof AbstractMappingAlgorithm) {
+			return (AbstractMappingAlgorithm)algorithm;
+		}
+		
+		throw new NoSuchMethodException("Buggerit!");
 	}
 
 }

@@ -2,7 +2,7 @@
  * @(#) JsonQueryService.java
  *
  * This code is part of the JNavigator project.
- * Copyright (c) 2011  Clemens Krainer
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,10 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.QueryService;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.IJsonQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.PositionQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.RealVehicleQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.VirtualVehicleQuery;
@@ -30,12 +32,12 @@ import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.WaypointsQuery;
 
 public class JsonQueryService extends QueryService {
 	
-	public JsonQueryService (IServletConfig servletConfig) {
+	public JsonQueryService (IServletConfig servletConfig, IMapperProxy mapperProxy) {
 		super (servletConfig);
-		queries.put("position", new PositionQuery());
-		queries.put("waypoints", new WaypointsQuery());
-		queries.put("virtualVehicle", new VirtualVehicleQuery());
-		queries.put("realVehicle", new RealVehicleQuery());
+		queries.put("position", new PositionQuery(mapperProxy));
+		queries.put("waypoints", new WaypointsQuery(mapperProxy));
+		queries.put("virtualVehicle", new VirtualVehicleQuery(mapperProxy));
+		queries.put("realVehicle", new RealVehicleQuery(mapperProxy));
 	}
 
 }

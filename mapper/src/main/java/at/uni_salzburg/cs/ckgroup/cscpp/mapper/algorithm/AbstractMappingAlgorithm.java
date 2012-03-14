@@ -36,6 +36,7 @@ import org.json.simple.parser.ParseException;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
+@Deprecated
 public abstract class AbstractMappingAlgorithm extends Thread implements IMappingAlgorithm {
 	
 	private static final Logger LOG = Logger.getLogger(AbstractMappingAlgorithm.class);
@@ -47,7 +48,6 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 	private long cycleTime = 1000;
 	
 	private Map<String,StatusProxy> statusProxyMap = new HashMap<String, StatusProxy>();
-	private Map<String,Map<String,VehicleStatus>> virtualVehicleMap = new HashMap<String, Map<String,VehicleStatus>>();
 	private List<VehicleInfo> virtualVehicleList = new ArrayList<VehicleInfo>();
 	private Map<String,RegData> registrationData;
 	private Set<String> centralEngines;
@@ -140,7 +140,6 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 		List<String> toBeUnregistered = new ArrayList<String>();
 		
 		JSONParser parser = new JSONParser();
-		virtualVehicleMap.clear();
 		virtualVehicleList.clear();
 		for (RegData rd : registrationData.values()) {
 			String key = rd.getEngineUri();
@@ -176,8 +175,6 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 				data.setVehicleStatus(status);
 				virtualVehicleList.add(data);
 			}
-			
-			virtualVehicleMap.put(key, vehicles);
 		}
 		
 		for (String engineUrl : toBeUnregistered) {
@@ -214,11 +211,6 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 	
 	public Map<String, StatusProxy> getStatusProxyMap() {
 		return statusProxyMap;
-	}
-
-	@Override
-	public Map<String, Map<String, VehicleStatus>> getVirtualVehicleMap() {
-		return virtualVehicleMap;
 	}
 
 	public List<VehicleInfo> getVirtualVehicleList() {

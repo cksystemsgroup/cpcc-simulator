@@ -27,18 +27,24 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 public class ConfigurationParser {
 	
-//	private static final Logger LOG = Logger.getLogger(ConfigurationParser.class);
+	private static final Logger LOG = Logger.getLogger(ConfigurationParser.class);
 	
 	public static final String ERROR_MESSAGE_MISSING_VALUE = "# please provide a value!";
 	public static final String ERROR_MESSAGE_INVALID_VALUE = "# invalid value!";
 	public static final String ERROR_MESSAGE_UNKNOWN_TYPE = "# unknown type!";
 	public static final String ERROR_MESSAGE_UNKNOWN_SENSOR_TYPE = "# unknown sensor type!";
+	public static final String ERROR_CLASS_NOT_FOUND = "# class not found!";
+	public static final String ERROR_MUST_IMPLEMENT_INTERFACE = "# class must implement interface %s";
 	
 	/**
 	 * The uploaded configuration.
@@ -67,6 +73,8 @@ public class ConfigurationParser {
 	 */
 	private final String [][] parameters;
 	
+	private Set<ClassLoader> classLoaders = new HashSet<ClassLoader>();
+	
 	/**
 	 * @param parameters the parameters and their default values.
 	 */
@@ -75,6 +83,8 @@ public class ConfigurationParser {
 		if (configErrors != null) {
 			this.configErrors.putAll(configErrors);
 		}
+		classLoaders.add(ConfigurationParser.class.getClassLoader());
+		classLoaders.add(Thread.currentThread().getContextClassLoader());
 	}
 	
 	/**
@@ -115,6 +125,51 @@ public class ConfigurationParser {
 			configOk = false;
 		}
 		return p;
+	}
+	
+	/**
+	 * @param param the property to be parsed. 
+	 * @return the parsed property as a <code>Class</code> object.
+	 */
+	protected Class<?> parseClassName (String param, Class<?> requiredInterface) {
+		String className = conf.getProperty(param);
+		if (className == null || "".equals(className.trim())) {
+			configErrors.put(param, ERROR_MESSAGE_MISSING_VALUE);
+			configOk = false;
+			return null;
+		}
+		
+		Class<?> c = null;
+		for (ClassLoader loader : classLoaders) {
+			try {
+				c = Class.forName(className,true,loader);
+			} catch (Throwable e) {
+		
+			}
+		}
+
+		if (c == null) {
+			configErrors.put(param, ERROR_CLASS_NOT_FOUND);
+			configOk = false;
+			return null;
+		}
+		
+		Class<?>[] interfaces = c.getInterfaces();
+		boolean found = false;
+		for (Class<?> i : interfaces) {
+			if (i.getName().equals(requiredInterface.getName())) {
+				found = true;
+				break;
+			}
+		}
+		
+		if (found) {
+			return c;	
+		}
+		
+		configErrors.put(param, String.format(ERROR_MUST_IMPLEMENT_INTERFACE,requiredInterface.getName()));
+		configOk = false;
+		return null;
 	}
 	
 	/**
@@ -234,6 +289,13 @@ public class ConfigurationParser {
 	 */
 	public String getSystemProperty(String key) {
 		return System.getProperty(key);
+	}
+
+	/**
+	 * @param classLoader the class loader to be added.
+	 */
+	public void addClassLoader(ClassLoader classLoader) {
+		classLoaders.add(classLoader);
 	}
 	
 }

@@ -20,8 +20,7 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
-import java.util.Map;
-
+@Deprecated
 public interface IMappingAlgorithm extends Runnable {
 	
 	boolean isRunning();
@@ -34,6 +33,6 @@ public interface IMappingAlgorithm extends Runnable {
 
 	boolean isPaused();
 
-	Map<String, Map<String, VehicleStatus>> getVirtualVehicleMap();
+//	Map<String, Map<String, VehicleStatus>> getVirtualVehicleMap();
 
 }

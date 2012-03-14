@@ -4,14 +4,16 @@
 		<artifactId>cpcc-project</artifactId>
 		<groupId>at.uni-salzburg.cs.cpcc</groupId>
 		<version>0.0.2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
+	
+	<groupId>at.uni-salzburg.cs.cpcc.viewer</groupId>
 	<artifactId>google-map-viewer</artifactId>
 	<packaging>war</packaging>
+	
 	<name>Google Maps Viewer</name>
-	<url>http://maven.apache.org</url>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+	<description>Cyber Physical Cloud Computing - Google Maps Viewer</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

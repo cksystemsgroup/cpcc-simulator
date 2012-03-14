@@ -20,11 +20,12 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.log4j.Logger;
 
+/**
+ * This mapping algorithm randomly selects a virtual vehicle and migrates it to a randomly chosen engine.
+ */
+@Deprecated
 public class RandomMappingAlgorithm extends AbstractMappingAlgorithm {
 
 	private static final Logger LOG = Logger.getLogger(RandomMappingAlgorithm.class);
@@ -33,11 +34,14 @@ public class RandomMappingAlgorithm extends AbstractMappingAlgorithm {
 	
 	private int counter = 0;
 	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.AbstractMappingAlgorithm#execute()
+	 */
 	@Override
 	public void execute() {
 		
-		if (getVirtualVehicleMap().isEmpty()) {
-			LOG.info("No migration because of empty virtual vehicle map.");
+		if (getVirtualVehicleList().isEmpty()) {
+			LOG.info("No migration because of empty virtual vehicle list.");
 			return;
 		}
 		
@@ -47,57 +51,56 @@ public class RandomMappingAlgorithm extends AbstractMappingAlgorithm {
 		
 		counter = 0;
 		
-		Entry<String, Map<String, VehicleStatus>> engine1 = getRandomEngine();
-		Entry<String, Map<String, VehicleStatus>> engine2 = getRandomEngine();
+		String targetEngineUrl = getRandomEngine();
 		
-		if (engine1 == null || engine2 == null) {
-			LOG.info("Random virtual vehicle migration cancelled because engine1 or engine2 is null.");
+		if (targetEngineUrl == null || targetEngineUrl.isEmpty()) {
+			LOG.info("Random virtual vehicle migration cancelled, because less than one engine registered.");
 			return;
 		}
 		
-		if (engine1.getValue().isEmpty() && engine2.getValue().isEmpty()) {
-			LOG.info("Random virtual vehicle migration cancelled because engine1 and engine2 have no virtual vehicles.");
+		VehicleInfo vehicleInfo = getRandomVehicle();
+		if (vehicleInfo == null) {
+			LOG.info("Random virtual vehicle migration cancelled, because there are no virtual vehicles available.");
 			return;
 		}
 		
-		String engine1Url = engine1.getKey();
-		String engine2Url = engine2.getKey();
-		
-		if (engine1Url.equals(engine2Url)) {
+		if (targetEngineUrl.equals(vehicleInfo.getEngineUrl())) {
 			LOG.debug("Source engine is target engine, migration cancelled.");
 			return;
 		}
 
-		if (!engine1.getValue().isEmpty()) {
-			String vehicle1 = getRandomVehicle(engine1.getValue());
-			if (vehicle1 != null) {
-				migrate (engine1Url, vehicle1, engine2Url);
-				return;
-			}
-		}
-		
-		if (!engine2.getValue().isEmpty()) {
-			String vehicle2 = getRandomVehicle(engine2.getValue());
-			if (vehicle2 != null) {
-				migrate (engine2Url, vehicle2, engine1Url);
-				return;
-			}
-		}
+		migrate (vehicleInfo.getEngineUrl(), vehicleInfo.getVehicleName(), targetEngineUrl);
 	}
 
-	private Entry<String, Map<String, VehicleStatus>> getRandomEngine () {
-		int engineNumber = (int)(Math.random() * getVirtualVehicleMap().size());
-		for (Entry<String, Map<String, VehicleStatus>> v : getVirtualVehicleMap().entrySet())
+	/**
+	 * Randomly select an engine.
+	 * 
+	 * @return the engine's base URL
+	 */
+	private String getRandomEngine () {
+		if (getRegistrationData().size() <= 1) {
+			return null;
+		}
+		
+		int engineNumber = (int)(Math.random() * getRegistrationData().size());
+		for (String engineURL : getRegistrationData().keySet()) {
 			if (engineNumber-- <= 0)
-				return v;
+				return engineURL;
+		}
 		return null;
 	}
 	
-	private String getRandomVehicle (Map<String, VehicleStatus> engine) {
-		if (engine.isEmpty())
+	/**
+	 * Randomly select a virtual vehicle.
+	 * 
+	 * @return a <code>VehicleInfo</code> object mainly containing the name and engine of this virtual vehicle.  
+	 */
+	private VehicleInfo getRandomVehicle () {
+		if (getVirtualVehicleList().isEmpty()) {
 			return null;
-		String[] vehicles = engine.keySet().toArray(new String[engine.size()]);
-		int number = (int)(Math.random() * engine.size());
-		return vehicles[number];
+		}
+		
+		int vehicleNumber = (int)(Math.random() * getVirtualVehicleList().size());
+		return getVirtualVehicleList().get(vehicleNumber);
 	}
 }

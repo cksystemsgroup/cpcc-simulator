@@ -1,5 +1,5 @@
 /*
- * @(#) EngineServlet.java
+ * @(#) EngineRegister.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2011  Michael Kleber

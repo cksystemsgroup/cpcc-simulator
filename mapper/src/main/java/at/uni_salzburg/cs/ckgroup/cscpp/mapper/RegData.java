@@ -22,18 +22,21 @@ package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IWayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 
-public class RegData implements JSONAware {
+public class RegData implements IRegistrationData {
     
 	private static final Logger LOG = Logger.getLogger(RegData.class);
 	
@@ -41,23 +44,27 @@ public class RegData implements JSONAware {
 	
     private String eng_uri;
     private String pilotUri;
-    private List<WayPoint> waypoints;
+    private List<IWayPoint> waypoints;
     private Set<String> sensors;
     private boolean centralEngine;
     private int accessErrors = 0;
+    private Map<String, String> pilotConfig;
     
-    public RegData(String eu, String pu, List<WayPoint> wp, Set<String> sensors2) {
+    public RegData(String eu, String pu, List<IWayPoint> wp, Set<String> sensors2, Map<String, String> pilotConfig) {
         eng_uri = eu;
         pilotUri = pu;
         waypoints = wp;
         sensors = sensors2;
         centralEngine = pu == null || pu.trim().isEmpty();
+        this.pilotConfig = pilotConfig;
     }
     
 	public RegData(JSONObject obj) {
 		LOG.info("new RegData(): obj=" + obj.toJSONString());
         eng_uri = (String)obj.get("engUri");
         pilotUri = (String)obj.get("pilotUri");
+        pilotConfig = new HashMap<String, String>();
+        pilotConfig.put("pilotName", (String)obj.get("pilotName"));
         
         Object array = obj.get("sensors");
         if (array == null) {
@@ -73,7 +80,7 @@ public class RegData implements JSONAware {
         if (array == null) {
         	waypoints = null;
         } else {
-            waypoints = new ArrayList<WayPoint>();
+            waypoints = new ArrayList<IWayPoint>();
 			for (Object entry : (JSONArray)array) {
 				WayPoint wayPoint = new WayPoint((JSONObject)entry);
 				waypoints.add(wayPoint);
@@ -81,26 +88,32 @@ public class RegData implements JSONAware {
         }
 	}
     
+	@Override
     public String getEngineUri() {
         return eng_uri;
     }
 
+	@Override
     public String getPilotUri() {
         return pilotUri;
     }
 
-    public List<WayPoint> getWaypoints() {
+	@Override
+    public List<IWayPoint> getWaypoints() {
         return waypoints;
     }
     
+	@Override
     public Set<String> getSensors() {
         return sensors;
     }
 
+	@Override
 	public boolean isCentralEngine() {
 		return centralEngine;
 	}
 	
+	@Override
 	public boolean isMaxAccessErrorsLimitReached() {
 		return ++accessErrors > MAX_ACCESS_ERRORS;
 	}
@@ -109,12 +122,20 @@ public class RegData implements JSONAware {
 		accessErrors = 0;
 	}
 
+	@Override
+	public Map<String, String> getPilotConfig() {
+		return pilotConfig;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public String toJSONString() {
 	    JSONObject obj = new JSONObject();
 	    obj.put("engUri", eng_uri);
-	    obj.put("pilotUri", pilotUri);
+	    if (pilotConfig != null) {
+		    obj.put("pilotUri", pilotUri);
+	    	obj.put("pilotName", pilotConfig.get("pilotName"));	
+	    }
 	    if (waypoints != null) {
 	    	obj.put("waypoints", waypoints);	
 	    }

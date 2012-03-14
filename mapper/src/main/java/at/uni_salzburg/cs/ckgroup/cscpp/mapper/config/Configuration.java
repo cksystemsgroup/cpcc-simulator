@@ -28,19 +28,22 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigurationParser;
 
 public class Configuration extends ConfigurationParser implements IConfiguration {
 	
 	Logger LOG = Logger.getLogger(Configuration.class);
 	
-	public static final String PROP_HOME_BASE_ENGINE_URL = "home.base.engine.url";
+//	public static final String PROP_HOME_BASE_ENGINE_URL = "home.base.engine.url";
+	public static final String PROP_MAPPER_ALGORITHM = "mapper.algorithm";
 	
 	/**
 	 * The parameters and their default values. 
 	 */
 	public static final String [][] parameters = {
-		{ PROP_HOME_BASE_ENGINE_URL },
+//		{ PROP_HOME_BASE_ENGINE_URL },
+		{ PROP_MAPPER_ALGORITHM },
 	};
 	
 	/**
@@ -50,13 +53,19 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	@SuppressWarnings("serial")
 	private static final Map<String,String> configErrors = new HashMap<String,String>() {{
-		put(PROP_HOME_BASE_ENGINE_URL,ERROR_MESSAGE_MISSING_VALUE);
+//		put(PROP_HOME_BASE_ENGINE_URL, ERROR_MESSAGE_MISSING_VALUE);
+		put(PROP_MAPPER_ALGORITHM, ERROR_MESSAGE_MISSING_VALUE);
 	}};
 	
 	/**
 	 * The base URL of the associated home base engine. 
 	 */
-	private URI homeBaseEngineUrl;
+//	private URI homeBaseEngineUrl;
+	
+	/**
+	 * The class name of the mapping algorithm. 
+	 */
+	private Class<?> mapperAlgorithmClass;
 	
 	/**
 	 * Construct a <code>Configuration</code> object.
@@ -74,14 +83,24 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	@Override
 	public void loadConfig (InputStream inStream) throws IOException {
 		super.loadConfig(inStream);
-		homeBaseEngineUrl = parseURI(PROP_HOME_BASE_ENGINE_URL);
+//		homeBaseEngineUrl = parseURI(PROP_HOME_BASE_ENGINE_URL);
+		mapperAlgorithmClass = parseClassName(PROP_MAPPER_ALGORITHM, IMappingAlgorithm.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.IConfiguration#getHomeBaseEngineUrl()
 	 */
-	public URI getHomeBaseEngineUrl() {
-		return homeBaseEngineUrl;
+//	@Override
+//	public URI getHomeBaseEngineUrl() {
+//		return homeBaseEngineUrl;
+//	}
+
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.IConfiguration#getMapperAlgorithmClass()
+	 */
+	@Override
+	public Class<?> getMapperAlgorithmClass() {
+		return mapperAlgorithmClass;
 	}
 
 }

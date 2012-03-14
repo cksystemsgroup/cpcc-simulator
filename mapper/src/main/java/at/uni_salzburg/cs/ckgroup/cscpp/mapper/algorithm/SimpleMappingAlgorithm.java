@@ -30,9 +30,9 @@ import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.VehicleStatus.Status;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleStatus;
 
-
+@Deprecated
 public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
 
 	private static final Logger LOG = Logger.getLogger(SimpleMappingAlgorithm.class);
@@ -41,8 +41,8 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
 	@Override
 	public void execute() {
                 
-		if (getVirtualVehicleMap().isEmpty()) {
-			LOG.info("No migration because of empty virtual vehicle map.");
+		if (getRegistrationData().isEmpty()) {
+			LOG.info("No migration because of empty registration map.");
 			return;
 		}
                 
@@ -57,9 +57,9 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
 
 			String vv = vehicleInfo.getVehicleName();
 			String eng_url = vehicleInfo.getEngineUrl();
-			VehicleStatus vs = vehicleInfo.getVehicleStatus();
+			IVirtualVehicleStatus vs = vehicleInfo.getVehicleStatus();
 					
-			if (vs.getState() == Status.COMPLETED) {
+			if (vs.getState() == IVirtualVehicleStatus.Status.COMPLETED) {
 				if (getCentralEngineUrl() != null) {
 					migrate(eng_url, vv, getCentralEngineUrl());
 				} else {
@@ -138,21 +138,6 @@ public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {
     	double dirNorm = dir.norm();
         double d = dir.crossProduct(pmc).norm() / dirNorm;
         return pmcNorm <= dirNorm + tol && d <= tol ? pmcNorm / velocity : null;
-        
-//        // direction vec = next - current
-//        CartesianCoordinate dir = next.subtract(current);
-//        // CN = c + t*dir -> t
-//        double t = ((current.multiply(dir)*(-1)) + (point.multiply(dir)) / dir.multiply(dir));
-//        // t in CN -> L
-//        CartesianCoordinate l = new CartesianCoordinate(current.getX() + t*dir.getX(), current.getY() + t*dir.getY(), current.getZ() + t*dir.getZ());
-//        
-//        if(current.norm() <= l.norm() && l.norm() <= next.norm()) {
-//            // d = | P - L |
-//            double d = point.subtract(l).norm();
-//            
-//            return d <= tol ? point.subtract(current).norm()/velocity : null;
-//        }
-//        else return null;
     }
 	
 }

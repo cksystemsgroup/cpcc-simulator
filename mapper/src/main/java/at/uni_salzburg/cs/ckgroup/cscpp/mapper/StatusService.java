@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
@@ -63,12 +62,12 @@ public class StatusService extends DefaultService {
 		String nextPage;
 		
 		if (ACTION_MAPPER_SUSPEND.equals(action)) {
-			IMappingAlgorithm mappingAlgorithm = (IMappingAlgorithm)config.getServletContext().getAttribute("mappingAlgorithm");
+			IMapperThread mappingAlgorithm = (IMapperThread)config.getServletContext().getAttribute("mapper");
 			mappingAlgorithm.cease();
 			nextPage = request.getContextPath() + "/status.tpl";
 			
 		} else if (ACTION_MAPPER_RESUME.equals(action)) {
-			IMappingAlgorithm mappingAlgorithm = (IMappingAlgorithm)config.getServletContext().getAttribute("mappingAlgorithm");
+			IMapperThread mappingAlgorithm = (IMapperThread)config.getServletContext().getAttribute("mapper");
 			mappingAlgorithm.proceed();
 			nextPage = request.getContextPath() + "/status.tpl";
 			

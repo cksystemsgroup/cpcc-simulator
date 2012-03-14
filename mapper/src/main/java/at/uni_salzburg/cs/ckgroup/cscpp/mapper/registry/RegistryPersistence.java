@@ -27,23 +27,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 
 public class RegistryPersistence {
 	
-	private static Object lock = new Object();
+	private static final Logger LOG = Logger.getLogger(RegistryPersistence.class);
+	
+	private static final Object lock = new Object();
+	private static final JSONParser parser = new JSONParser();
 	
 	@SuppressWarnings("unchecked")
-	public static void loadRegistry (File registryFile, Map<String, RegData> registrationData) throws IOException {
+	public static void loadRegistry (File registryFile, Map<String, IRegistrationData> registrationData) throws IOException {
 		synchronized (lock) {
 			String reg = FileUtils.loadFileAsString(registryFile);
-			JSONParser parser = new JSONParser();
+			if (reg == null || reg.isEmpty()) {
+				LOG.info("Can not load registry, because of empty or missing file " + registryFile);
+				return;
+			}
+			
 			List<Object> list;
 			try {
 				list = (List<Object>)parser.parse(reg);
@@ -51,25 +60,29 @@ public class RegistryPersistence {
 				throw new IOException("Parsing " + registryFile.getAbsolutePath() + " failed", e);
 			}
 			
+			int counter = 0;
 			for (Object entry : list) {
 				RegData rd = new RegData((JSONObject)entry);
 				registrationData.put(rd.getEngineUri(), rd);
+				++counter;
 			}
+			LOG.info(counter + " Registry entries successfully loaded from file " + registryFile);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void storeRegistry (File registryFile, Map<String, RegData> registrationData) throws IOException {
+	public static void storeRegistry (File registryFile, Map<String, IRegistrationData> registrationData) throws IOException {
 		synchronized (lock) {
 			JSONArray obj = new JSONArray();
-			for (Entry<String, RegData> entry : registrationData.entrySet()) {
-				RegData rd = entry.getValue();
+			for (Entry<String, IRegistrationData> entry : registrationData.entrySet()) {
+				IRegistrationData rd = entry.getValue();
 				obj.add(rd);
 			}
 			
 			PrintWriter pw = new PrintWriter(registryFile);
 			pw.print(obj.toString());
 			pw.close();
+			LOG.info("Registry successfully saved to file " + registryFile);
 		}
 	}
 

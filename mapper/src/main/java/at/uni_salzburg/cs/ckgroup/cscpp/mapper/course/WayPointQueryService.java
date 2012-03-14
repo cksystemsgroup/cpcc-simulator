@@ -29,11 +29,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IWayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
 public class WayPointQueryService {
 
-	public static List<WayPoint> getWayPointList(String pilotUrl) throws IOException, ParseException {
+	public static List<IWayPoint> getWayPointList(String pilotUrl) throws IOException, ParseException {
 		
 	    String jsonString = HttpQueryUtils.simpleQuery(pilotUrl+"/json/waypoints");
 	    if (jsonString == null || jsonString.isEmpty())
@@ -41,7 +42,7 @@ public class WayPointQueryService {
 	    
 	    JSONParser parser = new JSONParser();
 	    JSONArray array = (JSONArray)parser.parse(jsonString);
-	    List<WayPoint> wayPointList = new ArrayList<WayPoint>();
+	    List<IWayPoint> wayPointList = new ArrayList<IWayPoint>();
 	    
 		for (Object entry : array) {
 			WayPoint wayPoint = new WayPoint((JSONObject)entry);

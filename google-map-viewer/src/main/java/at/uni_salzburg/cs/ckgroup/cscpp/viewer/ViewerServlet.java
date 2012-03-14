@@ -21,6 +21,7 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -33,9 +34,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.config.Configuration;
 
 
 @SuppressWarnings("serial")
@@ -48,12 +51,15 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 	public final static String PROP_CONFIG_FILE = "viewer.config.file";
 	
 	private ServletConfig servletConfig;
+	private Configuration configuration = new Configuration();
 	private Properties props = new Properties ();
 	private File contexTempDir;
 	private File configFile;
+	private MapperProxy mapperProxy = new MapperProxy();
 	
 	private ServiceEntry[] services = {
-		new ServiceEntry("/json.*", new JsonQueryService(this)),
+		new ServiceEntry("/config/.*", new ConfigService(this)),
+		new ServiceEntry("/json.*", new JsonQueryService(this, mapperProxy)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};
 
@@ -73,7 +79,7 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 		try {
 			props.load(propStream);
 					
-//			servletConfig.getServletContext().setAttribute("aviator", aviator);
+			servletConfig.getServletContext().setAttribute("configuration", configuration);
 			
 			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
 //			configuration.setWorkDir (contexTempDir);
@@ -81,6 +87,8 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 			configFile = new File (contexTempDir, props.getProperty(PROP_CONFIG_FILE));
 			reloadConfigFile();
 			
+			mapperProxy.setConfiguration(configuration);
+			mapperProxy.start();
 		} catch (IOException e) {
 			throw new ServletException (e);
 		}
@@ -108,6 +116,7 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 	}
 	
     public void destroy () {
+    	mapperProxy.terminate();
 //    	backGroundTimer.cancel();
 //    	backGroundTimerTask.finish();
 //    	aviator.destroy();
@@ -129,10 +138,13 @@ public class ViewerServlet extends HttpServlet implements IServletConfig {
 
 	@Override
 	public void reloadConfigFile() throws IOException {
-//		if (configFile != null && configFile.exists()) {
-//			configuration.loadConfig(new FileInputStream(configFile));
-//			LOG.info("Loading existing configuration from " + configFile);
-//		}
+		if (configFile == null || !configFile.exists()) {
+			LOG.error("No configuration file available.");
+			return;
+		}
+		
+		configuration.loadConfig(new FileInputStream(configFile));
+		LOG.info("Loading configuration from " + configFile);
 	}
 	
 }

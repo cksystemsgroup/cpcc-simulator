@@ -22,8 +22,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
@@ -31,39 +31,49 @@ import org.json.simple.parser.JSONParser;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.EngineInfo;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.IMapperProxy;
 
 public class PositionQuery implements IJsonQuery {
 
 	private static final Logger LOG = Logger.getLogger(PositionQuery.class);
 	
-	public String execute(IServletConfig config, String[] parameters) throws IOException {
+	private IMapperProxy mapperProxy;
+	private JSONParser parser = new JSONParser();
+	
+	public PositionQuery(IMapperProxy mapperProxy) {
+		this.mapperProxy = mapperProxy;
+	}
 
-		Properties props = config.getProperties();
+	public String execute(IServletConfig config, String[] parameters) throws IOException {
 		
-		String pilotListString = props.getProperty(IJsonQuery.PROP_PILOT_LIST);
-		String[] pilotList = pilotListString.trim().split("\\s*,\\s*");
-		JSONParser parser = new JSONParser();
+		if (mapperProxy.getEngineInfoList() == null) {
+			return "";
+		}
 		
 		// TODO do this in parallel
 		Map<String, Object> pilotPositions = new LinkedHashMap<String, Object>();
-		for (String pilot : pilotList) {
+		
+		int pilotNumber = 0;
+		for (EngineInfo engineInfo : mapperProxy.getEngineInfoList()) {
 			String position = null;
+			String pilot = String.format(Locale.US, "pilot%03d", ++pilotNumber);
 			try {
-				String pilotName = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_NAME);
-				String pilotPosURL = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_POSITION_URL);
-				position = HttpQueryUtils.simpleQuery(pilotPosURL);
-				Map<String, Object> p = new LinkedHashMap<String, Object>();
-				p.put("name", pilotName);				
-				p.put("position", parser.parse(position));
-				pilotPositions.put(pilot, p);
+				String pilotName = engineInfo.getPilotName();
+				String pilotPosURL = engineInfo.getPositionUrl();
+				if (pilotPosURL != null) {
+					position = HttpQueryUtils.simpleQuery(pilotPosURL);
+					Map<String, Object> p = new LinkedHashMap<String, Object>();
+					p.put("name", pilotName);				
+					p.put("position", parser.parse(position));
+					pilotPositions.put(pilot, p);
+				}
 			} catch (Exception e) {
-				LOG.info("Can not query pilot " + pilot + ": " + position);
+				LOG.info("Can not query pilot " + pilot + ": " + position, e);
 			}
 		}
 
 		return JSONValue.toJSONString(pilotPositions);
 	}
 	
-
-
 }

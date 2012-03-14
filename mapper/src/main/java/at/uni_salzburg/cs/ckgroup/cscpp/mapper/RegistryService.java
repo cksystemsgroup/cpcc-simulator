@@ -2,7 +2,7 @@
  * @(#) RegistryService.java
  *
  * This code is part of the CPCC project.
- * Copyright (c) 2012  Michael Kleber
+ * Copyright (c) 2012  Clemens Krainer, Michael Kleber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.json.simple.parser.ParseException;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IWayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPointQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -43,7 +44,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 
 
 
-public class RegistryService extends DefaultService{
+public class RegistryService extends DefaultService {
 
     Logger LOG = Logger.getLogger(RegistryService.class);
     
@@ -81,12 +82,12 @@ public class RegistryService extends DefaultService{
 	        } else {
 	        	
 				@SuppressWarnings("unchecked")
-				Map<String, RegData> regdata = (Map<String, RegData>)config.getServletContext().getAttribute("regdata");
+				Map<String, IRegistrationData> regdata = (Map<String, IRegistrationData>)config.getServletContext().getAttribute("regdata");
 
 		        if(pilot_uri == null || pilot_uri.trim().isEmpty()) {
 		        	// No sensors available, which is OK. This is a central engine.
 		        	LOG.info("Sucessful registration: central engine='" + eng_uri + "'");
-					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null));
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null, null));
 					
 					@SuppressWarnings("unchecked")
 					Set<String> centralEngines = (Set<String>)config.getServletContext().getAttribute("centralEngines");
@@ -96,10 +97,10 @@ public class RegistryService extends DefaultService{
 		        	LOG.info("Sucessful registration: engine='" + eng_uri + "', pilot='" + pilot_uri + "'");
 		        	
 		        	LOG.info("Retrieving way-point list:");
-		        	List<WayPoint> wayPointList = null;
+		        	List<IWayPoint> wayPointList = null;
 			        try {
 						wayPointList = WayPointQueryService.getWayPointList(pilot_uri);
-						for (WayPoint p : wayPointList)
+						for (IWayPoint p : wayPointList)
 							LOG.info("Waypoint: " + p);
 					} catch (ParseException e) {
 						LOG.error("Error at retrieving way-point list", e);
@@ -109,18 +110,22 @@ public class RegistryService extends DefaultService{
 			        SensorProxy sensorProxy = new SensorProxy();
 			        sensorProxy.setPilotUrl(pilot_uri);
 			        Set<String> sensors = null;
+			        Map<String,String> pilotConfig = null;
 					try {
 						sensors = sensorProxy.getAvailableSensors();
 	
 				        for (String sensor : sensors) {
 				        	LOG.info("Sensor: " + sensor);
 				        }
-				        	
+				        
+				        pilotConfig = sensorProxy.getPilotConfig();
+				        LOG.info("Pilot configuration: " + pilotConfig);
+				        
 					} catch (ParseException e) {
 						LOG.error("Error at retrieving available sensors", e);
 					}
 
-					regdata.put(eng_uri.trim(), new RegData(eng_uri, pilot_uri, wayPointList, sensors));
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, pilot_uri, wayPointList, sensors, pilotConfig));
 
 		        }
 

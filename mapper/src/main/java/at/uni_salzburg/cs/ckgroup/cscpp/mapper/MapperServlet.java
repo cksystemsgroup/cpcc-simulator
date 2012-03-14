@@ -39,9 +39,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.IMappingAlgorithm;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.MappingAlgrithmBuilder;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMappingAlgorithm;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.json.JsonQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -50,7 +51,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 
 
 @SuppressWarnings("serial")
-public class MapperServlet extends HttpServlet implements IServletConfig {
+public class MapperServlet extends HttpServlet implements IRegistry, IServletConfig {
 	
 	Logger LOG = Logger.getLogger(MapperServlet.class);
 	
@@ -58,7 +59,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	public static final String PROP_PATH_NAME = "mapper.properties";
 	public static final String PROP_CONFIG_FILE = "mapper.config.file";
 	public static final String PROP_REGISTRY_FILE = "registry.file";
-	public static final String PROP_MAPPER_ALGORITHM = "mapper.algorithm";
+//	public static final String PROP_MAPPER_ALGORITHM = "mapper.algorithm";
 	
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
@@ -66,12 +67,14 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	private File contexTempDir;
 	private File configFile;
 	private File registryFile;
-	private Map<String, RegData> regdata;
+	private Map<String, IRegistrationData> regdata;
 	private Set<String> centralEngines;
-	private IMappingAlgorithm mappingAlgorithm;
+//	private IMappingAlgorithm mappingAlgorithm;
+	private Mapper mapper = new Mapper();
 
 	private ServiceEntry[] services = {
 		new ServiceEntry("/config/.*", new ConfigService(this)),
+		new ServiceEntry("/json/.*", new JsonQueryService(this, mapper)),
 		new ServiceEntry("/status/.*", new StatusService(this)),
 		new ServiceEntry("/registry/.*", new RegistryService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
@@ -80,7 +83,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	@Override
 	public void init (ServletConfig servletConfig) throws ServletException {
 		this.servletConfig = servletConfig;
-		regdata = Collections.synchronizedMap(new TreeMap<String, RegData>());
+		regdata = Collections.synchronizedMap(new TreeMap<String, IRegistrationData>());
 		centralEngines = Collections.synchronizedSet(new HashSet<String>());
 		super.init();
 		myInit();
@@ -102,15 +105,15 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 			
 			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
 			configuration.setWorkDir (contexTempDir);
-			
+			configuration.addClassLoader(servletConfig.getClass().getClassLoader());
 			configFile = new File (contexTempDir, props.getProperty(PROP_CONFIG_FILE));
 			registryFile = new File (contexTempDir, props.getProperty(PROP_REGISTRY_FILE));
 			servletConfig.getServletContext().setAttribute("registryFile", registryFile);
 			reloadConfigFile();
 			
-			String algorithmName = props.getProperty(PROP_MAPPER_ALGORITHM, "random");
-			mappingAlgorithm = MappingAlgrithmBuilder.build(algorithmName.trim(), regdata, centralEngines);
-			servletConfig.getServletContext().setAttribute("mappingAlgorithm", mappingAlgorithm);
+			servletConfig.getServletContext().setAttribute("mapper", mapper);
+			mapper.setRegistrationData(regdata);
+			mapper.start();
 			
 		} catch (IOException e) {
 			throw new ServletException (e);
@@ -140,7 +143,7 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 	
 	@Override
     public void destroy () {
-		mappingAlgorithm.terminate();
+		mapper.terminate();
     	// TODO check / implement
     }
     
@@ -164,6 +167,16 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 		if (configFile != null && configFile.exists()) {
 			configuration.loadConfig(new FileInputStream(configFile));
 			LOG.info("Loading configuration from " + configFile);
+			IMappingAlgorithm algorithm = null;
+			Class<?> mapperAlgorithmClass = configuration.getMapperAlgorithmClass();
+			if (mapperAlgorithmClass != null) {
+				try {
+					algorithm = (IMappingAlgorithm)mapperAlgorithmClass.newInstance();
+				} catch (Exception e) {
+					throw new IOException("Can not instantiate mapper algorithm", e);
+				}
+			}
+			mapper.setMappingAlgorithm(algorithm);
 		}
 		if (registryFile != null && registryFile.exists()) {
 			RegistryPersistence.loadRegistry(registryFile, regdata);
@@ -171,4 +184,9 @@ public class MapperServlet extends HttpServlet implements IServletConfig {
 		}
 	}
 
+	@Override
+	public Map<String, IRegistrationData> getRegistrationData() {
+		return regdata;
+	}
+	
 }

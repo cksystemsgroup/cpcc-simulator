@@ -6,7 +6,7 @@
 				<tbody>
 					<tr>
 						<td>Mapper Algorithm: </td>
-#set( $algo = $servletConfig.getServletContext().getAttribute("mappingAlgorithm") )
+#set( $algo = $servletConfig.getServletContext().getAttribute("mapper") )
 #if( $algo.isPaused() )
 						<td><span style="color: red">paused</span></td>
 #else
@@ -35,6 +35,11 @@
 #end
 #if( $rd.getPilotUri() )
 Pilot URL: <a href="$rd.getPilotUri()">$rd.getPilotUri()</a> <br/>
+#set( $pilotName = false )
+#set( $pilotName = $rd.getPilotConfig().get("pilotName") )
+#if( $pilotName )
+Pilot Name: <a href="$rd.getPilotUri()">$pilotName</a> <br/>
+#end
 #end
 #if ( $rd.getSensors() )
 Available sensors:

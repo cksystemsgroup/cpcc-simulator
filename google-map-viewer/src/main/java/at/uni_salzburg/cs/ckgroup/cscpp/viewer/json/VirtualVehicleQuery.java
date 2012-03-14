@@ -21,8 +21,8 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
@@ -30,38 +30,50 @@ import org.json.simple.parser.JSONParser;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.EngineInfo;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.IMapperProxy;
 
 public class VirtualVehicleQuery implements IJsonQuery {
+	
+	private static final Logger LOG = Logger.getLogger(VirtualVehicleQuery.class);
+	
+	private IMapperProxy mapperProxy;
+	private JSONParser parser = new JSONParser();
+
+	public VirtualVehicleQuery(IMapperProxy mapperProxy) {
+		this.mapperProxy = mapperProxy;
+	}
 
 	@Override
 	public String execute(IServletConfig config, String[] parameters) {
 		
-		Logger LOG = Logger.getLogger(VirtualVehicleQuery.class);
-		
-		Properties props = config.getProperties();
-		
-		String pilotListString = props.getProperty(IJsonQuery.PROP_PILOT_LIST);
-		String[] pilotList = pilotListString.trim().split("\\s*,\\s*");
-		JSONParser parser = new JSONParser();
+		if (mapperProxy.getEngineInfoList() == null) {
+			return "";
+		}
 		
 		// TODO do this in parallel
 		Map<String, Object> vehicleStatus = new LinkedHashMap<String, Object>();
-		for (String pilot : pilotList) {
-			String position = null;
+		
+		int pilotNumber = 0;
+		for (EngineInfo engineInfo : mapperProxy.getEngineInfoList()) {
+			String vehicleStatusString = null;
+			String pilot = String.format(Locale.US, "pilot%03d", ++pilotNumber);
 			try {
-				String pilotName = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_NAME);
-				String pilotVehicleURL = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_VEHICLE_STATUS_URL);
-				position = HttpQueryUtils.simpleQuery(pilotVehicleURL);
-				Map<String, Object> p = new LinkedHashMap<String, Object>();
-				p.put("name", pilotName);				
-				p.put("vehicles", parser.parse(position));
-				vehicleStatus.put(pilot, p);
+				String pilotName = engineInfo.getPilotName();
+				String vehicleStatusURL = engineInfo.getVehicleStatusUrl();
+				if (pilotName != null && vehicleStatusURL != null) {
+					vehicleStatusString = HttpQueryUtils.simpleQuery(vehicleStatusURL);
+					Map<String, Object> p = new LinkedHashMap<String, Object>();
+					p.put("name", pilotName);				
+					p.put("vehicles", parser.parse(vehicleStatusString));
+					vehicleStatus.put(pilot, p);
+				}
 			} catch (Exception e) {
-				LOG.info("Can not query pilot " + pilot + ": " + position);
+				LOG.info("Can not query pilot " + pilot + ": " + vehicleStatusString, e);
 			}
 		}
-
+		
 		return JSONValue.toJSONString(vehicleStatus);
 	}
-
+	
 }

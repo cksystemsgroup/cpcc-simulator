@@ -21,8 +21,8 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
@@ -30,35 +30,49 @@ import org.json.simple.parser.JSONParser;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.EngineInfo;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.IMapperProxy;
 
 public class WaypointsQuery implements IJsonQuery {
 	
 	private static final Logger LOG = Logger.getLogger(WaypointsQuery.class);
 	
+	private IMapperProxy mapperProxy;
+	private JSONParser parser = new JSONParser();
+	
+	public WaypointsQuery(IMapperProxy mapperProxy) {
+		this.mapperProxy = mapperProxy;
+	}
+
 	public String execute(IServletConfig config, String[] parameters) {
 		
-		Properties props = config.getProperties();
-		
-		String pilotListString = props.getProperty(IJsonQuery.PROP_PILOT_LIST);
-		String[] pilotList = pilotListString.trim().split("\\s*,\\s*");
-		JSONParser parser = new JSONParser();
+		if (mapperProxy.getEngineInfoList() == null) {
+			return "";
+		}
 		
 		// TODO do this in parallel
 		Map<String, Object> pilotWaypoints = new LinkedHashMap<String, Object>();
-		for (String pilot : pilotList) {
+		
+		int pilotNumber = 0;
+		for (EngineInfo engineInfo : mapperProxy.getEngineInfoList()) {
 			String waypoints = null;
+			String pilot = String.format(Locale.US, "pilot%03d", ++pilotNumber);
 			try {
-				String pilotWaypointsURL = props.getProperty(PROP_PILOT_PREFIX+pilot+PROP_PILOT_WAYPOINTS_URL);
-				waypoints = HttpQueryUtils.simpleQuery(pilotWaypointsURL);
-				Map<String, Object> p = new LinkedHashMap<String, Object>();
-				p.put("waypoints", parser.parse(waypoints));
-				pilotWaypoints.put(pilot, p);
+				String pilotName = engineInfo.getPilotName();
+				String waypointsUrl = engineInfo.getWaypointsUrl();
+				if (waypointsUrl != null) {
+					waypoints = HttpQueryUtils.simpleQuery(waypointsUrl);
+					Map<String, Object> p = new LinkedHashMap<String, Object>();
+					p.put("name", pilotName);				
+					p.put("waypoints", parser.parse(waypoints));
+					pilotWaypoints.put(pilot, p);
+				}
 			} catch (Exception e) {
-				LOG.info("Can not query pilot " + pilot + ": " + waypoints);
+				LOG.info("Can not query pilot " + pilot + ": " + waypoints, e);
 			}
 		}
-
+		
 		return JSONValue.toJSONString(pilotWaypoints);
 	}
-
+	
 }

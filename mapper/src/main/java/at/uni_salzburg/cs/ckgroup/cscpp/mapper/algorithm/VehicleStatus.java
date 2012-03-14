@@ -30,12 +30,9 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleStatus;
 
-public class VehicleStatus implements JSONAware {
-	
-	enum Status {
-		NONE, SUSPENDED, ACTIVE, CORRUPT, COMPLETED
-	};
+public class VehicleStatus implements IVirtualVehicleStatus, JSONAware {
 	
 	private String name;
 	private String id;
@@ -62,26 +59,32 @@ public class VehicleStatus implements JSONAware {
 		}
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public Status getState() {
 		return state;
 	}
 
+	@Override
 	public PolarCoordinate getPosition() {
 		return position;
 	}
 
+	@Override
 	public double getTolerance() {
 		return tolerance;
 	}
 
+	@Override
 	public Set<String> getActions() {
 		return actions;
 	}

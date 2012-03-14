@@ -21,6 +21,7 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.IMapperProxy;
 
 
 public interface IJsonQuery extends IQuery {
@@ -32,4 +33,5 @@ public interface IJsonQuery extends IQuery {
 	String PROP_PILOT_WAYPOINTS_URL = ".waypoints.url";
 	String PROP_PILOT_VEHICLE_STATUS_URL = ".vehicle.status.url";
 	
+//	void setMapperProxy(IMapperProxy mapperProxy);
 }

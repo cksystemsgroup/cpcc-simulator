@@ -26,8 +26,9 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IWayPoint;
 
-public class WayPoint implements JSONAware {
+public class WayPoint implements IWayPoint, JSONAware {
 	
 	private PolarCoordinate point;
 	private double precision;

@@ -13,7 +13,7 @@
 	<artifactId>utils</artifactId>
 
 	<name>Utilities Module</name>
-	<description>Cybe Physical Cloud Computing - Utilities Module</description>
+	<description>Cyber Physical Cloud Computing - Utilities Module</description>
 
 	<dependencies>
 		<dependency>

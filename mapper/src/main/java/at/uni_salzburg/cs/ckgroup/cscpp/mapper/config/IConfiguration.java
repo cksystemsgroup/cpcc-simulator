@@ -20,7 +20,6 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.config;
 
-import java.net.URI;
 
 public interface IConfiguration {
 
@@ -30,7 +29,10 @@ public interface IConfiguration {
 	 * 
 	 * @return the base URL of the associated home-base engine.
 	 */
-	public URI getHomeBaseEngineUrl();
+//	URI getHomeBaseEngineUrl();
 
-	
+	/**
+	 * @return the class instance of the mapping algorithm. 
+	 */
+	Class<?> getMapperAlgorithmClass();
 }

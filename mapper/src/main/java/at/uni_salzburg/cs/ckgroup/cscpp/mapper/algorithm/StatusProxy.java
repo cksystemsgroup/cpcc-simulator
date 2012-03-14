@@ -31,8 +31,9 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IStatusProxy;
 
-public class StatusProxy {
+public class StatusProxy implements IStatusProxy {
 	
 	Logger LOG = Logger.getLogger(StatusProxy.class);
 
@@ -50,6 +51,7 @@ public class StatusProxy {
 		this.statusUrl = pilotUrl + "/status";
 	}
 	
+	@Override
 	public void fetchCurrentStatus() {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpget = new HttpGet(statusUrl);
@@ -99,14 +101,17 @@ public class StatusProxy {
 		return Double.valueOf(v);
 	}
 
+	@Override
 	public PolarCoordinate getCurrentPosition() {
 		return currentPosition;
 	}
 
+	@Override
 	public PolarCoordinate getNextPosition() {
 		return nextPosition;
 	}
 
+	@Override
 	public Double getVelocity() {
 		return velocity;
 	}

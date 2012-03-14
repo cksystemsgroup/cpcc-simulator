@@ -21,6 +21,7 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.parser.ParseException;
@@ -86,6 +87,11 @@ public interface ISensorProxy {
 	 * @return the list of available sensors.
 	 */
 	Set<String> getAvailableSensors() throws ParseException;
+	
+	/**
+	 * @return the associated pilot's configuration parameters.
+	 */
+	Map<String,String> getPilotConfig() throws ParseException;
 	
 	/**
 	 * @return the list of way-points as JSON string.

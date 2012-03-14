@@ -20,12 +20,16 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
-public class VehicleInfo {
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleInfo;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleStatus;
 
+public class VehicleInfo implements IVirtualVehicleInfo {
+	
 	private String vehicleName;
 	private String engineUrl;
 	private VehicleStatus vehicleStatus;
 	
+	@Override
 	public String getVehicleName() {
 		return vehicleName;
 	}
@@ -34,6 +38,7 @@ public class VehicleInfo {
 		this.vehicleName = vehicleName;
 	}
 	
+	@Override
 	public String getEngineUrl() {
 		return engineUrl;
 	}
@@ -42,7 +47,8 @@ public class VehicleInfo {
 		this.engineUrl = engineUrl;
 	}
 	
-	public VehicleStatus getVehicleStatus() {
+	@Override
+	public IVirtualVehicleStatus getVehicleStatus() {
 		return vehicleStatus;
 	}
 	

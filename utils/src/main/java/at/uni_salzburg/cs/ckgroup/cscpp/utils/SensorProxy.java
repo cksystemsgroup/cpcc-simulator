@@ -23,8 +23,11 @@ package at.uni_salzburg.cs.ckgroup.cscpp.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.http.HttpEntity;
@@ -34,6 +37,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -107,6 +111,28 @@ public class SensorProxy extends Thread implements ISensorProxy {
 		Set<String> result = new HashSet<String>();
 		for (Object entry : list) {
 			result.add(entry.toString());
+		}
+		
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy#getPilotConfig()
+	 */
+	@Override
+	public Map<String,String> getPilotConfig() throws ParseException {
+		String jsonString = getSensorValue("config");
+		if (jsonString == null) {
+			return null;
+		}
+		
+		JSONParser parser = new JSONParser();
+		JSONObject obj = (JSONObject)parser.parse(jsonString);
+		Map<String,String> result = new HashMap<String, String>();
+		for (Object entry : obj.entrySet()) {
+			@SuppressWarnings("unchecked")
+			Entry<String, String> e = (Entry<String, String>)entry;
+			result.put(e.getKey(), e.getValue());
 		}
 		
 		return result;

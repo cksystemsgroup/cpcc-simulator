@@ -1,6 +1,6 @@
 		<div id="sidebar">
 			<h2>Mapper Algorithm</h2>
-#set( $algo = $servletConfig.getServletContext().getAttribute("mappingAlgorithm") )
+#set( $algo = $servletConfig.getServletContext().getAttribute("mapper") )
 #if( $algo.isPaused() )
 			<form action="status/mapperResume" method="get" enctype="text/plain">
 				<p>

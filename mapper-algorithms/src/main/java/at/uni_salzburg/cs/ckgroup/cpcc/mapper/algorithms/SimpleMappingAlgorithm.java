@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithms;
+package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
 
 import java.util.List;
 import java.util.Map;
@@ -30,12 +30,12 @@ import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMapper;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMappingAlgorithm;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IStatusProxy;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleInfo;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleStatus;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
 
 public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 	

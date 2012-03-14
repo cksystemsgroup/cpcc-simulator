@@ -30,10 +30,10 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMapper;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IStatusProxy;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleInfo;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 

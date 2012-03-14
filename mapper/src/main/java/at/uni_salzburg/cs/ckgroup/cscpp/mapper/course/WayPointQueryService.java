@@ -29,7 +29,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IWayPoint;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IWayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
 public class WayPointQueryService {

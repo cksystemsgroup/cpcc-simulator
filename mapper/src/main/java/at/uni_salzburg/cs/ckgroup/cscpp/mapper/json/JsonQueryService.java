@@ -20,7 +20,7 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.json;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMapper;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.QueryService;
 

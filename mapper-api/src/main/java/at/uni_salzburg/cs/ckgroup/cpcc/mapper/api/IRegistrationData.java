@@ -1,5 +1,5 @@
 /*
- * @(#) IStatusProxy.java
+ * @(#) IRegistrationData.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -18,18 +18,29 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper.api;
+package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
-import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public interface IStatusProxy {
+import org.json.simple.JSONAware;
 
-	void fetchCurrentStatus();
+
+public interface IRegistrationData extends JSONAware {
 	
-	PolarCoordinate getCurrentPosition();
+    String getEngineUri();
 
-	PolarCoordinate getNextPosition();
+    String getPilotUri();
 
-	Double getVelocity();
+    List<IWayPoint> getWaypoints();
+    
+    Set<String> getSensors();
+
+	boolean isCentralEngine();
+	
+	boolean isMaxAccessErrorsLimitReached();
+
+	Map<String, String> getPilotConfig();
 	
 }

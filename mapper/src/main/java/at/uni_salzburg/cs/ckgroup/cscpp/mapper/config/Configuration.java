@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMappingAlgorithm;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigurationParser;
 
 public class Configuration extends ConfigurationParser implements IConfiguration {

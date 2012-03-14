@@ -1,5 +1,5 @@
 /*
- * @(#) AbstractMappingAlgorithm.java
+ * @(#) IVirtualVehicleInfo.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -18,10 +18,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper.api;
+package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
-
-public interface IMappingAlgorithm {
+public interface IVirtualVehicleInfo {
 	
-	void execute(IMapper mapper);
+	String getVehicleName();
+	
+	String getEngineUrl();
+	
+	IVirtualVehicleStatus getVehicleStatus();
 }

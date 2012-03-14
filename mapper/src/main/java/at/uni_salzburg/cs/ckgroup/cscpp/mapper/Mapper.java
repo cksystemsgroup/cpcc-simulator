@@ -34,14 +34,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.StatusProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.VehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.VehicleStatus;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMapper;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMappingAlgorithm;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IStatusProxy;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
 public class Mapper extends Thread implements IMapperThread, IMapper {

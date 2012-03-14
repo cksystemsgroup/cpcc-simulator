@@ -22,7 +22,7 @@ package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
 import java.util.Map;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 
 public interface IRegistry {
 	

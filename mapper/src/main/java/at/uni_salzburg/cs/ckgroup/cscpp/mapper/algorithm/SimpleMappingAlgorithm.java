@@ -29,8 +29,8 @@ import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleStatus;
 
 @Deprecated
 public class SimpleMappingAlgorithm extends AbstractMappingAlgorithm {

@@ -1,5 +1,5 @@
 /*
- * @(#) IMappingAlgorithm.java
+ * @(#) RandomMappingAlgorithm.java
  *
  * This code is part of the JNavigator project.
  * Copyright (c) 2012  Clemens Krainer
@@ -18,13 +18,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithms;
+package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMapper;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMappingAlgorithm;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleInfo;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
 
 /**
  * This mapping algorithm randomly selects a virtual vehicle and migrates it to a randomly chosen engine.

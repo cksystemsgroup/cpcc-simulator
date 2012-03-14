@@ -1,5 +1,5 @@
 /*
- * @(#) IRegistrationData.java
+ * @(#) IMapper.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -18,28 +18,22 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper.api;
+package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.simple.JSONAware;
 
-public interface IRegistrationData extends JSONAware {
+public interface IMapper {
+
+	Map<String, IStatusProxy> getStatusProxyMap();
+
+	List<IVirtualVehicleInfo> getVirtualVehicleList();
+
+	Map<String, IRegistrationData> getRegistrationData();
+
+	Set<String> getCentralEngines();
 	
-    String getEngineUri();
-
-    String getPilotUri();
-
-    List<IWayPoint> getWaypoints();
-    
-    Set<String> getSensors();
-
-	boolean isCentralEngine();
-	
-	boolean isMaxAccessErrorsLimitReached();
-
-	Map<String, String> getPilotConfig();
-	
+	void migrate(String sourceEngineUrl, String vehicleName, String targetEngineUrl);
 }

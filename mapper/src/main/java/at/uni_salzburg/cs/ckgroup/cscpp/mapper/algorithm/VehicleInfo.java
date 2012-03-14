@@ -20,8 +20,8 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleInfo;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleStatus;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
 
 public class VehicleInfo implements IVirtualVehicleInfo {
 	

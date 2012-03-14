@@ -1,5 +1,5 @@
 /*
- * @(#) IVirtualVehicleStatus.java
+ * @(#) IStatusProxy.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -18,28 +18,18 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper.api;
-
-import java.util.Set;
+package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
-public interface IVirtualVehicleStatus {
+public interface IStatusProxy {
+
+	void fetchCurrentStatus();
 	
-	enum Status {
-		NONE, SUSPENDED, ACTIVE, CORRUPT, COMPLETED
-	};
+	PolarCoordinate getCurrentPosition();
 
-	String getName();
+	PolarCoordinate getNextPosition();
 
-	String getId();
-
-	Status getState();
-
-	PolarCoordinate getPosition();
-
-	double getTolerance();
-
-	Set<String> getActions();
+	Double getVelocity();
 	
 }

@@ -39,8 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMappingAlgorithm;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.json.JsonQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
@@ -114,6 +114,8 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 			servletConfig.getServletContext().setAttribute("mapper", mapper);
 			mapper.setRegistrationData(regdata);
 			mapper.start();
+			
+			
 			
 		} catch (IOException e) {
 			throw new ServletException (e);

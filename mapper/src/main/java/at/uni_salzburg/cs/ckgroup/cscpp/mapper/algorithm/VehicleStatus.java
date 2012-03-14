@@ -30,7 +30,7 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IVirtualVehicleStatus;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
 
 public class VehicleStatus implements IVirtualVehicleStatus, JSONAware {
 	

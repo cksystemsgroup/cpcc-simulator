@@ -33,8 +33,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 
 public class RegistryPersistence {

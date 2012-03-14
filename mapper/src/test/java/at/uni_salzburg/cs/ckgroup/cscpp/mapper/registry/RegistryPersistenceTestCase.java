@@ -33,8 +33,8 @@ import junit.framework.Assert;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IWayPoint;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IWayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 

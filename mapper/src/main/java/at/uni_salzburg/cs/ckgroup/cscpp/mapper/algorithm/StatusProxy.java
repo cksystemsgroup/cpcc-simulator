@@ -31,7 +31,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IStatusProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
 
 public class StatusProxy implements IStatusProxy {
 	

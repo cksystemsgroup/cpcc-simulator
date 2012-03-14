@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.json.simple.parser.ParseException;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IRegistrationData;
-import at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IWayPoint;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IWayPoint;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPointQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;

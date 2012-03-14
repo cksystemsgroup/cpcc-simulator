@@ -40,8 +40,15 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
 public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 	
 	private static final Logger LOG = Logger.getLogger(SimpleMappingAlgorithm.class);
+	
+	/**
+	 * The geodetic system to be used for coordinate transformations.
+	 */
 	private IGeodeticSystem geodeticSystem = new WGS84();
 	
+	/* (non-Javadoc)
+	 * @see at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm#execute(at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper)
+	 */
 	@Override
 	public void execute(IMapper mapper) {
 		        
@@ -86,15 +93,31 @@ public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 		}
 	}
 		
-	private String findEngine(PolarCoordinate pos, double tolerance, Set<String> actionSet, IMapper mapper) {
+	/**
+	 * This method searches for a given Virtual Vehicle an Engine to migrate to.
+	 * 
+	 * @param virtualVehiclePosition
+	 *            the position of the inspected Virtual Vehicle Action Point
+	 * @param tolerance
+	 *            the radius of the tolerance sphere all around the inspected
+	 *            Virtual Vehicle Action Point.
+	 * @param actionSet
+	 *            the set of actions to be performed at the inspected Virtual
+	 *            Vehicle Action Point.
+	 * @param mapper
+	 *            the Mapper instance.
+	 * @return an Engine base URL where the Virtual Vehicle should be migrated
+	 *         to.
+	 */
+	private String findEngine(PolarCoordinate virtualVehiclePosition, double tolerance, Set<String> actionSet, IMapper mapper) {
 		
-		if (pos == null) {
+		if (virtualVehiclePosition == null) {
 			return null;
 		}
 		
 		Double minimumTime = Double.MAX_VALUE;
-		String foundEngineUrl = null;
-		CartesianCoordinate virtualPosCart = geodeticSystem.polarToRectangularCoordinates(pos);
+		String newEngineUrl = null;
+		CartesianCoordinate virtualPositionPosCart = geodeticSystem.polarToRectangularCoordinates(virtualVehiclePosition);
 		
 		for(Map.Entry<String,IStatusProxy> statusProxyEntry : mapper.getStatusProxyMap().entrySet()) {
 		    String engineUrl = statusProxyEntry.getKey();
@@ -106,7 +129,7 @@ public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 		    if(currentPosition != null && nextPosition != null && velocity != null) {
 		        CartesianCoordinate currentPosCart = geodeticSystem.polarToRectangularCoordinates(currentPosition);
 		        CartesianCoordinate nextPosCart = geodeticSystem.polarToRectangularCoordinates(nextPosition);
-		        Double timeToVvActionPoint = calculateTimeToVvActionPoint(currentPosCart, nextPosCart, virtualPosCart, tolerance, velocity);
+		        Double timeToVvActionPoint = calculateTimeToVvActionPoint(currentPosCart, nextPosCart, virtualPositionPosCart, tolerance, velocity);
 		        
 		        if(timeToVvActionPoint != null && timeToVvActionPoint < minimumTime) {
 		    		minimumTime = timeToVvActionPoint;
@@ -114,7 +137,7 @@ public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 		            if(registrationData != null) {
 		            	for (String action : actionSet) {
 		            		if (registrationData.getSensors().contains(action)) {
-		            			foundEngineUrl = engineUrl;
+		            			newEngineUrl = engineUrl;
 		            			break;
 		            		}
 		            	}
@@ -123,9 +146,28 @@ public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 		    }
 		}
 		
-		return foundEngineUrl;
+		return newEngineUrl;
 	}
 
+	/**
+	 * This method calculates the time a Real Vehicle will need to arrive a
+	 * given Virtual Vehicle Action Point.
+	 * 
+	 * @param currentRvPosition
+	 *            the current Real Vehicle position.
+	 * @param nextRvWayPoint
+	 *            the end of the current set course flight segment.
+	 * @param vvActionPoint
+	 *            the inspected Virtual Vehicle Action Point.
+	 * @param tolerance
+	 *            the radius of the tolerance sphere all around the inspected
+	 *            Virtual Vehicle Action Point.
+	 * @param velocity
+	 *            the current velocity of the Real Vehicle.
+	 * @return the time the Real Vehicle will need to arrive the inspected
+	 *         Virtual Vehicle Action Point, or null if the Real Vehicle will
+	 *         not get near it.
+	 */
 	private Double calculateTimeToVvActionPoint(CartesianCoordinate currentRvPosition, CartesianCoordinate nextRvWayPoint, CartesianCoordinate vvActionPoint, double tolerance, double velocity) {
 		// Are we in the tolerance sphere ?
 		CartesianCoordinate pmc = vvActionPoint.subtract(currentRvPosition);

@@ -22,11 +22,24 @@ package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
+/**
+ * A Real Vehicle set course waypoint.
+ *
+ */
 public interface IWayPoint {
 
+	/**
+	 * @return the waypoint the Real Vehicle has to pass in polar coordinates, i.e., latitude, longitude, and altitude above ground.
+	 */
 	PolarCoordinate getPoint();
 	
+	/**
+	 * @return the precision in meters the Real Vehicle has to come near the specified waypoint to consider it as reached.
+	 */
 	double getPrecision();
 
+	/**
+	 * @return the average velocity of the Real Vehicle to approach the waypoint. 
+	 */
 	double getVelocity();
 }

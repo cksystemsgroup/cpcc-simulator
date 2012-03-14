@@ -24,22 +24,48 @@ import java.util.Set;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
+/**
+ * This interface covers a Virtual Vehicle's status.
+ */
 public interface IVirtualVehicleStatus {
 	
 	enum Status {
 		NONE, SUSPENDED, ACTIVE, CORRUPT, COMPLETED
 	};
 
+	/**
+	 * @return the current Engine internal Virtual Vehicle name. Engines use
+	 *         this name for migrating Virtual Vehicles to other Engines.
+	 */
 	String getName();
 
+	/**
+	 * @return the Virtual Vehicle identification.
+	 */
 	String getId();
 
+	/**
+	 * @return the current Virtual Vehicle state.
+	 */
 	Status getState();
 
+	/**
+	 * @return the position of the currently active Action Point in polar
+	 *         coordinates, i.e., latitude, longitude, and altitude above
+	 *         ground.
+	 */
 	PolarCoordinate getPosition();
 
+	/**
+	 * @return the radius of the tolerance sphere all around the currently
+	 *         active Action Point.
+	 */
 	double getTolerance();
 
+	/**
+	 * @return the set of actions to be performed at the currently active Action
+	 *         Point.
+	 */
 	Set<String> getActions();
 	
 }

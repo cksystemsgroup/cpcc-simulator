@@ -22,14 +22,34 @@ package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
+/**
+ * The Mapper provides an instance of <code>IStatusProxy</code> to allow mapping
+ * algorithms access Real Vehicle status information.
+ */
 public interface IStatusProxy {
 
+	/**
+	 * Fetch the current Real Vehicle status.
+	 */
 	void fetchCurrentStatus();
 	
+	/**
+	 * @return the current position of the Real Vehicle in polar coordinates,
+	 *         i.e., latitude, longitude, and altitude above ground.
+	 */
 	PolarCoordinate getCurrentPosition();
 
+	/**
+	 * @return the end of the current Real Vehicle set course flight segment in
+	 *         polar coordinates, i.e., latitude, longitude, and altitude above
+	 *         ground.
+	 */
 	PolarCoordinate getNextPosition();
 
+	/**
+	 * @return the Real Vehicle average velocity in the current set course
+	 *         flight segment.
+	 */
 	Double getVelocity();
 	
 }

@@ -33,12 +33,18 @@ public class RandomMappingAlgorithm implements IMappingAlgorithm {
 
 	private static final Logger LOG = Logger.getLogger(RandomMappingAlgorithm.class);
 	
+	/**
+	 * This constant defines the number of execute() invocations needed to attempt a random migration.
+	 */
 	public static final int COUNTER_MAXIMUM = 5;
 	
+	/**
+	 * Execution counter. Increases by one each time execute() is invocated.
+	 */
 	private int counter = 0;
 	
 	/* (non-Javadoc)
-	 * @see at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMappingAlgorithm#execute(at.uni_salzburg.cs.ckgroup.cscpp.mapper.api.IMapper)
+	 * @see at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm#execute(at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper)
 	 */
 	@Override
 	public void execute(IMapper mapper) {

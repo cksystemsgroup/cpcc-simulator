@@ -24,16 +24,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
+/**
+ * The Mapper provides this interface to mapping algorithms. 
+ */
 public interface IMapper {
 
+	/**
+	 * @return the map of <code>IStatusProxy</code> instances. Key is the base URL of the associated Engine.
+	 */
 	Map<String, IStatusProxy> getStatusProxyMap();
 
+	/**
+	 * @return the list of all existing Virtual Vehicles.
+	 */
 	List<IVirtualVehicleInfo> getVirtualVehicleList();
 
+	/**
+	 * @return the map of registered Engines. Key is the base URL of the associated Engine.
+	 */
 	Map<String, IRegistrationData> getRegistrationData();
 
+	/**
+	 * @return the set of Engines where completed Virtual Vehicles will be migrated to.
+	 */
 	Set<String> getCentralEngines();
 	
+	/**
+	 * Migrate a Virtual Vehicle from one Engine to another.
+	 * 
+	 * @param sourceEngineUrl the base URL of the Engine currently transporting the Virtual Vehicle.
+	 * @param vehicleName the vehicle's local name.
+	 * @param targetEngineUrl the base URL of the new Engine. 
+	 */
 	void migrate(String sourceEngineUrl, String vehicleName, String targetEngineUrl);
 }

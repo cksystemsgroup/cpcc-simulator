@@ -27,20 +27,48 @@ import java.util.Set;
 import org.json.simple.JSONAware;
 
 
+/**
+ * This interface covers the information of a registered Engine.
+ */
 public interface IRegistrationData extends JSONAware {
 	
-    String getEngineUri();
+    /**
+     * @return the registered base URL of the Engine.
+     */
+    String getEngineUrl();
 
-    String getPilotUri();
+    /**
+     * @return the associated base URL of the Real Vehicle.
+     */
+    String getPilotUrl();
 
+    /**
+     * @return the Real Vehicle's set course as a list of waypoints.
+     */
     List<IWayPoint> getWaypoints();
     
+    /**
+     * @return the Real Vehicle's available sensors.
+     */
     Set<String> getSensors();
 
+	/**
+	 * @return true, if the Engine is a central Engine, i.e., an Engine where
+	 *         completed Virtual Vehicles will be migrated to.
+	 */
 	boolean isCentralEngine();
 	
+	/**
+	 * @return true, if the limit of maximum allowed errors accessing an Engine
+	 *         has been reached, false otherwise. If the limit has been reached,
+	 *         the Mapper deregisters the Engine automatically.
+	 */
 	boolean isMaxAccessErrorsLimitReached();
 
+	/**
+	 * @return Real Vehicle configuration properties, e.g., the Real Vehicle's
+	 *         name.
+	 */
 	Map<String, String> getPilotConfig();
 	
 }

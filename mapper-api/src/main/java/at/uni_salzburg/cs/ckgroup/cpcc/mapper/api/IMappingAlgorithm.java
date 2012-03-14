@@ -20,9 +20,15 @@
  */
 package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
-
-
+/**
+ * Each mapping algorithm has to implement this interface.
+ */
 public interface IMappingAlgorithm {
 	
+	/**
+	 * The Mapper periodically invokes this method.
+	 * 
+	 * @param mapper the current Mapper instance.
+	 */
 	void execute(IMapper mapper);
 }

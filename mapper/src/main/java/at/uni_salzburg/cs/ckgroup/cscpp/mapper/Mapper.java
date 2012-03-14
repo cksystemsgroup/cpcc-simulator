@@ -134,11 +134,11 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 
 	private void renewStatusProxyMap() {
 		for (IRegistrationData rd : registrationData.values()) {
-			if (!statusProxyMap.containsKey(rd.getEngineUri()) && rd.getPilotUri() != null) {
-				statusProxyMap.put(rd.getEngineUri(), new StatusProxy(rd.getPilotUri()));
+			if (!statusProxyMap.containsKey(rd.getEngineUrl()) && rd.getPilotUrl() != null) {
+				statusProxyMap.put(rd.getEngineUrl(), new StatusProxy(rd.getPilotUrl()));
 			}
-			if (!centralEngines.contains(rd.getEngineUri()) && rd.isCentralEngine()) {
-				centralEngines.add(rd.getEngineUri());
+			if (!centralEngines.contains(rd.getEngineUrl()) && rd.isCentralEngine()) {
+				centralEngines.add(rd.getEngineUrl());
 			}
 		}
 		
@@ -163,7 +163,7 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		JSONParser parser = new JSONParser();
 		virtualVehicleList.clear();
 		for (IRegistrationData rd : registrationData.values()) {
-			String key = rd.getEngineUri();
+			String key = rd.getEngineUrl();
 			String engineVehicleURL = key + "/json/vehicle";
 			
 			String position = null;
@@ -192,7 +192,7 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 				
 				VehicleInfo data = new VehicleInfo();
 				data.setVehicleName(entry.getKey());
-				data.setEngineUrl(rd.getEngineUri());
+				data.setEngineUrl(rd.getEngineUrl());
 				data.setVehicleStatus(status);
 				virtualVehicleList.add(data);
 			}

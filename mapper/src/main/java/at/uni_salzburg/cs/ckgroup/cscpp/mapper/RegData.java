@@ -89,12 +89,12 @@ public class RegData implements IRegistrationData {
 	}
     
 	@Override
-    public String getEngineUri() {
+    public String getEngineUrl() {
         return eng_uri;
     }
 
 	@Override
-    public String getPilotUri() {
+    public String getPilotUrl() {
         return pilotUri;
     }
 

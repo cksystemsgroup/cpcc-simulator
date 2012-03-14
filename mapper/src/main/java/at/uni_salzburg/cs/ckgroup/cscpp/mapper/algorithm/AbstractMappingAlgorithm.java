@@ -117,8 +117,8 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 
 	private void renewStatusProxyMap() {
 		for (RegData rd : registrationData.values()) {
-			if (!statusProxyMap.containsKey(rd.getEngineUri()) && rd.getPilotUri() != null) {
-				statusProxyMap.put(rd.getEngineUri(), new StatusProxy(rd.getPilotUri()));
+			if (!statusProxyMap.containsKey(rd.getEngineUrl()) && rd.getPilotUrl() != null) {
+				statusProxyMap.put(rd.getEngineUrl(), new StatusProxy(rd.getPilotUrl()));
 			}
 		}
 		
@@ -142,7 +142,7 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 		JSONParser parser = new JSONParser();
 		virtualVehicleList.clear();
 		for (RegData rd : registrationData.values()) {
-			String key = rd.getEngineUri();
+			String key = rd.getEngineUrl();
 			String engineVehicleURL = key + "/json/vehicle";
 			
 			String position = null;
@@ -171,7 +171,7 @@ public abstract class AbstractMappingAlgorithm extends Thread implements IMappin
 				
 				VehicleInfo data = new VehicleInfo();
 				data.setVehicleName(entry.getKey());
-				data.setEngineUrl(rd.getEngineUri());
+				data.setEngineUrl(rd.getEngineUrl());
 				data.setVehicleStatus(status);
 				virtualVehicleList.add(data);
 			}

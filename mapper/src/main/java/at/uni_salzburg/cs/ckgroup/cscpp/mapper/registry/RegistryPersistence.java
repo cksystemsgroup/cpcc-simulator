@@ -63,7 +63,7 @@ public class RegistryPersistence {
 			int counter = 0;
 			for (Object entry : list) {
 				RegData rd = new RegData((JSONObject)entry);
-				registrationData.put(rd.getEngineUri(), rd);
+				registrationData.put(rd.getEngineUrl(), rd);
 				++counter;
 			}
 			LOG.info(counter + " Registry entries successfully loaded from file " + registryFile);

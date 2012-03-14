@@ -49,10 +49,10 @@ public class RegistryPersistenceTestCase {
 		RegistryPersistence.loadRegistry(storagePath, registrationData);
 		IRegistrationData d1 = registrationData.get("http://localhost:8080/engine");
 		Assert.assertNotNull(d1);
-		String engineUri = d1.getEngineUri();
+		String engineUri = d1.getEngineUrl();
 		Assert.assertEquals("http://localhost:8080/engine", engineUri);
 		
-		String pilotUri = d1.getPilotUri();
+		String pilotUri = d1.getPilotUrl();
 		Assert.assertEquals("http://localhost:8080/pilot", pilotUri);
 		
 		Set<String> sensors = d1.getSensors();

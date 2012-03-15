@@ -113,11 +113,14 @@
 #if( $log )
 ##set( $log = $log.replaceAll("\n","<br/>\n") )
 ##$log
-<table class="vvErrorLog">
+			<div class="vvProgramHeader">
+				Vehicle Log:
+			</div>
+			<table class="vvErrorLog">
 #foreach( $l in $log.split("\n") )
-	<tr class="vvErrorLog"><td class="vvErrorLog">$l</td></tr>
+				<tr class="vvErrorLog"><td class="vvErrorLog">$l</td></tr>
 #end
-</table>
+			</table>
 #end
 #if( !$vehicle.isProgramCorrupted() )	
 			<div class="vvProgramHeader">

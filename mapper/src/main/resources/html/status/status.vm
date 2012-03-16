@@ -33,18 +33,18 @@
 #else
 						<td>Engine URL: <a href="$key">$key</a> <br/>
 #end
-#if( $rd.getPilotUri() )
-Pilot URL: <a href="$rd.getPilotUri()">$rd.getPilotUri()</a> <br/>
+#if( $rd.getPilotUrl() )
+Pilot URL: <a href="$rd.getPilotUrl()">$rd.getPilotUrl()</a> <br/>
 #set( $pilotName = false )
 #set( $pilotName = $rd.getPilotConfig().get("pilotName") )
 #if( $pilotName )
-Pilot Name: <a href="$rd.getPilotUri()">$pilotName</a> <br/>
+Pilot Name: <a href="$rd.getPilotUrl()">$pilotName</a> <br/>
 #end
 #end
 #if ( $rd.getSensors() )
 Available sensors:
 #set( $first = true )
-#set( $su = $rd.getPilotUri() + "/sensor" )
+#set( $su = $rd.getPilotUrl() + "/sensor" )
 #foreach( $sensor in $rd.getSensors() )#if( !$first ),#{end} <a href="$su/$sensor">$sensor</a>#set( $first = false )#end
 #set( $vehMap = $algo.getVirtualVehicleMap().get($key) )
 #if( $vehMap.size() > 0 )

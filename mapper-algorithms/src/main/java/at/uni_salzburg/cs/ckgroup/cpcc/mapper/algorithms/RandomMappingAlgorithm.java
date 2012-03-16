@@ -1,7 +1,7 @@
 /*
  * @(#) RandomMappingAlgorithm.java
  *
- * This code is part of the JNavigator project.
+ * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify

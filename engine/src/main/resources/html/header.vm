@@ -1,7 +1,7 @@
 	<div id="header" class="container">
 		<div id="logo">
 			<h1><a href="index.tpl">Engine</a></h1>
-			<p><a href="http://cs.uni-salzburg.at/~ck/group/">ESE CPCC Project</a></p>
+			<p><a href="http://cs.uni-salzburg.at/~ck/group/">CPCC Project</a></p>
 		</div>
 		<div id="menu">
 			<ul>

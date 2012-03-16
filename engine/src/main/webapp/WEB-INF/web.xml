@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
-	<display-name>CPCC ESE Engine</display-name>
+	<display-name>CPCC Engine</display-name>
 	<description>Web based virtual vehicle engine</description>
 
 	<servlet>
@@ -36,7 +36,7 @@
 
 	<login-config>
 		<auth-method>BASIC</auth-method>
-		<realm-name>ESE CPCC Authentication Realm</realm-name>
+		<realm-name>CPCC Authentication Realm</realm-name>
 	</login-config>
 
 	<security-role>

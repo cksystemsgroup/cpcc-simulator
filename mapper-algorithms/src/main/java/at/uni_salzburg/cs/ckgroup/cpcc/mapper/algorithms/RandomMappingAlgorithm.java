@@ -27,7 +27,9 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
 
 /**
- * This mapping algorithm randomly selects a virtual vehicle and migrates it to a randomly chosen engine.
+ * This algorithm does not use any information concerning flight plans and
+ * available sensors. It randomly selects a VV and an Engine and initiates a
+ * migration from the Engine the VV resides to the other Engine.
  */
 public class RandomMappingAlgorithm implements IMappingAlgorithm {
 

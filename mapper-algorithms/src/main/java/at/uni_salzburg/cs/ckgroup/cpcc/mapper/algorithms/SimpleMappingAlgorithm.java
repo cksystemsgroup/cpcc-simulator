@@ -37,6 +37,30 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
 
+/**
+ * The simple mapping algorithm works as follows:
+ * 
+ * <pre>
+ * for all virtual vehicles do
+ *     if virtual vehicle program is complete
+ *     then
+ *         invoke migration to central engine
+ *     else
+ *         find fastest real vehicle with at least one fitting sensor and a
+ *         distance between the line of the current position to the end of
+ *         the current flight plan segment and the currently active virtual
+ *         vehicle action point smaller than the tolerance
+ *     end if
+ *     if vehicle found 
+ *     then 
+ *         invoke migration to it 
+ *     end if
+ * end for
+ * </pre>
+ * 
+ * The fastest real vehicle is the vehicle with the shortest flight time from
+ * its current position to the virtual vehicle action point.
+ */
 public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 	
 	private static final Logger LOG = Logger.getLogger(SimpleMappingAlgorithm.class);

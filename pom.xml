@@ -46,8 +46,8 @@
 	</modules>
 
 	<scm>
-		<connection>scm:svn:http://zoot.local/ese/svn/ESEP/trunk</connection>
-		<developerConnection>scm:svn:http://zoot.local/ese/svn/ESEP/trunk</developerConnection>
+		<connection>scm:svn:http://zoot.site/jnavigator/svn-cpcc/ESEP/trunk</connection>
+		<developerConnection>scm:svn:http://zoot.site/jnavigator/svn-cpcc/ESEP/trunk</developerConnection>
 	</scm>
 
 	<dependencyManagement>

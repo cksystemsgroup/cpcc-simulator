@@ -247,7 +247,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	}
 	
 	private void logVehiclePosition(String action, double latitude, double longitude, double altitude) {
-		String msg = String.format(Locale.US, "%s at (%.8f,%.8f,%.8f)", action, latitude, longitude, altitude);
+		String msg = String.format(Locale.US, "%s at (%.8f,%.8f,%.3f)", action, latitude, longitude, altitude);
 		try {
 			addLogEntry(msg);
 		} catch (IOException e) {

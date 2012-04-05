@@ -38,6 +38,7 @@ public class StatusService extends DefaultService {
 	
 	public static final String ACTION_MAPPER_SUSPEND = "mapperSuspend";
 	public static final String ACTION_MAPPER_RESUME = "mapperResume";
+	public static final String ACTION_MAPPER_SINGLE_STEP = "mapperSingleStep";
 	
 	public StatusService (IServletConfig configuraton) {
 		super (configuraton);
@@ -62,13 +63,18 @@ public class StatusService extends DefaultService {
 		String nextPage;
 		
 		if (ACTION_MAPPER_SUSPEND.equals(action)) {
-			IMapperThread mappingAlgorithm = (IMapperThread)config.getServletContext().getAttribute("mapper");
-			mappingAlgorithm.cease();
+			IMapperThread mapperThread = (IMapperThread)config.getServletContext().getAttribute("mapper");
+			mapperThread.cease();
 			nextPage = request.getContextPath() + "/status.tpl";
 			
 		} else if (ACTION_MAPPER_RESUME.equals(action)) {
-			IMapperThread mappingAlgorithm = (IMapperThread)config.getServletContext().getAttribute("mapper");
-			mappingAlgorithm.proceed();
+			IMapperThread mapperThread = (IMapperThread)config.getServletContext().getAttribute("mapper");
+			mapperThread.proceed();
+			nextPage = request.getContextPath() + "/status.tpl";
+			
+		} else if (ACTION_MAPPER_SINGLE_STEP.equals(action)) {
+			IMapperThread mapperThread = (IMapperThread)config.getServletContext().getAttribute("mapper");
+			mapperThread.singleStep();
 			nextPage = request.getContextPath() + "/status.tpl";
 			
 		} else {

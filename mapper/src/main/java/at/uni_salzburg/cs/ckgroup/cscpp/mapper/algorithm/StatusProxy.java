@@ -21,23 +21,35 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRVCommand;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandFlyTo;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandHover;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandLand;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
 
 public class StatusProxy implements IStatusProxy {
 	
 	Logger LOG = Logger.getLogger(StatusProxy.class);
 
 	private String statusUrl;
+	
+	private String setCourseUrl;
 	
 	private PolarCoordinate currentPosition;
 	
@@ -49,6 +61,7 @@ public class StatusProxy implements IStatusProxy {
 		if (pilotUrl == null)
 			throw new NullPointerException("Status URL may not be null!");
 		this.statusUrl = pilotUrl + "/status";
+		this.setCourseUrl = pilotUrl + "/admin/json/courseUpload";
 	}
 	
 	@Override
@@ -114,6 +127,89 @@ public class StatusProxy implements IStatusProxy {
 	@Override
 	public Double getVelocity() {
 		return velocity;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void changeSetCourse(List<IRVCommand> courseCommandList, boolean immediate) {
+		
+		JSONArray a = new JSONArray();
+		
+		for (IRVCommand cmd : courseCommandList) {
+			a.add(rvCommandToJSON(cmd));
+		}
+		
+		JSONObject o = new JSONObject();
+		o.put("immediate", Boolean.valueOf(immediate));
+		o.put("course", a);
+		
+		
+		String x = JSONValue.toJSONString(a);
+		
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(setCourseUrl);
+		HttpResponse response;
+	
+		String responseString = "";
+		try {
+			StringEntity entity = new StringEntity(x, "setcourse/json", null);
+			httppost.setEntity(entity);
+			
+			response = httpclient.execute(httppost);
+			int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == 200)
+				responseString = EntityUtils.toString(response.getEntity());
+			else
+				LOG.error("Error at accessing " + setCourseUrl + " code=" + statusCode + " reason=" + response.getStatusLine().getReasonPhrase());
+			
+			LOG.info("Upload new course to " + setCourseUrl + " response=" + responseString);
+		} catch (Exception e) {
+			LOG.error("Can not access " + setCourseUrl ,e);
+		}
+		
+		
+		// TODO return a value 
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JSONObject rvCommandToJSON(IRVCommand cmd) {
+		JSONObject o = new JSONObject();
+		
+		if (cmd instanceof RVCommandHover) {
+			RVCommandHover c = (RVCommandHover)cmd;
+			o.put("cmd", "hover");
+			o.put("time", c.getTime());
+			return o;
+		}
+		
+		if (cmd instanceof RVCommandFlyTo) { 
+			RVCommandFlyTo c = (RVCommandFlyTo)cmd;
+			o.put("cmd", "flyTo");
+			o.put("latitude", c.getPoint().getLatitude());
+			o.put("longitude", c.getPoint().getLongitude());
+			o.put("altitude", c.getPoint().getAltitude());
+			o.put("precision", c.getPrecision());
+			o.put("velocity", c.getVelocity());
+			return o;
+		}
+		
+		if (cmd instanceof RVCommandLand) {
+			o.put("cmd", "land");
+			return o;
+		}
+		
+		if (cmd instanceof RVCommandTakeOff) {
+			RVCommandTakeOff c = (RVCommandTakeOff)cmd;
+			o.put("cmd", "takeOff");
+			o.put("time", c.getTime());
+			o.put("altitude", c.getAltitude());
+			return o;
+		}
+		
+		LOG.error("Unknown RVCommand: " + cmd.getClass().getName());
+		
+		return null;
 	}
 	
 }

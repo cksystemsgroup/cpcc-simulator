@@ -1,5 +1,5 @@
 /*
- * @(#) IMapperThread.java
+ * @(#) RVCommandHover.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -18,39 +18,37 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
+package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
-public interface IMapperThread {
-
-	/**
-	 * @return true if the mapper thread executes.
-	 */
-	boolean isRunning();
+/**
+ * This class contains the attributes of the Vehicle Control Language <i>hover</i> command.
+ */
+public class RVCommandHover implements IRVCommand {
 	
 	/**
-	 * @return true if the execution of mapping algorithms is suspended.
+	 * The time the Real Vehicle should hover on the spot in seconds.
 	 */
-	boolean isPaused();
+	private long time;
 
 	/**
-	 * Terminate the mapper.
+	 * @param time the time the Real Vehicle should hover on the spot in seconds.
 	 */
-	void terminate();
-	
+	public RVCommandHover(long time) {
+		this.time = time;
+	}
+
 	/**
-	 * Suspend the execution of mapping algorithms.
+	 * @return the time the Real Vehicle should hover on the spot in seconds.
 	 */
-	void cease();
-	
+	public long getTime() {
+		return time;
+	}
+
 	/**
-	 * Resume the execution of mapping algorithms.
+	 * @param time the time the Real Vehicle should hover on the spot in seconds.
 	 */
-	void proceed();
-	
-	/**
-	 * Invoke the current mapping algorithm once, if the mapping algorithms is
-	 * suspended. If the algorithm is not suspended, this method does nothing.
-	 */
-	void singleStep();
-	
+	public void setTime(long time) {
+		this.time = time;
+	}
+
 }

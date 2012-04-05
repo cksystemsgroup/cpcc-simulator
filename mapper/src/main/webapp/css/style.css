@@ -348,6 +348,25 @@ a:hover {
 	text-align: justify;
 }
 
+#sidebar p.multiForms {
+	margin: 0 0px;
+	padding: 0px 30px 0px 30px;
+	text-align: justify;
+}
+
+#sidebar table {
+	table-layout: auto;
+/* 	align: left; */
+	border-style: none;
+	border-width: 0px;
+	margin: 0 0px;
+	padding-left: 28px;
+}
+
+#sidebar td {
+	padding: 0px 14px 0px 0px;
+}
+
 #sidebar a {
 	border: none;
 }
@@ -484,6 +503,8 @@ a:hover {
 }
 
 /* Below this line are the addons by ckrainer */
+
+
 
 table.sensors tr:nth-child(odd) td {
         background-color: #e6e6e6;

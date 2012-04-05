@@ -2,17 +2,37 @@
 			<h2>Mapper Algorithm</h2>
 #set( $algo = $servletConfig.getServletContext().getAttribute("mapper") )
 #if( $algo.isPaused() )
+			<p class="multiForms">
+				To activate the mapper algorithm press the Resume button or the Single Step button.
+				<table>
+					<tr>
+						<td>
+							<form action="status/mapperResume" method="get" enctype="text/plain">
+								<input type="submit" name="mapperResume" value="Resume" />
+							</form>
+						</td>
+						<td>
+							<form action="status/mapperSingleStep" method="get" enctype="text/plain">
+								<input type="submit" name="mapperSingleStep" value="Single Step" />
+							</form>
+						</td>
+					</tr>
+				</table>
+			</p>
+<!--			
 			<form action="status/mapperResume" method="get" enctype="text/plain">
 				<p>
 				To activate the mapper algorithm press the Resume button.<br>
-				<input type="submit" name="mapperRegistration" value="Resume" />
+				<input type="submit" name="mapperResume" value="Resume" />
+				<input type="submit" name="mapperSingleStep" value="Single Step" />
 				</p>
 			</form>
+-->
 #else			
 			<form action="status/mapperSuspend" method="get" enctype="text/plain">
 				<p>
 				To pause the mapper algorithm press the Suspend button.<br>
-				<input type="submit" name="mapperRegistration" value="Suspend" />
+				<input type="submit" name="mapperSuspend" value="Suspend" />
 				</p>
 			</form>
 #end

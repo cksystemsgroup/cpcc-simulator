@@ -37,8 +37,8 @@ import org.json.simple.parser.ParseException;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
-import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.IStatusProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.StatusProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.VehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.VehicleStatus;
@@ -54,7 +54,7 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 
 	private long cycleTime = 1000;
 	
-	private Map<String,IStatusProxy> statusProxyMap = new HashMap<String, IStatusProxy>();
+	private Map<String,at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy> statusProxyMap = new HashMap<String, at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy>();
 	private List<IVirtualVehicleInfo> virtualVehicleList = new ArrayList<IVirtualVehicleInfo>();
 	private Map<String,IRegistrationData> registrationData;
 	private Set<String> centralEngines = new HashSet<String>();
@@ -108,29 +108,41 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		while (running) {
 			
 			if (!paused) {
-				// create/remove StatusProxy objects.
-				renewStatusProxyMap();
-				
-				// get real vehicle status
-				getPilotStatii();
-				
-				// get virtual vehicle status
-				try {
-					getEngineStatii();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-				
-				if (mappingAlgorithm != null) {
-					mappingAlgorithm.execute(this);
-				} else {
-					LOG.error("No mapping algorithm found. Mapping stopped.");
-					cease();
-				}
+				step();
 			}
 			try { Thread.sleep(cycleTime); } catch (InterruptedException e) { }
 		}
 	}
+	
+	@Override
+	public void singleStep() {
+		if (paused) {
+			step();
+		}
+	}
+	
+	private void step () {
+		// create/remove StatusProxy objects.
+		renewStatusProxyMap();
+		
+		// get real vehicle status
+		getPilotStatii();
+		
+		// get virtual vehicle status
+		try {
+			getEngineStatii();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		if (mappingAlgorithm != null) {
+			mappingAlgorithm.execute(this);
+		} else {
+			LOG.error("No mapping algorithm found. Mapping stopped.");
+			cease();
+		}
+	}
+	
 
 	private void renewStatusProxyMap() {
 		for (IRegistrationData rd : registrationData.values()) {
@@ -151,8 +163,8 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	}
 	
 	private void getPilotStatii() {
-		for (IStatusProxy proxy : statusProxyMap.values()) {
-			proxy.fetchCurrentStatus();
+		for (at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy proxy : statusProxyMap.values()) {
+			((IStatusProxy)proxy).fetchCurrentStatus();
 		}
 	}
 	
@@ -178,7 +190,7 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 				}
 			}
 			
-			if (position == null || position.trim().isEmpty()) {
+			if (position == null || position.trim().isEmpty() || position.trim().startsWith("<")) {
 				continue;
 			}
 			JSONObject obj = (JSONObject)parser.parse(position);
@@ -233,7 +245,7 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	}
 	
 	@Override
-	public Map<String, IStatusProxy> getStatusProxyMap() {
+	public Map<String, at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy> getStatusProxyMap() {
 		return statusProxyMap;
 	}
 

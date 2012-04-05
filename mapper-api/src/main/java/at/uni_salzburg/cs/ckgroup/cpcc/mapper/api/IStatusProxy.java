@@ -20,18 +20,20 @@
  */
 package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
+import java.util.List;
+
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
 /**
- * The Mapper provides an instance of <code>IStatusProxy</code> to allow mapping
- * algorithms access Real Vehicle status information.
+ * The Mapper provides instances of <code>IStatusProxy</code> to allow mapping
+ * algorithms to access Real Vehicle status information and change set courses.
  */
 public interface IStatusProxy {
 
 	/**
 	 * Fetch the current Real Vehicle status.
 	 */
-	void fetchCurrentStatus();
+//	void fetchCurrentStatus();
 	
 	/**
 	 * @return the current position of the Real Vehicle in polar coordinates,
@@ -51,5 +53,17 @@ public interface IStatusProxy {
 	 *         flight segment.
 	 */
 	Double getVelocity();
+	
+	/**
+	 * Change the current set course of a Real Vehicle.
+	 * 
+	 * @param courseCommandList
+	 *            a list of new set course commands.
+	 * @param immediate
+	 *            if true, the new set course commands will processed
+	 *            immediately. If false, the currently running command will be
+	 *            finished before switching to the new commands.
+	 */
+	void changeSetCourse(List<IRVCommand> courseCommandList, boolean immediate);
 	
 }

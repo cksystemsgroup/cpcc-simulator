@@ -62,6 +62,8 @@ public class RegData implements IRegistrationData {
 	public RegData(JSONObject obj) {
 		LOG.info("new RegData(): obj=" + obj.toJSONString());
         eng_uri = (String)obj.get("engUri");
+        Object ce = obj.get("centralEngine");
+        centralEngine = ce == null ? false : ((Boolean)ce).booleanValue();
         pilotUri = (String)obj.get("pilotUri");
         pilotConfig = new HashMap<String, String>();
         pilotConfig.put("pilotName", (String)obj.get("pilotName"));
@@ -132,6 +134,7 @@ public class RegData implements IRegistrationData {
 	public String toJSONString() {
 	    JSONObject obj = new JSONObject();
 	    obj.put("engUri", eng_uri);
+	    obj.put("centralEngine", Boolean.valueOf(centralEngine));
 	    if (pilotConfig != null) {
 		    obj.put("pilotUri", pilotUri);
 	    	obj.put("pilotName", pilotConfig.get("pilotName"));	

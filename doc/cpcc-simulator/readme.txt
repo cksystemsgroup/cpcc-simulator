@@ -171,7 +171,7 @@ Build your your project:
 
 Install your algorithms:
 
-	cp target/mapper-algorithm-ext-0.0.2-SNAPSHOT.jar $CPCC_SIM_HOME/tomcat-central/external_algorithms/mapper-algorithms-0.0.2-SNAPSHOT.jar
+	cp target/mapper-algorithms-ext-0.0.2-SNAPSHOT.jar $CPCC_SIM_HOME/tomcat-central/external_algorithms/mapper-algorithms-0.0.2-SNAPSHOT.jar
 
 
 Restart the ground station tomcat:
@@ -219,6 +219,14 @@ Apache Maven:
 
 	http://maven.apache.org/
 
+Eclipse IDE:
+
+	http://www.eclipse.org/
+
+Eclipse IDE plugin update sites:
+
+	http://download.eclipse.org/technology/m2e/releases
+	http://subclipse.tigris.org/update_1.6.x
 
 
 

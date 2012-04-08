@@ -244,6 +244,11 @@ function updateWaypoints (waypoints) {
 			path[k] = new google.maps.LatLng(wp[k].latitude, wp[k].longitude);
 		}
 		
+		if (wp.length == 1) {
+			var a = position[m].position;
+			path[1] = new google.maps.LatLng(a.latitude, a.longitude);			
+		}
+		
 		if (!waypointPolylines[m]) {
 			// new one!
 			waypointPolylines[m] = new google.maps.Polyline ({
@@ -340,11 +345,11 @@ function onLoad() {
 			  {
 			    method:'get',
 			    onSuccess: function(transport){
-			    	if (loadWaypoints) {
-						loadWaypoints = false;
+//			    	if (loadWaypoints) {
+//						loadWaypoints = false;
 						var waypoints = transport.responseText.evalJSON();
 						updateWaypoints(waypoints);
-				    }
+//				    }
 			    },
 			    onFailure: function(){ alert('Something went wrong...') }
 			  });

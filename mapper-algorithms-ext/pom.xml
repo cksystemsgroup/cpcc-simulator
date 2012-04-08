@@ -8,7 +8,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>at.uni-salzburg.cs.cpcc.mapper</groupId>
-	<artifactId>mapper-algorithm-ext</artifactId>
+	<artifactId>mapper-algorithms-ext</artifactId>
 	<name>VV Mapper Algorithms Extension Module</name>
 	<description>Cyber Physical Cloud Computing - Virtual Vehicle Mapper Algorithms Extension Module</description>
 	<dependencies>

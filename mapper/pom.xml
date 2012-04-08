@@ -60,12 +60,5 @@
 			<artifactId>mapper-algorithms</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-<!-- -->
-		<dependency>
-			<groupId>at.uni-salzburg.cs.cpcc.mapper</groupId>
-			<artifactId>mapper-algorithms-ext</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-<!-- -->
 	</dependencies>
 </project>

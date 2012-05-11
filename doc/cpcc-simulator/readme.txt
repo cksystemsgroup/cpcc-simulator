@@ -198,7 +198,7 @@ the ground station tomcat, as shown above.
 6. Software update
    ---------------
 
-To successfully run an sofware update, you have to change the "catalinaBase"
+To successfully run a sofware update, you have to change the "catalinaBase"
 path in the tomcat server deployment configurations. To do this, change the
 path /mnt/local_homes/ckrainer to the content of your $CPCC_SIM_HOME variable
 in the files $CPCC_SIM_HOME/tomcat-*/pom.xml by using vi:

@@ -198,7 +198,18 @@ the ground station tomcat, as shown above.
 6. Software update
    ---------------
 
-Execute the following commands to update the simulator:
+To successfully run an sofware update, you have to change the "catalinaBase"
+path in the tomcat server deployment configurations. To do this, change the
+path /mnt/local_homes/ckrainer to the content of your $CPCC_SIM_HOME variable
+in the files $CPCC_SIM_HOME/tomcat-*/pom.xml by using vi:
+
+	vi $CPCC_SIM_HOME/tomcat-*/pom.xml
+
+or by using perl:
+
+	perl -pi -e 's#/mnt/local_homes/ckrainer#'"$CPCC_SIM_HOME"'#;' $CPCC_SIM_HOME/tomcat-*/pom.xml
+
+After that, execute the following commands to update the simulator:
 
 	cd $CPCC_SIM_HOME
 	./deploy.sh

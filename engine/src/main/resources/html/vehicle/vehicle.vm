@@ -8,7 +8,7 @@
 				<thead>
 					<tr>
 						<th>#</th>
-						<th></th>
+						<th><input type="checkbox" onclick="for(i=0, v=document.getElementsByName('vehicles'), c=document.getElementById('vehicles_selector').checked; i &lt; v.length; i++)v.item(i).checked=c;" title="(Un)Select All" name="vehicles_selector" id="vehicles_selector"></th>
 						<th>status</th>
 						<th>local name</th>
 						<th>unique identification</th>
@@ -24,7 +24,7 @@
 #set( $x = $x + 1 )
 					<tr>
 						<td>$x</td>
-						<td><input type="checkbox" name="vehicles" value="$name" /></td>
+						<td align="center"><input type="checkbox" name="vehicles" value="$name" /></td>
 #if( $vehicle.isFrozen() )
 						<td><span style="color: white; background-color: pink;">frozen</span></td>						
 #else

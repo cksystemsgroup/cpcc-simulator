@@ -39,6 +39,8 @@ import org.json.simple.JSONValue;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRVCommand;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandFlyTo;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandGoAuto;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandGoManual;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandHover;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandLand;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
@@ -56,6 +58,8 @@ public class StatusProxy implements IStatusProxy {
 	private PolarCoordinate nextPosition;
 	
 	private Double velocity;
+
+	private boolean idle;
 	
 	public StatusProxy (String pilotUrl) {
 		if (pilotUrl == null)
@@ -92,6 +96,7 @@ public class StatusProxy implements IStatusProxy {
 		currentPosition = parsePosition(valueMap, "Latitude", "Longitude", "AltitudeOverGround");
 		nextPosition = parsePosition(valueMap, "NextLatitude", "NextLongitude", "NextAltitudeOverGround");
 		velocity = parseDouble(valueMap, "Velocity");
+		idle = parseBoolean(valueMap, "Idle", false);
 	}
 	
 	private PolarCoordinate parsePosition(Map<String, String> valueMap, String latKey, String lonKey, String altKey) {
@@ -114,6 +119,15 @@ public class StatusProxy implements IStatusProxy {
 		return Double.valueOf(v);
 	}
 
+	private boolean parseBoolean(Map<String, String> valueMap, String key, boolean def) {
+		String v = valueMap.get(key);
+		
+		if (v == null)
+			return def;
+		
+		return Boolean.parseBoolean(v);
+	}
+	
 	@Override
 	public PolarCoordinate getCurrentPosition() {
 		return currentPosition;
@@ -129,6 +143,11 @@ public class StatusProxy implements IStatusProxy {
 		return velocity;
 	}
 
+	@Override
+	public boolean isIdle() {
+		return idle;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void changeSetCourse(List<IRVCommand> courseCommandList, boolean immediate) {
@@ -168,7 +187,7 @@ public class StatusProxy implements IStatusProxy {
 		}
 		
 		
-		// TODO return a value 
+		// TODO return a value ?
 		
 	}
 	
@@ -207,6 +226,16 @@ public class StatusProxy implements IStatusProxy {
 			return o;
 		}
 		
+		if (cmd instanceof RVCommandGoAuto) {
+			o.put("cmd", "goAuto");
+			return o;
+		}
+
+		if (cmd instanceof RVCommandGoManual) {
+			o.put("cmd", "goManual");
+			return o;
+		}
+
 		LOG.error("Unknown RVCommand: " + cmd.getClass().getName());
 		
 		return null;

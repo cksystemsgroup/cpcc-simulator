@@ -55,6 +55,11 @@ public interface IStatusProxy {
 	Double getVelocity();
 	
 	/**
+	 * @return true if the Real Vehicle idles, i.e., has no more VCL commands to execute.
+	 */
+	boolean isIdle();
+	
+	/**
 	 * Change the current set course of a Real Vehicle.
 	 * 
 	 * @param courseCommandList

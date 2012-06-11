@@ -86,6 +86,29 @@ public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 			return;
 		}
 		
+		coursePlanning(mapper);
+		
+		virtualVehicleMapping(mapper);
+	}
+	
+	/**
+	 * To be overridden in derived classes.
+	 * 
+	 * @param mapper
+	 *            the Mapper instance.
+	 */
+	protected void coursePlanning(IMapper mapper) {
+		// Intentionally empty
+	}
+	
+	/**
+	 * Perform mapping of Virtual Vehicles.
+	 * 
+	 * @param mapper
+	 *            the mapper instance.
+	 */
+	protected void virtualVehicleMapping(IMapper mapper) {
+		
 		List<IVirtualVehicleInfo> vehicleList = mapper.getVirtualVehicleList();
 		
 		for (IVirtualVehicleInfo vehicleInfo : vehicleList) {

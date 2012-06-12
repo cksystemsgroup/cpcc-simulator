@@ -182,7 +182,7 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 			try {
 				position = HttpQueryUtils.simpleQuery(engineVehicleURL);
 			} catch (IOException e) {
-				LOG.error("Can not query Engine at " + key, e);
+				LOG.error("Can not query Engine at " + key + ": " + e.getMessage());
 				if (!rd.isMaxAccessErrorsLimitReached()) {
 					continue;
 				} else {

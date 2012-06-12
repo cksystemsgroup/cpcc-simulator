@@ -5,7 +5,7 @@ CPCC Simulator README
 1. Download
    --------
 
-Download the current simulator from
+Download the current simulator and patches from
 http://cs.uni-salzburg.at/~ckrainer/CPCC/cpcc-simulator
 
 
@@ -25,6 +25,15 @@ directory and adjust your PATH environment variable as follows:
 	export PATH=$CPCC_SIM_HOME/bin:$PATH
 
 and add this commands to your ~/.profile and/or ~/.bashrc for future use.
+
+
+The simulator only has three real vehicles. A fourth real vehicle is available
+by installing file tomcat-pilot4-patch-*.tar.bz2 as follows:
+
+	cd $CPCC_SIM_HOME
+	tar -xjf /path/to/archive/tomcat-pilot4-patch-*.tar.bz2
+	./deploy.sh
+
 
 
 3. Startup
@@ -69,6 +78,7 @@ All three real vehicles provide web interfaces.  The base URLs are:
 - Heli One: http://localhost:9010/pilot
 - Heli Two: http://localhost:9020/pilot
 - Heli Three: http://localhost:9030/pilot
+- Heli Four: http://localhost:9050/pilot
 
 Each real vehicle carries an associated virtual vehicle run-time environment,
 i.e., virtual vehicle engine.  The ground station also runs a virtual vehicle
@@ -77,6 +87,7 @@ run-time environment, i.e., the central engine.  The base URLs are:
 - Engine 1: http://localhost:9010/engine
 - Engine 2: http://localhost:9020/engine
 - Engine 3: http://localhost:9030/engine
+- Engine 4: http://localhost:9050/engine
 - Central Engine: http://localhost:9040/engine
 
 The base URLs for the Google Maps viewer and the mapper are:
@@ -121,8 +132,9 @@ Switch to the Google Maps viewer to monitor your missions.
 Archive cpcc-sim-config-*.tar.bz2 contains configuration files for all real
 vehicles (pilot-*.cfg), all virtual vehicle run-time environments
 (engine-*.cfg), mapper (mapper-central.cfg), and Google Maps viewer
-(gm-viewer-central.cfg).  Additionally, this archive contains four unprocessed
-virtual vehicles as ZIP files and the real vehicle's flight plans (RV-*.crs).
+(gm-viewer-central.cfg).  Older versions of this archive may contain four
+unprocessed virtual vehicles as ZIP files and the real vehicle's flight plans
+(RV-*.crs).
 
 
 5.4 Manual migration
@@ -137,6 +149,7 @@ The migration URLs for this simulation setup are:
 - Engine 1: http://localhost:9010/engine/vehicle/text/vehicleUpload
 - Engine 2: http://localhost:9020/engine/vehicle/text/vehicleUpload
 - Engine 3: http://localhost:9030/engine/vehicle/text/vehicleUpload
+- Engine 4: http://localhost:9050/engine/vehicle/text/vehicleUpload
 - Central Engine: http://localhost:9040/engine/vehicle/text/vehicleUpload
 
 
@@ -152,7 +165,7 @@ and unpack it in a directory of your choice:
 
 
 Set your build environment:
-	
+
 	export CPCC_SIM_HOME=/my/simulator/installdir
 
 	export JAVA_HOME=$CPCC_SIM_HOME/.jdk/jdk1.6.0_29-x64
@@ -215,7 +228,7 @@ After that, execute the following commands to update the simulator:
 	./deploy.sh
 
 
-7. Internet web sites
+8. Internet web sites
    ------------------
 
 Apache log4j:
@@ -238,6 +251,4 @@ Eclipse IDE plugin update sites:
 
 	http://download.eclipse.org/technology/m2e/releases
 	http://subclipse.tigris.org/update_1.6.x
-
-
 

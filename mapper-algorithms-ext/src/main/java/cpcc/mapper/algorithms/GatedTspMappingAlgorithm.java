@@ -206,7 +206,7 @@ public class GatedTspMappingAlgorithm extends SimpleMappingAlgorithm implements 
 					courseCommandList.add(new RVCommandFlyTo(rvInfo.depot, 2, 5));
 					rvInfo.flyingToDepot = true;
 				} else {
-					LOG.info("Noting to do for " + engineUrl + ", depot already reached.");
+					LOG.debug("Noting to do for " + engineUrl + ", depot already reached.");
 				}
 			}
 			

@@ -26,4 +26,6 @@ public interface IZone {
 	
 	boolean isInside(PolarCoordinate p);
 	
+	PolarCoordinate getCenterOfGravity ();
+	
 }

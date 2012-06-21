@@ -102,30 +102,38 @@ University of Salzburg, Austria
 %\subsection[Short First Subsection Name]{First Subsection Name}
 
 \begin{frame}\frametitle{Demo Setup} %\framesubtitle{Task}
-In this demonstration four Real Vehicles (RVs) are assigned to separate square
-cells. The cells are:
-\vspace{0.5cm}
+% In this demonstration four Real Vehicles (RVs) are assigned to separate square
+% cells. The cells are:
+% \vspace{0.5cm}
+% 
+% \begin{tabular}{|c|c|c|c|c|}
+% \hline
+%      & \multicolumn{2}{|c|}{Latitude} & \multicolumn{2}{|c|}{Longitude} \\
+% \hline
+% Cell & from    & to       & from      & to \\
+% \hline
+%  1   & 47.82202396 N & 47.82376633 N & 13.03839827 E & 13.04082245 E \\
+% \hline
+%  2   & 47.82202396 N & 47.82376633 N & 13.04082245 E & 13.04324663 E \\
+% \hline
+%  3   & 47.82028159 N & 47.82202396 N & 13.03839827 E & 13.04082245 E \\
+% \hline
+%  4   & 47.82028159 N & 47.82202396 N & 13.04082245 E & 13.04324663 E \\
+% \hline 
+% \end{tabular}
+% 
+% \vspace{0.5cm}
+% The RVs are assigned to the cells as they register with the Mapper
+% and each RV serves one cell exclusively and independently.  The
+% depot of the each RV is the center of its assigned cell.
 
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-     & \multicolumn{2}{|c|}{Latitude} & \multicolumn{2}{|c|}{Longitude} \\
-\hline
-Cell & from    & to       & from      & to \\
-\hline
- 1   & 47.82202396 N & 47.82376633 N & 13.03839827 E & 13.04082245 E \\
-\hline
- 2   & 47.82202396 N & 47.82376633 N & 13.04082245 E & 13.04324663 E \\
-\hline
- 3   & 47.82028159 N & 47.82202396 N & 13.03839827 E & 13.04082245 E \\
-\hline
- 4   & 47.82028159 N & 47.82202396 N & 13.04082245 E & 13.04324663 E \\
-\hline 
-\end{tabular}
+  \begin{itemize}
+    \item Four Real Vehicles (RVs) are assigned to separate square cells
+    \item The RVs are assigned to the cells as they register with the Mapper 
+    \item Each RV serves one cell exclusively and independently
+    \item The depot of the each RV is the center of its assigned cell
+  \end{itemize}
 
-\vspace{0.5cm}
-The RVs are assigned to the cells as they register with the Mapper
-and each RV serves one cell exclusively and independently.  The
-depot of the each RV is the center of its assigned cell.
 \end{frame}
 
 \begin{frame}\frametitle{Demo Setup}%\framesubtitle{System}
@@ -172,7 +180,7 @@ For each cell the Mapper applies:
 % seconds.
 
   \begin{itemize}
-    \item 4 RVs in their cells. 
+    \item 4 RVs in their cells
     \item 199 VV APs arrive randomly, average rate is one each 5 seconds.
     \item gated-TSP RV flight planning
     \item VV mapping and migration unchanged
@@ -198,7 +206,9 @@ For each cell the Mapper applies:
 %         \begin{center}
 %                 {\includegraphics[width=9.5cm]{out-00767-mod.png}}
 %         \end{center}
-Demo Video
+  \begin{itemize}
+    \item Demo Video
+  \end{itemize}
 
 \end{frame}
 

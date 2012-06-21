@@ -40,6 +40,7 @@
 		<module>engine</module>
 		<module>mapper</module>
 		<module>mapper-algorithms</module>
+		<module>mapper-algorithms-ext</module>
 		<module>mapper-api</module>
 		<module>google-map-viewer</module>
 		<module>utils</module>

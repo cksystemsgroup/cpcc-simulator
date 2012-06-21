@@ -21,6 +21,7 @@
 package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 
 public class SquareZone implements IZone {
 
@@ -36,12 +37,18 @@ public class SquareZone implements IZone {
 		this.maxLongitude = maxLongitude;
 	}
 	
+	@Override
 	public boolean isInside(PolarCoordinate p) {
 		if (p == null) {
 			return false;
 		}
 		return	minLatitude  <= p.getLatitude()  && p.getLatitude()  <= maxLatitude &&
 				minLongitude <= p.getLongitude() && p.getLongitude() <= maxLongitude;
+	}
+	
+	@Override
+	public PolarCoordinate getCenterOfGravity() {
+		return new PolarCoordinate((maxLatitude + minLatitude) / 2, (maxLongitude - minLongitude) / 2, 0);
 	}
 	
 	@Override

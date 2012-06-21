@@ -22,45 +22,101 @@ package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
 
 import java.util.Locale;
 
-import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
-import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 
 public class PolygonZone implements IZone {
 	
-	private IGeodeticSystem geodeticSystem;
-	private TwoTuple[] vertices;
-	private boolean positiveOrientation = true;
-	private TwoTuple cog;
+	private static final double epsilon = 1E-9;
 	
-	public PolygonZone(PolarCoordinate[] v, IGeodeticSystem geodeticSystem) {
-		this.geodeticSystem = geodeticSystem;
+	private TwoTuple[] vertices;
+	private double maxLat = Double.NEGATIVE_INFINITY;
+	private double minLat = Double.POSITIVE_INFINITY;
+	private double maxLon = Double.NEGATIVE_INFINITY;
+	private double minLon = Double.POSITIVE_INFINITY;
+	
+	public PolygonZone(PolarCoordinate[] v) {
 		
 		vertices = new TwoTuple[v.length];
-		
+
 		for (int k=0, l=v.length; k < l; ++k) {
-			CartesianCoordinate c = geodeticSystem.polarToRectangularCoordinates(v[k]);
-			vertices[k] = new TwoTuple(c.x, c.y);
+			double x = v[k].getLatitude();
+			double y = v[k].getLongitude();
+			vertices[k] = new TwoTuple(x,y);
 		}
 		
-		cog = getCenterOfGravity();
-		positiveOrientation = isInside(cog.x, cog.y);
-		System.out.println(this.toString());
-	}
-	
-	public PolygonZone(TwoTuple[] vertices) {
-		this.vertices = vertices;
-		cog = getCenterOfGravity();
-		positiveOrientation = isInside(cog.x, cog.y);
-		System.out.println(this.toString());
+		findBoundingBox();
 	}
 
-	public boolean isInside(PolarCoordinate p) {
-		CartesianCoordinate c = geodeticSystem.polarToRectangularCoordinates(p.getLatitude(), p.getLongitude(), 0);
-		return isInside(c.x, c.y);
+
+	public PolygonZone(TwoTuple[] vertices) {
+		this.vertices = vertices;
+		findBoundingBox();
+	}
+
+	
+	private void findBoundingBox() {
+		for (int k=0, l=vertices.length; k < l; ++k) {
+			if (vertices[k].x < minLat) minLat = vertices[k].x;
+			if (vertices[k].x > maxLat) maxLat = vertices[k].x;
+			if (vertices[k].y < minLon) minLon = vertices[k].y;
+			if (vertices[k].y > maxLon) maxLon = vertices[k].y;
+		}
 	}
 	
-	private TwoTuple getCenterOfGravity () {
+	@Override
+	public boolean isInside(PolarCoordinate p) {
+		return isInside(p.getLatitude(), p.getLongitude());
+	}
+	
+	public boolean isInside (double cx, double cy) {
+		
+		if (cx < minLat || cx > maxLat || cy < minLon || cy > maxLon)
+			return false;
+		
+		int right=0;
+		int left=0;
+		for (int i=0, l=vertices.length; i < l; ++i) {
+			double ax = vertices[i].x;
+			double ay = vertices[i].y;
+			double bx = i+1 == l ? vertices[0].x : vertices[i+1].x;
+			double by = i+1 == l ? vertices[0].y : vertices[i+1].y;
+			
+			if (cx == ax && cy == ay)
+				return true;
+
+			if (cy == ay) ay += epsilon;
+			if (cy == by) by += epsilon;
+
+			if ((cy < ay && cy < by) || (cy > ay && cy > by))
+				continue;
+			
+			if (cx <= ax && cx <= bx) {
+				++right;
+				continue;
+			}
+			
+			if (cx >= ax && cx >= bx) {
+				++left;
+				continue;
+			}
+			
+			double k = (by - ay) / (bx - ax) ;
+			double x = ax + (cy - ay) / k;
+			if (cx <= x)
+				++right;
+			else
+				++left;
+		}
+		
+		if (right != 0)
+			return right % 2 == 1;
+		
+		return left % 2 == 1;
+	}
+	
+	@Override
+	public PolarCoordinate getCenterOfGravity () {
 		double x = 0, y = 0;
 		double doubleArea = 0;
 		
@@ -74,23 +130,7 @@ public class PolygonZone implements IZone {
 		}
 		
 		double sixTimesArea = 3.0 * doubleArea;
-		
-		return new TwoTuple(x/sixTimesArea, y/sixTimesArea);
-	}
-	
-	public boolean isInside(double cx, double cy) {
-		int right=0;
-		int left=0;
-		for (int k=0, l=vertices.length; k < l; ++k) {
-			TwoTuple a = vertices[k];
-			TwoTuple b = k+1 == l ? vertices[0] : vertices[k+1];
-			double d = (cy - a.y) * (b.x - a.x) - (cx - a.x) * (b.y - a.y);
-			if (d > 0) ++left; else if (d < 0) ++right;
-			if (left > 0 && right > 0)
-				return false;
-		}
-		
-		return right > left ^ positiveOrientation;
+		return new PolarCoordinate(x/sixTimesArea, y/sixTimesArea, 0);
 	}
 	
 	@Override
@@ -106,7 +146,7 @@ public class PolygonZone implements IZone {
 			b.append(t);
 		}
 
-		return String.format(Locale.US, "vertices: %s, cog=%s, orientation=%s", b.toString(), cog.toString(), positiveOrientation ? "positive" : "negative");
+		return String.format(Locale.US, "vertices: %s", b.toString());
 	}
 	
 	public static class TwoTuple {
@@ -120,7 +160,7 @@ public class PolygonZone implements IZone {
 		
 		@Override
 		public String toString() {
-			return String.format(Locale.US, "(%.2f, %.2f)", x, y);
+			return String.format(Locale.US, "(%.8f, %.8f)", x, y);
 		}
 	}
 }

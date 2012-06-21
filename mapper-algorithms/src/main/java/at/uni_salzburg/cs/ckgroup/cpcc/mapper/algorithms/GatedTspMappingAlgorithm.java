@@ -37,6 +37,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRVCommand;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandFlyTo;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandGoAuto;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;

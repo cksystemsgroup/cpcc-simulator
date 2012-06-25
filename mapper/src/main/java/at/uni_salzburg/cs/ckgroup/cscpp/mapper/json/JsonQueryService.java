@@ -29,6 +29,7 @@ public class JsonQueryService extends QueryService {
 	public JsonQueryService (IServletConfig servletConfig, IMapper mapper) {
 		super (servletConfig);
 		queries.put("mapperStatus", new MapperStatusQuery(mapper));
+		queries.put("zones", new ZonesQuery(mapper));
 	}
 
 }

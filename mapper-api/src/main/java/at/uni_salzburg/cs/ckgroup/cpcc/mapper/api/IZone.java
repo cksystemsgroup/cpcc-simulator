@@ -20,12 +20,15 @@
  */
 package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
+import org.json.simple.JSONAware;
+
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
-public interface IZone {
+public interface IZone extends JSONAware {
 	
 	boolean isInside(PolarCoordinate p);
 	
-	PolarCoordinate getCenterOfGravity ();
+	PolarCoordinate getDepotPosition ();
 	
+	void setDepotPosition(PolarCoordinate depotPosition);
 }

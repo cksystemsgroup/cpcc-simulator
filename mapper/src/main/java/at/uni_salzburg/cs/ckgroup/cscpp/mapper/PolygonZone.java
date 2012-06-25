@@ -18,9 +18,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
+package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
 import java.util.Locale;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
@@ -34,6 +38,7 @@ public class PolygonZone implements IZone {
 	private double minLat = Double.POSITIVE_INFINITY;
 	private double maxLon = Double.NEGATIVE_INFINITY;
 	private double minLon = Double.POSITIVE_INFINITY;
+	private PolarCoordinate depotPosition;
 	
 	public PolygonZone(PolarCoordinate[] v) {
 		
@@ -62,10 +67,15 @@ public class PolygonZone implements IZone {
 			if (vertices[k].y < minLon) minLon = vertices[k].y;
 			if (vertices[k].y > maxLon) maxLon = vertices[k].y;
 		}
+		
+		depotPosition = getCenterOfGravity();
 	}
 	
 	@Override
 	public boolean isInside(PolarCoordinate p) {
+		if (p == null) {
+			return false;
+		}
 		return isInside(p.getLatitude(), p.getLongitude());
 	}
 	
@@ -116,6 +126,15 @@ public class PolygonZone implements IZone {
 	}
 	
 	@Override
+	public PolarCoordinate getDepotPosition () {
+		return depotPosition;
+	}
+	
+	@Override
+	public void setDepotPosition(PolarCoordinate depotPosition) {
+		this.depotPosition = depotPosition;
+	}
+	
 	public PolarCoordinate getCenterOfGravity () {
 		double x = 0, y = 0;
 		double doubleArea = 0;
@@ -149,7 +168,22 @@ public class PolygonZone implements IZone {
 		return String.format(Locale.US, "vertices: %s", b.toString());
 	}
 	
-	public static class TwoTuple {
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+		
+		JSONObject o = new JSONObject();
+		JSONArray a = new JSONArray();
+		for (TwoTuple t : vertices) {
+			a.add(t);
+		}
+		o.put("type", "polygon");
+		o.put("vertices", a);
+		o.put("depot", new TwoTuple(depotPosition.getLatitude(), depotPosition.getLongitude()));
+		return o.toJSONString();
+	}
+	
+	public static class TwoTuple implements JSONAware {
 		public double x;
 		public double y;
 
@@ -161,6 +195,15 @@ public class PolygonZone implements IZone {
 		@Override
 		public String toString() {
 			return String.format(Locale.US, "(%.8f, %.8f)", x, y);
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Override
+		public String toJSONString() {
+			JSONObject o = new JSONObject();
+			o.put("lat", new Double(x));
+			o.put("lon", new Double(y));
+			return o.toJSONString();
 		}
 	}
 }

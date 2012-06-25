@@ -18,13 +18,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
+package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.PolygonZone;
 
 public class PolygonZoneTestCase {
 
@@ -40,7 +41,7 @@ public class PolygonZoneTestCase {
 		
 		PolygonZone pz = new PolygonZone(v);
 
-		PolarCoordinate cog = pz.getCenterOfGravity();
+		PolarCoordinate cog = pz.getDepotPosition();
 		Assert.assertEquals(5, cog.getLatitude(), 1E-9);
 		Assert.assertEquals(5, cog.getLongitude(), 1E-9);
 		
@@ -72,7 +73,7 @@ public class PolygonZoneTestCase {
 		
 		PolygonZone pz = new PolygonZone(v);
 
-		PolarCoordinate cog = pz.getCenterOfGravity();
+		PolarCoordinate cog = pz.getDepotPosition();
 		Assert.assertEquals(5, cog.getLatitude(), 1E-9);
 		Assert.assertEquals(5, cog.getLongitude(), 1E-9);
 		
@@ -104,7 +105,7 @@ public class PolygonZoneTestCase {
 
 		PolygonZone pz = new PolygonZone(v);
 
-		PolarCoordinate cog = pz.getCenterOfGravity();
+		PolarCoordinate cog = pz.getDepotPosition();
 		Assert.assertEquals(5, cog.getLatitude(), 1E-9);
 		Assert.assertEquals(5, cog.getLongitude(), 1E-9);
 		
@@ -132,7 +133,7 @@ public class PolygonZoneTestCase {
 		
 		PolygonZone pz = new PolygonZone(v);
 
-		PolarCoordinate cog = pz.getCenterOfGravity();
+		PolarCoordinate cog = pz.getDepotPosition();
 		Assert.assertEquals(5, cog.getLatitude(), 1E-9);
 		Assert.assertEquals(5, cog.getLongitude(), 1E-9);
 		
@@ -159,7 +160,7 @@ public class PolygonZoneTestCase {
 		
 		PolygonZone pz = new PolygonZone(v);
 		
-		PolarCoordinate cog = pz.getCenterOfGravity();
+		PolarCoordinate cog = pz.getDepotPosition();
 		Assert.assertEquals(49, cog.getLatitude(), 1E-9);
 		Assert.assertEquals(12.5, cog.getLongitude(), 1E-9);
 		
@@ -186,7 +187,7 @@ public class PolygonZoneTestCase {
 		
 		PolygonZone pz = new PolygonZone(v);
 
-		PolarCoordinate cog = pz.getCenterOfGravity();
+		PolarCoordinate cog = pz.getDepotPosition();
 		Assert.assertEquals(49, cog.getLatitude(), 1E-9);
 		Assert.assertEquals(12.5, cog.getLongitude(), 1E-9);
 
@@ -216,7 +217,7 @@ public class PolygonZoneTestCase {
 		
 		PolygonZone pz = new PolygonZone(v);
 
-		PolarCoordinate cog = pz.getCenterOfGravity();
+		PolarCoordinate cog = pz.getDepotPosition();
 		Assert.assertEquals(47.82193751800164, cog.getLatitude(), 1E-9);
 		Assert.assertEquals(13.04178658337083, cog.getLongitude(), 1E-9);
 
@@ -254,7 +255,7 @@ public class PolygonZoneTestCase {
 		
 		PolygonZone pz = new PolygonZone(v);
 
-		PolarCoordinate cog = pz.getCenterOfGravity();
+		PolarCoordinate cog = pz.getDepotPosition();
 		Assert.assertEquals(47.82193751800164, cog.getLatitude(), 1E-9);
 		Assert.assertEquals(13.04178658337083, cog.getLongitude(), 1E-9);
 		

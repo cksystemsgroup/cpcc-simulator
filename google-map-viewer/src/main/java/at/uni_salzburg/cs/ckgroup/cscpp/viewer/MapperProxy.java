@@ -52,6 +52,7 @@ public class MapperProxy extends Thread implements IMapperProxy {
 	private Configuration configuration;
 	private JSONParser parser = new JSONParser();
 	private List<EngineInfo> engineInfoList;
+	private String zoneInfo;
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
@@ -89,10 +90,17 @@ public class MapperProxy extends Thread implements IMapperProxy {
 			}
 			engineInfoList = newEngineInfoList;
 			
+			zoneInfo = getMapperValue("zones");
+			
 			try { Thread.sleep(CYCLE); } catch (InterruptedException e) { }
 		}
 	}
 
+	@Override
+	public String getZoneInfo() {
+		return zoneInfo;
+	}
+	
 	@Override
 	public String getMapperValue(String name) {
 		InputStream inStream = getMapperValueAsStream(name);

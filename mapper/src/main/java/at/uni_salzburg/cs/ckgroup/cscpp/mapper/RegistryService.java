@@ -87,7 +87,7 @@ public class RegistryService extends DefaultService {
 		        if(pilot_uri == null || pilot_uri.trim().isEmpty()) {
 		        	// No sensors available, which is OK. This is a central engine.
 		        	LOG.info("Sucessful registration: central engine='" + eng_uri + "'");
-					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null, null));
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null, null, null));
 					
 					@SuppressWarnings("unchecked")
 					Set<String> centralEngines = (Set<String>)config.getServletContext().getAttribute("centralEngines");
@@ -125,7 +125,7 @@ public class RegistryService extends DefaultService {
 						LOG.error("Error at retrieving available sensors", e);
 					}
 
-					regdata.put(eng_uri.trim(), new RegData(eng_uri, pilot_uri, wayPointList, sensors, pilotConfig));
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, pilot_uri, wayPointList, sensors, pilotConfig, null));
 
 		        }
 

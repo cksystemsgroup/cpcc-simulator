@@ -34,6 +34,7 @@ import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IWayPoint;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 
 public class RegData implements IRegistrationData {
@@ -49,14 +50,17 @@ public class RegData implements IRegistrationData {
     private boolean centralEngine;
     private int accessErrors = 0;
     private Map<String, String> pilotConfig;
+    private IZone assignedZone;
+    private Object mapperData;
     
-    public RegData(String eu, String pu, List<IWayPoint> wp, Set<String> sensors2, Map<String, String> pilotConfig) {
+    public RegData(String eu, String pu, List<IWayPoint> wp, Set<String> sensors2, Map<String, String> pilotConfig, IZone assignedZone) {
         eng_uri = eu;
         pilotUri = pu;
         waypoints = wp;
         sensors = sensors2;
         centralEngine = pu == null || pu.trim().isEmpty();
         this.pilotConfig = pilotConfig;
+        this.assignedZone = assignedZone;
     }
     
 	public RegData(JSONObject obj) {
@@ -88,6 +92,8 @@ public class RegData implements IRegistrationData {
 				waypoints.add(wayPoint);
 			}
         }
+        
+        assignedZone = null;
 	}
     
 	@Override
@@ -129,6 +135,25 @@ public class RegData implements IRegistrationData {
 		return pilotConfig;
 	}
 
+	@Override
+	public IZone getAssignedZone() {
+		return assignedZone;
+	}
+	
+	public void setAssignedZone(IZone assignedZone) {
+		this.assignedZone = assignedZone;
+	}
+	
+	@Override
+	public Object getMapperData() {
+		return mapperData;
+	}
+	
+	@Override
+	public void setMapperData(Object mapperData) {
+		this.mapperData = mapperData;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public String toJSONString() {

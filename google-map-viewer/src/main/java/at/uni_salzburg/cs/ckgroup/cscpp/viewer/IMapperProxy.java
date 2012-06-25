@@ -27,4 +27,6 @@ public interface IMapperProxy {
 	String getMapperValue(String name);
 	
 	List<EngineInfo> getEngineInfoList();
+	
+	String getZoneInfo();
 }

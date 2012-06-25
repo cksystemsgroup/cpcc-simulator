@@ -38,6 +38,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.IStatusProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.StatusProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.VehicleInfo;
@@ -58,6 +59,8 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	private List<IVirtualVehicleInfo> virtualVehicleList = new ArrayList<IVirtualVehicleInfo>();
 	private Map<String,IRegistrationData> registrationData;
 	private Set<String> centralEngines = new HashSet<String>();
+	private Set<IZone> zones;
+	private Set<IZone> neighborZones;
 	private IMappingAlgorithm mappingAlgorithm;
 	
 	public void setRegistrationData(Map<String, IRegistrationData> registrationData) {
@@ -262,5 +265,23 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	@Override
 	public Set<String> getCentralEngines() {
 		return centralEngines;
+	}
+	
+	@Override
+	public Set<IZone> getZones() {
+		return zones;
+	}
+	
+	public void setZones(Set<IZone> zones) {
+		this.zones = zones;
+	}
+	
+	@Override
+	public Set<IZone> getNeighborZones() {
+		return neighborZones;
+	}
+	
+	public void setNeighborZones(Set<IZone> neighborZones) {
+		this.neighborZones = neighborZones;
 	}
 }

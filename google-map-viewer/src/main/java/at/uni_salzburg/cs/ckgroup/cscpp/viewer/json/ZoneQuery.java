@@ -1,5 +1,5 @@
 /*
- * @(#) IMappingAlgorithm.java
+ * @(#) ZoneQuery.java
  *
  * This code is part of the JNavigator project.
  * Copyright (c) 2012  Clemens Krainer
@@ -18,21 +18,29 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm;
+package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
-@Deprecated
-public interface IMappingAlgorithm extends Runnable {
-	
-	boolean isRunning();
-	
-	void terminate();
-	
-	void cease();
-	
-	void proceed();
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.IMapperProxy;
 
-	boolean isPaused();
+public class ZoneQuery implements IJsonQuery {
+	
+//	private static final Logger LOG = Logger.getLogger(ZoneQuery.class);
+	
+	private IMapperProxy mapperProxy;
 
-//	Map<String, Map<String, VehicleStatus>> getVirtualVehicleMap();
+	public ZoneQuery(IMapperProxy mapperProxy) {
+		this.mapperProxy = mapperProxy;
+	}
 
+	@Override
+	public String execute(IServletConfig config, String[] parameters) {
+		
+		if (mapperProxy.getZoneInfo() == null) {
+			return "";
+		}
+		
+		return mapperProxy.getZoneInfo();
+	}
+	
 }

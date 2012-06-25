@@ -71,4 +71,27 @@ public interface IRegistrationData extends JSONAware {
 	 */
 	Map<String, String> getPilotConfig();
 	
+	/**
+	 * @return the zone this engine is assigned to.
+	 */
+	IZone getAssignedZone();
+	
+	/**
+	 * Assign this Real Vehicle to a particular zone.
+	 * 
+	 * @param zone the zone to assign Real Vehicle to. 
+	 */
+	void setAssignedZone(IZone zone);
+	
+	/**
+	 * @return the mapper specific data for this Real Vehicle.
+	 */
+	Object getMapperData();
+	
+	/**
+	 * Set the mapper internal data for this Ral Vehicle.
+	 * 
+	 * @param mapperData the mapper specific data.
+	 */
+	void setMapperData(Object mapperData);
 }

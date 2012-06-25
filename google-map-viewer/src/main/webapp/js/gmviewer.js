@@ -2,6 +2,7 @@
 var positionUrl = '/gmview/json/position';
 var waypointsUrl = '/gmview/json/waypoints';
 var vehicleUrl = '/gmview/json/virtualVehicle';
+var zonesUrl = '/gmview/json/zones';
 var map;
 var markers = {};
 var waypointPolylines = {};
@@ -14,6 +15,8 @@ var loadWaypoints = true;
 var actionPointMap = {};
 var vvPathMap = {};
 var vvMovementMap = {};
+var rvZones = new Array();
+var mapRepositioned = false;
 
 var motionToColorMap = {
 		physical: {color: "green", visible: true},
@@ -273,6 +276,55 @@ function updateWaypoints (waypoints) {
 	
 }
 
+
+function updateZones(zones) {
+	
+	var newZones = new Array();
+	
+	for (var k=0, l=rvZones.length; k < l; ++k) {
+		rvZones[k].setActive(false);
+	}
+	
+	for (var k=0, zl=zones.length; k < zl; ++k) {
+		var found = false;
+		for (var i=0, rl=rvZones.length; i < rl; ++i) {
+			if (rvZones[i].isEquivalent(zones[k])) {
+				rvZones[i].setActive(true);
+				found = true;
+			}
+		}
+		if (!found) {
+			newZones.push(zones[k]);
+		}
+	}
+	
+	for (var k=rvZones.length-1; k >= 0; --k) {
+		if (!rvZones[k].getActive()) {
+			var ovl = rvZones.splice(k,1);
+			ovl.hide();
+			ovl.setMap(null);
+		}
+	}
+	
+	for (var k=0, l=newZones.length; k < l; ++k) {
+		var ovl = new ZoneOverlay(newZones[k], map);
+		rvZones.push(ovl);
+	}
+	
+	if (!mapRepositioned && rvZones.length > 0) {
+		var bounds = rvZones[0].getBounds();
+		
+		for (var k=1, l=rvZones.length; k < l; ++k) {
+			bounds.union(rvZones[k].getBounds());
+		}
+		
+//		alert ("reposition map to " + bounds.getCenter());
+		map.setCenter(bounds.getCenter());
+		mapRepositioned = true;
+	}
+}
+
+
 function onLoad() {
 	var center = 0;
 	var zoomLevel = 0;
@@ -345,13 +397,24 @@ function onLoad() {
 			  {
 			    method:'get',
 			    onSuccess: function(transport){
-//			    	if (loadWaypoints) {
-//						loadWaypoints = false;
-						var waypoints = transport.responseText.evalJSON();
-						updateWaypoints(waypoints);
-//				    }
+					var waypoints = transport.responseText.evalJSON();
+					updateWaypoints(waypoints);
 			    },
 			    onFailure: function(){ alert('Something went wrong...') }
+			  });
+		},
+	1);
+	
+	new PeriodicalExecuter(
+		function() {
+			new Ajax.Request(zonesUrl,
+			  {
+			    method:'get',
+			    onSuccess: function(transport){
+					var zones = transport.responseText.evalJSON();
+					updateZones(zones);
+			    },
+			    onFailure: function(){ alert('Something went wrong 3 ...') }
 			  });
 		},
 	1);

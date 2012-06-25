@@ -20,23 +20,21 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.json;
 
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
-import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
-public class MapperStatusQuery implements IQuery {
+public class ZonesQuery implements IQuery {
 	
 	private IMapper mapper;
 	
-	public MapperStatusQuery(IMapper mapper) {
+	public ZonesQuery(IMapper mapper) {
 		this.mapper = mapper;
 	}
 	
@@ -47,17 +45,11 @@ public class MapperStatusQuery implements IQuery {
 			return "";
 		}
 		
-		Map<String, IRegistrationData> registrationData = mapper.getRegistrationData();
-//		Map<String, IStatusProxy> statusProxyMap = mapper.getStatusProxyMap();
-//		List<IVirtualVehicleInfo> virtualVehicleList = mapper.getVirtualVehicleList();
+		Set<IZone> zones = mapper.getZones();
 		
 		JSONArray a = new JSONArray();
-		for (Entry<String, IRegistrationData> rdEntry : registrationData.entrySet()) {
-			IRegistrationData rd = rdEntry.getValue();
-			
-			JSONObject o = new JSONObject();
-			o.put("regDat", rd);
-			a.add(o);
+		for (IZone zone : zones) {
+			a.add(zone);
 		}
 		
 		return JSONValue.toJSONString(a);

@@ -11,6 +11,7 @@
 <script src="js/VvPointOverlay.js" type="text/javascript"></script>
 <script src="js/ActionPointOverlay.js" type="text/javascript"></script>
 <script src="js/JAviatorOverlay.js" type="text/javascript"></script>
+<script src="js/ZoneOverlay.js" type="text/javascript"></script>
 <script src="js/gmviewer.js" type="text/javascript"></script>
 <script src="js/raphael-min.js" type="text/javascript"></script>
 <script src="js/prototype.js" type="text/javascript"></script>

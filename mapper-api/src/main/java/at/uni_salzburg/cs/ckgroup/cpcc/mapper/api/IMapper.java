@@ -57,4 +57,14 @@ public interface IMapper {
 	 * @param targetEngineUrl the base URL of the new Engine. 
 	 */
 	void migrate(String sourceEngineUrl, String vehicleName, String targetEngineUrl);
+
+	/**
+	 * @return the set of zones the Mapper is responsible to manage, i.e., the zones real vehicles known to the Mapper are allowed to fly.
+	 */
+	Set<IZone> getZones();
+
+	/**
+	 * @return the set of neighbor zones, i.e., zones bordering the Mapper's managed zones.
+	 */
+	Set<IZone> getNeighborZones();
 }

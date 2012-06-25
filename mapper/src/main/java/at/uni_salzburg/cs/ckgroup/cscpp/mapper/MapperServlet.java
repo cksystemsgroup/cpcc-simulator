@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.json.JsonQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
@@ -59,7 +60,6 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 	public static final String PROP_PATH_NAME = "mapper.properties";
 	public static final String PROP_CONFIG_FILE = "mapper.config.file";
 	public static final String PROP_REGISTRY_FILE = "registry.file";
-//	public static final String PROP_MAPPER_ALGORITHM = "mapper.algorithm";
 	
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
@@ -68,8 +68,9 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 	private File configFile;
 	private File registryFile;
 	private Map<String, IRegistrationData> regdata;
+	private Set<IZone> zones;
+	private Set<IZone> neighborZones;
 	private Set<String> centralEngines;
-//	private IMappingAlgorithm mappingAlgorithm;
 	private Mapper mapper = new Mapper();
 
 	private ServiceEntry[] services = {
@@ -85,6 +86,8 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 		this.servletConfig = servletConfig;
 		regdata = Collections.synchronizedMap(new TreeMap<String, IRegistrationData>());
 		centralEngines = Collections.synchronizedSet(new HashSet<String>());
+		zones = Collections.synchronizedSet(new HashSet<IZone>());
+		neighborZones = Collections.synchronizedSet(new HashSet<IZone>());
 		super.init();
 		myInit();
 	}
@@ -99,6 +102,11 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 		try {
 			props.load(propStream);
 			
+			ZoneFactory.buildZones(zones);
+			servletConfig.getServletContext().setAttribute("zones", zones);
+			ZoneFactory.buildNeighborZones(neighborZones);
+			servletConfig.getServletContext().setAttribute("neighborZones", neighborZones);
+			
 			servletConfig.getServletContext().setAttribute("configuration", configuration);	
 			servletConfig.getServletContext().setAttribute("regdata", regdata);
 			servletConfig.getServletContext().setAttribute("centralEngines", centralEngines);
@@ -111,8 +119,11 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 			servletConfig.getServletContext().setAttribute("registryFile", registryFile);
 			reloadConfigFile();
 			
+			
 			servletConfig.getServletContext().setAttribute("mapper", mapper);
 			mapper.setRegistrationData(regdata);
+			mapper.setZones(zones);
+			mapper.setNeighborZones(neighborZones);
 			mapper.start();
 			
 			

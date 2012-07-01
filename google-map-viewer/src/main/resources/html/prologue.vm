@@ -7,7 +7,6 @@
 <title>Google Maps Viewer</title>
 <link href="$contextPath/css/style.css" rel="stylesheet" type="text/css" media="screen" />
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=$systemProperties.getProperty("google.maps.api.key.v3")&sensor=false"></script>
-<script src="js/pilot.js" type="text/javascript"></script>
 <script src="js/VvPointOverlay.js" type="text/javascript"></script>
 <script src="js/ActionPointOverlay.js" type="text/javascript"></script>
 <script src="js/JAviatorOverlay.js" type="text/javascript"></script>

@@ -81,8 +81,10 @@ public class MapperProxy extends Thread implements IMapperProxy {
 							waypointsUrl = pilotUri + "/json/waypoints";
 						}
 						String vehicleStatusUrl = engineUrl + "/json/vehicle";
-									
-						newEngineInfoList.add(new EngineInfo(pilotName, positionUrl, waypointsUrl, vehicleStatusUrl));			
+						String actionPointUrl = engineUrl + "/json/actionPoint";
+						String vehicleDataUrl = engineUrl + "/vehicle/html/vehicleData";
+						
+						newEngineInfoList.add(new EngineInfo(pilotName, positionUrl, waypointsUrl, vehicleStatusUrl, actionPointUrl, vehicleDataUrl));			
 					}
 				} catch (ParseException e1) {
 					LOG.error("Error at parsing JSON string '" + jsonString + "'", e1);

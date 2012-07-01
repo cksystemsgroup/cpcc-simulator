@@ -64,7 +64,9 @@ public class VirtualVehicleQuery implements IJsonQuery {
 				if (pilotName != null && vehicleStatusURL != null) {
 					vehicleStatusString = HttpQueryUtils.simpleQuery(vehicleStatusURL);
 					Map<String, Object> p = new LinkedHashMap<String, Object>();
-					p.put("name", pilotName);				
+					p.put("name", pilotName);
+					p.put("engine", engineInfo.getActionPointUrl());
+					p.put("vehicleData", engineInfo.getVehicleDataUrl());
 					p.put("vehicles", parser.parse(vehicleStatusString));
 					vehicleStatus.put(pilot, p);
 				}

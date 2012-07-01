@@ -17,6 +17,7 @@ var vvPathMap = {};
 var vvMovementMap = {};
 var rvZones = new Array();
 var mapRepositioned = false;
+var infoWindow;
 
 var motionToColorMap = {
 		physical: {color: "green", visible: true},
@@ -56,14 +57,6 @@ function updateMap() {
 		
 	}
 	
-//	if (!dummy) {
-//		var point = new google.maps.LatLng(47.82202216,13.04082111);
-//		dummy = new google.maps.Marker({position: point, visible: true, map: map});
-////		dummy2 = new JAviatorOverlay(point, map);
-//		dummy2 = new ActionPointOverlay(point, map);
-////		dummy2.show();
-//	}
-//	dummy2.setComplete(false);
 }
 
 function updatePointsOfInterest () {
@@ -176,6 +169,8 @@ function updateVvPaths() {
 	
 	for (id in vehicles) {
 		var vs = vehicles[id].vehicles;
+		var engineUrl = vehicles[id].engine;
+		var vehicleDataUrl = vehicles[id].vehicleData;
 		for (v in vs) {
 			var aps = vs[v].actionPoints;
 			if (!actionPointMap[v]) {
@@ -184,9 +179,10 @@ function updateVvPaths() {
 			for (var k=0; k < aps.length; ++k) {
 				var ap = new google.maps.LatLng(aps[k].latitude, aps[k].longitude);
 				if (!actionPointMap[v][k]) {
-					actionPointMap[v][k] = new ActionPointOverlay(ap, map);
+					actionPointMap[v][k] = new ActionPointOverlay(ap, map, aps[k].completed, engineUrl, vehicleDataUrl, v, k, infoWindow);
+				} else {
+					actionPointMap[v][k].setComplete(aps[k].completed);
 				}
-				actionPointMap[v][k].setComplete(aps[k].completed);
 			}
 			
 			if (!vvMovementMap[v]) {
@@ -361,6 +357,14 @@ function onLoad() {
 
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	
+	infoWindow = new google.maps.InfoWindow();
+	
+//	Ajax.Responders.register({ 
+//        onException: function(request, exception) { 
+//                (function() { throw exception; }).defer(); 
+//        } 
+//	});
+	
 	new PeriodicalExecuter(
 		function() {
 			new Ajax.Request(positionUrl,
@@ -370,7 +374,15 @@ function onLoad() {
 			      position = transport.responseText.evalJSON();
 			      updateMap();
 			    },
-			    onFailure: function(){ alert('Something went wrong...') }
+			    onFailure: function(){ alert('Something went wrong...') },
+//			    onException: function(e){ alert('Exception 1: ' + e) }
+//			    onException: function(e){
+//			    	var s = '';
+//			    	for (var v in e) {
+//			    		s = s + v + ": " + e[v] + ",\n\n";
+//			    	}
+//			    	alert('Exception 1: ' + s);
+//			    	}
 			  });
 		},
 	1);
@@ -386,7 +398,14 @@ function onLoad() {
 					updatePointsOfInterest();
 					updateVvPaths();
 			    },
-			    onFailure: function(){ alert('Something went wrong...') }
+			    onFailure: function(){ alert('Something went wrong...') },
+//			    onException: function(e){
+//			    	var s = '';
+//			    	for (var v in e) {
+//			    		s = s + v + ": " + e[v] + ",\n\n";
+//			    	}
+//			    	alert('Exception 2: ' + s);
+//			    	}
 			  });
 		},
 	1);
@@ -400,7 +419,8 @@ function onLoad() {
 					var waypoints = transport.responseText.evalJSON();
 					updateWaypoints(waypoints);
 			    },
-			    onFailure: function(){ alert('Something went wrong...') }
+			    onFailure: function(){ alert('Something went wrong...') },
+//			    onException: function(e){ alert('Exception 3: ' + e) }
 			  });
 		},
 	1);
@@ -414,7 +434,8 @@ function onLoad() {
 					var zones = transport.responseText.evalJSON();
 					updateZones(zones);
 			    },
-			    onFailure: function(){ alert('Something went wrong 3 ...') }
+			    onFailure: function(){ alert('Something went wrong 4 ...') },
+//			    onException: function(e){ alert('Exception 4: ' + e) }
 			  });
 		},
 	1);
@@ -426,5 +447,11 @@ function GUnload() {
 }
 
 
+function openImageWindow (url) {
 
+//	fenster = window.open(url, "Popupfenster", "width=400,height=300,resizable=yes");
+	win = window.open(url, "Popupwindow", "resizable=yes");
+	win.focus();
+	return false;
+} 
 

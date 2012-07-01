@@ -6,8 +6,9 @@ function ZoneOverlay(zone, map) {
 	this.map_ = map;
 	this.mvcObject_ = null;
 	this.active_ = true;
-	this.onAdd();
 	this.boundingBox = null;
+
+	this.onAdd();
 }
 
 // ZoneOverlay.prototype = new google.maps.OverlayView();
@@ -15,17 +16,16 @@ function ZoneOverlay(zone, map) {
 ZoneOverlay.prototype.onAdd = function() {
 	
 	if (this.zone_.type == "circle") {
-		
+		var center = new google.maps.LatLng(this.zone_.center.lat, this.zone_.center.lon);
 		this.mvcObject_ = new google.maps.Circle({
-			center: this.zone_.center,
+			center: center,
 			clickable: false,
 			fillOpacity: 0,
 			map: this.map_,
 			radius: this.zone_.radius,
 			strokeColor: "#6C6C6C",
 			strokeOpacity: 0.3,
-			strokeWeight: 1,
-			visible: true
+			strokeWeight: 1
 		});
 		
 		boundingBox = this.mvcObject_.getBounds();

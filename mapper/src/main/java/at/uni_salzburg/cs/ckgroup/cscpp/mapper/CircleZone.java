@@ -47,6 +47,9 @@ public class CircleZone implements IZone {
 
 	@Override
 	public boolean isInside(PolarCoordinate position) {
+		if (position == null) {
+			return false;
+		}
 		PolarCoordinate p = new PolarCoordinate(position);
 		p.setAltitude(0);
 		CartesianCoordinate pCart = geodeticSystem.polarToRectangularCoordinates(p);
@@ -73,6 +76,7 @@ public class CircleZone implements IZone {
 	public String toJSONString() {
 		JSONObject o = new JSONObject();
 		o.put("type", "circle");
+		o.put("radius", new Double(radius));
 		
 		JSONObject c = new JSONObject();
 		c.put("lat", new Double(center.getLatitude()));

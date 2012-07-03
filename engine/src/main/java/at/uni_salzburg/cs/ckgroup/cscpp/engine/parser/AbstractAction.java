@@ -22,10 +22,12 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.Serializable;
 
+import org.json.simple.JSONAware;
+
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 
-public abstract class AbstractAction implements IAction, Serializable
+public abstract class AbstractAction implements IAction, Serializable, JSONAware
 {
 	private static final long serialVersionUID = -2728056184176401730L;
 	private long timestamp = 0;

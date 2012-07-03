@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Locale;
 
+import org.json.simple.JSONObject;
+
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 public class ActionPicture extends AbstractAction implements Serializable {
@@ -69,10 +71,22 @@ public class ActionPicture extends AbstractAction implements Serializable {
 	@Override
 	public String toString() 
 	{
-		if(getTimestamp() != 0)
+		if (getTimestamp() != 0)
 			return String.format(Locale.US, "Picture (%d \"%s\")", getTimestamp(), filename);
 		else
 			return "Picture";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+		JSONObject o = new JSONObject();
+		o.put("type", ISensorProxy.SENSOR_NAME_PHOTO);
+		if (getTimestamp() != 0) {
+			o.put("time", getTimestamp());
+			o.put("value", filename);
+		}
+		return o.toJSONString();
 	}
 
 	public String getFilename() 

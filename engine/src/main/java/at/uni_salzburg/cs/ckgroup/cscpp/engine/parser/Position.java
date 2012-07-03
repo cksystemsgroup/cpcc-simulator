@@ -22,9 +22,12 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 import java.io.Serializable;
 import java.util.Locale;
 
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
-public class Position implements Serializable
+public class Position implements Serializable, JSONAware
 {
 	private static final long serialVersionUID = 4207943401820191787L;
 	private double tolerance;
@@ -38,7 +41,6 @@ public class Position implements Serializable
 		latitude = pt.getLatitude();
 		longitude = pt.getLongitude();
 		altitude = pt.getAltitude();
-		
 		tolerance = tol;
 	}
 
@@ -54,5 +56,16 @@ public class Position implements Serializable
 	public String toString() {
 		return String.format(Locale.US, "Point %.8f %.8f %.3f tolerance %.1f", 
 				latitude, longitude, altitude, tolerance);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+		JSONObject obj = new JSONObject();
+		obj.put("latitude", latitude);
+		obj.put("longitude", longitude);
+		obj.put("altitude", altitude);
+		obj.put("tolerance", tolerance);
+		return obj.toJSONString();
 	}
 }

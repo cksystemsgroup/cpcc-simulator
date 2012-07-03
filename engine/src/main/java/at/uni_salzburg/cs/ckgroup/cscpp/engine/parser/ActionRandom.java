@@ -1,5 +1,5 @@
 /*
- * @(#) ActionTemperature.java
+ * @(#) ActionRandom.java
  *
  * This code is part of the ESE CPCC project.
  * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
@@ -22,6 +22,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.Serializable;
 import java.util.Locale;
+
+import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
@@ -53,5 +55,17 @@ public class ActionRandom extends AbstractAction implements Serializable
 			return String.format(Locale.US, "Random (%d %d)", getTimestamp(), random);
 		else
 			return "Random";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+		JSONObject o = new JSONObject();
+		o.put("type", ISensorProxy.SENSOR_NAME_RANDOM);
+		if(getTimestamp() != 0) {
+			o.put("time", getTimestamp());
+			o.put("value", random);
+		}
+		return o.toJSONString();
 	}
 }

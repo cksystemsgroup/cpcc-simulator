@@ -1,5 +1,5 @@
 /*
- * @(#) ActionTemperature.java
+ * @(#) ActionSpeed.java
  *
  * This code is part of the ESE CPCC project.
  * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
@@ -22,6 +22,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.Serializable;
 import java.util.Locale;
+
+import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
@@ -53,5 +55,17 @@ public class ActionSpeed extends AbstractAction implements Serializable
 			return String.format(Locale.US, "Speed (%d %.1f)", getTimestamp(), speedOverGround);
 		else
 			return "Speed";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+		JSONObject o = new JSONObject();
+		o.put("type", "speed");
+		if (getTimestamp() != 0) {
+			o.put("time", getTimestamp());
+			o.put("value", speedOverGround);
+		}
+		return o.toJSONString();
 	}
 }

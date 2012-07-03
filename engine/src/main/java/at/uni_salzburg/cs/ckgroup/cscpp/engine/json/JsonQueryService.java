@@ -37,6 +37,7 @@ public class JsonQueryService extends QueryService {
 	public JsonQueryService (IServletConfig servletConfig) {
 		super (servletConfig);
 		queries.put("vehicle", new VehicleQuery());
+		queries.put("actionPoint", new ActionPointQuery());
 	}
 
 	public void setVehicleMap (Map<String,IVirtualVehicle> vehicleMap) {
@@ -44,6 +45,9 @@ public class JsonQueryService extends QueryService {
 			if (query instanceof VehicleQuery) {
 				VehicleQuery vehicleQuery = (VehicleQuery)query;
 				vehicleQuery.setVehicleMap(vehicleMap);
+			} else if (query instanceof ActionPointQuery) {
+				ActionPointQuery actionPointQuery = (ActionPointQuery)query;
+				actionPointQuery.setVehicleMap(vehicleMap);
 			}
 		}
 	}

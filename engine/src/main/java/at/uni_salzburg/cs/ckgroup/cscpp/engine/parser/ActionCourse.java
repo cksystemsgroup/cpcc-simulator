@@ -1,5 +1,5 @@
 /*
- * @(#) ActionTemperature.java
+ * @(#) ActionCourse.java
  *
  * This code is part of the ESE CPCC project.
  * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
@@ -22,6 +22,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
 import java.io.Serializable;
 import java.util.Locale;
+
+import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
@@ -49,9 +51,21 @@ public class ActionCourse extends AbstractAction implements Serializable
 	@Override
 	public String toString() 
 	{
-		if(getTimestamp() != 0)
+		if (getTimestamp() != 0)
 			return String.format(Locale.US, "Course (%d %.1f)", getTimestamp(), courseOverGround);
 		else
 			return "Course";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+		JSONObject o = new JSONObject();
+		o.put("type", "course");
+		if (getTimestamp() != 0) {
+			o.put("time", getTimestamp());
+			o.put("value", courseOverGround);
+		}
+		return o.toJSONString();
 	}
 }

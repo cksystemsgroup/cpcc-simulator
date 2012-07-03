@@ -33,11 +33,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 public class ConfigurationParser {
 	
-	private static final Logger LOG = Logger.getLogger(ConfigurationParser.class);
+//	private static final Logger LOG = Logger.getLogger(ConfigurationParser.class);
 	
 	public static final String ERROR_MESSAGE_MISSING_VALUE = "# please provide a value!";
 	public static final String ERROR_MESSAGE_INVALID_VALUE = "# invalid value!";
@@ -68,10 +66,12 @@ public class ConfigurationParser {
 	 */
 	private Map<String,String> configErrors = new HashMap<String,String>();
 	
+	private String[][] originalParameters;
+	
 	/**
 	 * The parameters and their default values. 
 	 */
-	private final String [][] parameters;
+	private final List<String[]> parameters;
 	
 	private Set<ClassLoader> classLoaders = new HashSet<ClassLoader>();
 	
@@ -79,7 +79,9 @@ public class ConfigurationParser {
 	 * @param parameters the parameters and their default values.
 	 */
 	public ConfigurationParser(final String [][] parameters, Map<String,String> configErrors) {
-		this.parameters = parameters;
+		this.originalParameters = parameters;
+		this.parameters = new ArrayList<String[]>();
+
 		if (configErrors != null) {
 			this.configErrors.putAll(configErrors);
 		}
@@ -97,6 +99,11 @@ public class ConfigurationParser {
 		conf.clear();
 		conf.load(inStream);
 		configErrors.clear();
+		parameters.clear();
+		
+		for (String[] entry : originalParameters) {
+			parameters.add(entry);
+		}
 		
 		for (String[] entry : parameters) {
 			String v = conf.getProperty(entry[0]);
@@ -238,6 +245,21 @@ public class ConfigurationParser {
 	}
 	
 	/**
+	 * @param param the property to be parsed.
+	 * @return the parsed property as an <code>double</code>.
+	 */
+	protected double parseDouble (String param) {
+		double i = Double.NaN;
+		try {
+			i = Double.parseDouble(conf.getProperty(param));
+		} catch (Throwable e) {
+			configErrors.put(param, ERROR_MESSAGE_INVALID_VALUE);
+			configOk = false;
+		}
+		return i;
+	}
+	
+	/**
 	 * @return the current configuration as a list of strings.
 	 */
 	public Properties getConfig () {
@@ -263,10 +285,24 @@ public class ConfigurationParser {
 	}
 	
 	/**
+	 * @return the parameter list
+	 */
+	protected List<String[]> getParameters() {
+		return parameters;
+	}
+	
+	/**
 	 * @return returns true if the configuration is consistent.
 	 */
 	public boolean isConfigOk() {
 		return configOk;
+	}
+	
+	/**
+	 * @param configOk set to true if the configuration is consistent.
+	 */
+	protected void setConfigOk(boolean configOk) {
+		this.configOk = configOk;
 	}
 	
 	/**

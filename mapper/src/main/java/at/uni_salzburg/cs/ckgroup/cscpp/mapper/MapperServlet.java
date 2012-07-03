@@ -68,7 +68,7 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 	private File configFile;
 	private File registryFile;
 	private Map<String, IRegistrationData> regdata;
-	private Set<IZone> zones;
+//	private Set<IZone> zones;
 	private Set<IZone> neighborZones;
 	private Set<String> centralEngines;
 	private Mapper mapper = new Mapper();
@@ -86,7 +86,7 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 		this.servletConfig = servletConfig;
 		regdata = Collections.synchronizedMap(new TreeMap<String, IRegistrationData>());
 		centralEngines = Collections.synchronizedSet(new HashSet<String>());
-		zones = Collections.synchronizedSet(new HashSet<IZone>());
+//		zones = Collections.synchronizedSet(new HashSet<IZone>());
 		neighborZones = Collections.synchronizedSet(new HashSet<IZone>());
 		super.init();
 		myInit();
@@ -102,10 +102,10 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 		try {
 			props.load(propStream);
 			
-			ZoneFactory.buildZones(zones);
-			servletConfig.getServletContext().setAttribute("zones", zones);
-			ZoneFactory.buildNeighborZones(neighborZones);
-			servletConfig.getServletContext().setAttribute("neighborZones", neighborZones);
+//			ZoneFactory.buildZones(zones);
+//			servletConfig.getServletContext().setAttribute("zones", zones);
+//			ZoneFactory.buildNeighborZones(neighborZones);
+//			servletConfig.getServletContext().setAttribute("neighborZones", neighborZones);
 			
 			servletConfig.getServletContext().setAttribute("configuration", configuration);	
 			servletConfig.getServletContext().setAttribute("regdata", regdata);
@@ -122,7 +122,7 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 			
 			servletConfig.getServletContext().setAttribute("mapper", mapper);
 			mapper.setRegistrationData(regdata);
-			mapper.setZones(zones);
+			mapper.setZones(configuration.getZoneSet());
 			mapper.setNeighborZones(neighborZones);
 			mapper.start();
 			

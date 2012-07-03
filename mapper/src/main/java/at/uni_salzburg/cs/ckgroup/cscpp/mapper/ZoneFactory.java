@@ -1,5 +1,5 @@
 /*
- * @(#) RegData.java
+ * @(#) ZoneFactory.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 
+@Deprecated
 public class ZoneFactory {
 	
 	private static final Logger LOG = Logger.getLogger(ZoneFactory.class);
@@ -78,6 +79,8 @@ public class ZoneFactory {
 	
 	public static void buildZones(Set<IZone> zones) {
 		zones.clear();
+//		PolygonZone cz = new PolygonZone(ZONES[3]);
+//		zones.add(new CircleZone(cz.getDepotPosition(), 117, new WGS84()));
 		for(PolarCoordinate[] zone : ZONES) {
 			zones.add(new PolygonZone(zone));
 		}

@@ -20,19 +20,20 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.config;
 
+import java.util.Set;
+
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
+
 
 public interface IConfiguration {
-
-	/**
-	 * Once a virtual vehicle completes its mission, the mapper initiates the
-	 * migration to the home-base engine.
-	 * 
-	 * @return the base URL of the associated home-base engine.
-	 */
-//	URI getHomeBaseEngineUrl();
 
 	/**
 	 * @return the class instance of the mapping algorithm. 
 	 */
 	Class<?> getMapperAlgorithmClass();
+
+	/**
+	 * @return the configured real vehicle zones.
+	 */
+	Set<IZone> getZoneSet();
 }

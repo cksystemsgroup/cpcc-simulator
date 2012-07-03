@@ -22,28 +22,46 @@ package at.uni_salzburg.cs.ckgroup.cscpp.mapper.config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
+import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.course.WGS84;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.CircleZone;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.PolygonZone;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigurationParser;
 
 public class Configuration extends ConfigurationParser implements IConfiguration {
 	
 	Logger LOG = Logger.getLogger(Configuration.class);
 	
-//	public static final String PROP_HOME_BASE_ENGINE_URL = "home.base.engine.url";
-	public static final String PROP_MAPPER_ALGORITHM = "mapper.algorithm";
+	private static final String PROP_MAPPER_ALGORITHM = "mapper.algorithm";
+	
+	private static final String PROP_ZONE_PREFIX = "zone.";
+	private static final String PROP_ZONE_LIST = PROP_ZONE_PREFIX + "list";
+	private static final String PROP_ZONE_TYPE_POSTFIX = ".type";
+	private static final String PROP_ZONE_VERTICES_POSTFIX = ".vertices";
+	private static final String PROP_ZONE_POSITION_POSTFIX = ".position";
+	private static final String PROP_ZONE_RADIUS_POSTFIX = ".radius";
 	
 	/**
 	 * The parameters and their default values. 
 	 */
 	public static final String [][] parameters = {
-//		{ PROP_HOME_BASE_ENGINE_URL },
 		{ PROP_MAPPER_ALGORITHM },
+		{ PROP_ZONE_LIST },
 	};
 	
 	/**
@@ -53,14 +71,10 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	@SuppressWarnings("serial")
 	private static final Map<String,String> configErrors = new HashMap<String,String>() {{
-//		put(PROP_HOME_BASE_ENGINE_URL, ERROR_MESSAGE_MISSING_VALUE);
 		put(PROP_MAPPER_ALGORITHM, ERROR_MESSAGE_MISSING_VALUE);
+		put(PROP_ZONE_LIST, ERROR_MESSAGE_MISSING_VALUE);
 	}};
-	
-	/**
-	 * The base URL of the associated home base engine. 
-	 */
-//	private URI homeBaseEngineUrl;
+
 	
 	/**
 	 * The class name of the mapping algorithm. 
@@ -68,10 +82,21 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	private Class<?> mapperAlgorithmClass;
 	
 	/**
+	 * 
+	 */
+	private Set<IZone> zoneSet;
+
+	/**
+	 * 
+	 */
+	private IGeodeticSystem geodeticSystem = new WGS84();
+	
+	/**
 	 * Construct a <code>Configuration</code> object.
 	 */
 	public Configuration () {
 		super(parameters, configErrors);
+		zoneSet = Collections.synchronizedSet(new HashSet<IZone>());
 	}
 	
 	/**
@@ -83,17 +108,88 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	@Override
 	public void loadConfig (InputStream inStream) throws IOException {
 		super.loadConfig(inStream);
-//		homeBaseEngineUrl = parseURI(PROP_HOME_BASE_ENGINE_URL);
 		mapperAlgorithmClass = parseClassName(PROP_MAPPER_ALGORITHM, IMappingAlgorithm.class);
-	}
+		zoneSet.clear();
+		
+		String zoneListString = parseString(PROP_ZONE_LIST);
+		if (zoneListString == null) {
+			return;
+		}
+		
+        Pattern p = Pattern.compile ("\\([^()]+\\)");
 
-	/* (non-Javadoc)
-	 * @see at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.IConfiguration#getHomeBaseEngineUrl()
-	 */
-//	@Override
-//	public URI getHomeBaseEngineUrl() {
-//		return homeBaseEngineUrl;
-//	}
+		List<String[]> pars = getParameters();
+		
+		String[] zoneNames = zoneListString.trim().split("\\s*,\\s*");
+		for (String name : zoneNames) {
+			
+			String propType = PROP_ZONE_PREFIX + name + PROP_ZONE_TYPE_POSTFIX;
+			pars.add(new String[] {propType});
+			String type = parseString(propType);
+			
+			if ("polygon".equals(type)) {
+				String propVertices = PROP_ZONE_PREFIX + name + PROP_ZONE_VERTICES_POSTFIX;
+				pars.add(new String[] {propVertices});
+				
+				String verticesString = parseString(propVertices);
+				if (verticesString == null) {
+					continue;
+				}
+				
+				List<PolarCoordinate> vertices = new ArrayList<PolarCoordinate>();
+				
+                Matcher m = p.matcher (verticesString);
+
+                while (m.find ())
+                {
+                	String verticeString = verticesString.substring (m.start () + 1, m.end () - 1).trim();
+                	String[] ll = verticeString.split("\\s*,\\s*");
+                	if (ll.length != 2) {
+                		configErrors.put(propVertices, ERROR_MESSAGE_INVALID_VALUE);
+                		setConfigOk(false);
+                	}
+                	double latitude = Double.parseDouble(ll[0]);
+                	double longitude = Double.parseDouble(ll[1]);
+                	vertices.add(new PolarCoordinate(latitude, longitude, 0.0));
+                }
+
+                zoneSet.add(new PolygonZone(vertices.toArray(new PolarCoordinate[0])));
+				
+			} else if ("circle".equals(type)) {
+				String propPosition = PROP_ZONE_PREFIX + name + PROP_ZONE_POSITION_POSTFIX;
+				String propRadius = PROP_ZONE_PREFIX + name + PROP_ZONE_RADIUS_POSTFIX;
+				pars.add(new String[] {propPosition});
+				pars.add(new String[] {propRadius});
+				
+				String positionString = parseString(propPosition);
+				if (positionString == null) {
+					continue;
+				}
+				
+				if (!positionString.matches("\\s*\\(\\s*\\d+.\\d+\\s*,\\s*\\d+.\\d+\\)\\s*")) {
+            		configErrors.put(propPosition, ERROR_MESSAGE_INVALID_VALUE);
+            		setConfigOk(false);
+				}
+				
+				String[] ll = positionString.trim().replaceAll("\\(\\s*", "").replaceAll("\\s*\\)", "").split("\\s*,\\s*");
+            	if (ll.length != 2) {
+            		configErrors.put(propPosition, ERROR_MESSAGE_INVALID_VALUE);
+            		setConfigOk(false);
+            	}
+            	double latitude = Double.parseDouble(ll[0]);
+            	double longitude = Double.parseDouble(ll[1]);
+				double radius = parseDouble(propRadius);
+				
+				zoneSet.add(new CircleZone(new PolarCoordinate(latitude, longitude, 0.0), radius, geodeticSystem));
+				
+			} else {
+				configErrors.put(propType, ERROR_MESSAGE_INVALID_VALUE);
+				setConfigOk(false);
+			}
+			
+		}
+		 
+	}
 
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.IConfiguration#getMapperAlgorithmClass()
@@ -103,4 +199,8 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 		return mapperAlgorithmClass;
 	}
 
+	@Override
+	public Set<IZone> getZoneSet() {
+		return zoneSet;
+	}
 }

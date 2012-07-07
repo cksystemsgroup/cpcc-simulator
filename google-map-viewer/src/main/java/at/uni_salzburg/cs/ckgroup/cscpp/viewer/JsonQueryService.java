@@ -22,6 +22,7 @@ package at.uni_salzburg.cs.ckgroup.cscpp.viewer;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.QueryService;
+import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.ActionPointQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.PositionQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.RealVehicleQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.viewer.json.VirtualVehicleQuery;
@@ -38,6 +39,7 @@ public class JsonQueryService extends QueryService {
 		queries.put("virtualVehicle", new VirtualVehicleQuery(mapperProxy));
 		queries.put("realVehicle", new RealVehicleQuery(mapperProxy));
 		queries.put("zones", new ZoneQuery(mapperProxy));
+		queries.put("actionPoint", new ActionPointQuery(mapperProxy));
 	}
 
 }

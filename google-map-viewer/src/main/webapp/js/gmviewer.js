@@ -10,8 +10,6 @@ var position = {};
 var vehicles = {};
 var pointsOfInterest = {};
 var loadWaypoints = true;
-//var dummy = null;
-//var dummy2 = null;
 var actionPointMap = {};
 var vvPathMap = {};
 var vvMovementMap = {};
@@ -47,7 +45,6 @@ function updateMap() {
 			markers[m].setPosition(point);
 		} else {
 			// new one!
-//			markers[m] = new PilotOverlay(point, map);
 			markers[m] = new JAviatorOverlay(point, map);
 			markers[m].setPilotName(position[m].name);
 			loadWaypoints = true;
@@ -163,7 +160,6 @@ function updateVvPaths() {
 				vvPathMap[v].active.setMap(null);
 				vvPathMap[v].active = null;
 			}
-
 		}
 	}
 	
@@ -206,7 +202,6 @@ function updateVvPaths() {
 					strokeWeight: 2
 				});
 			}
-			
 		}
 	}
 	
@@ -269,7 +264,6 @@ function updateWaypoints (waypoints) {
 			waypointPolylines[m].setMap(null);
 		}
 	}
-	
 }
 
 
@@ -314,7 +308,6 @@ function updateZones(zones) {
 			bounds.union(rvZones[k].getBounds());
 		}
 		
-//		alert ("reposition map to " + bounds.getCenter());
 		map.setCenter(bounds.getCenter());
 		mapRepositioned = true;
 	}
@@ -375,14 +368,6 @@ function onLoad() {
 			      updateMap();
 			    },
 			    onFailure: function(){ alert('Something went wrong...') },
-//			    onException: function(e){ alert('Exception 1: ' + e) }
-//			    onException: function(e){
-//			    	var s = '';
-//			    	for (var v in e) {
-//			    		s = s + v + ": " + e[v] + ",\n\n";
-//			    	}
-//			    	alert('Exception 1: ' + s);
-//			    	}
 			  });
 		},
 	1);
@@ -399,13 +384,6 @@ function onLoad() {
 					updateVvPaths();
 			    },
 			    onFailure: function(){ alert('Something went wrong...') },
-//			    onException: function(e){
-//			    	var s = '';
-//			    	for (var v in e) {
-//			    		s = s + v + ": " + e[v] + ",\n\n";
-//			    	}
-//			    	alert('Exception 2: ' + s);
-//			    	}
 			  });
 		},
 	1);
@@ -420,7 +398,6 @@ function onLoad() {
 					updateWaypoints(waypoints);
 			    },
 			    onFailure: function(){ alert('Something went wrong...') },
-//			    onException: function(e){ alert('Exception 3: ' + e) }
 			  });
 		},
 	1);
@@ -435,7 +412,6 @@ function onLoad() {
 					updateZones(zones);
 			    },
 			    onFailure: function(){ alert('Something went wrong 4 ...') },
-//			    onException: function(e){ alert('Exception 4: ' + e) }
 			  });
 		},
 	1);
@@ -448,8 +424,6 @@ function GUnload() {
 
 
 function openImageWindow (url) {
-
-//	fenster = window.open(url, "Popupfenster", "width=400,height=300,resizable=yes");
 	win = window.open(url, "Popupwindow", "resizable=yes");
 	win.focus();
 	return false;

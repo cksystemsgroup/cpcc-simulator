@@ -17,17 +17,19 @@ function ActionPointOverlay(point, map, complete, engineUrl, vehicleDataUrl, veh
 	
 	google.maps.event.addListener(this, 'click',
 		function (event) {
-			var actionPointUrl = engineUrl + "/" + vehicleName + "/" + actionPointIndex;
+			var actionPointUrl = 'json/actionPoint/' + escape(engineUrl) + "/" + vehicleName + "/" + actionPointIndex;
 			var me = this;
 			new Ajax.Request(actionPointUrl,
 			{
 				method:'get',
+				asynchronous: false,
+				contentType:'text/plain',
 				onSuccess: function(transport){
-					response = transport.responseText.evalJSON();
+					var response = transport.responseText.evalJSON();
 					infoWindow.setContent(me.actionPointToHTML(response));
 					infoWindow.open(map, me);
 				},
-				onFailure: function(){ alert('Something went wrong...') },
+				onFailure: function(){ alert('Something went wrong...'); },
 			});
 		}
 	);

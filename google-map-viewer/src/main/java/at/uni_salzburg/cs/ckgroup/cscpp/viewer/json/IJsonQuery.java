@@ -21,7 +21,6 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.json;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
-import at.uni_salzburg.cs.ckgroup.cscpp.viewer.IMapperProxy;
 
 
 public interface IJsonQuery extends IQuery {

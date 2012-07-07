@@ -39,26 +39,10 @@ public class ActionPointQuery implements IQuery {
 
 	private static final String PROP_VEHICLE_LOCAL_NAME = "name";
 	private static final String PROP_VEHICLE_STATE = "state";
-//	private static final String PROP_VEHICLE_LATITUDE = "latitude";
-//	private static final String PROP_VEHICLE_LONGITUDE = "longitude";
-//	private static final String PROP_VEHICLE_ALTITUDE = "altitude";
-//	private static final String PROP_VEHICLE_TOLERANCE = "tolerance";
 	private static final String PROP_VEHICLE_ACTIONS = "actions";
 	private static final String PROP_VEHICLE_ACTION_POINT = "actionPoint";
 
 	private Map<String, IVirtualVehicle> vehicleMap;
-	
-//	@SuppressWarnings("serial")
-//	private Map<String,String> actionsMap = new HashMap<String, String>() {{
-//		put("AIRPRESSURE", "airPressure");
-//		put("ALTITUDE", "altitude");
-//		put("COURSE", "course");
-//		put("PICTURE", "photo");
-//		put("RANDOM", "random");
-//		put("SONAR", "sonar");
-//		put("SPEED", "speed");
-//		put("TEMPERATURE", "temperature");
-//	}};
 
 	public void setVehicleMap(Map<String, IVirtualVehicle> vehicleMap) {
 		this.vehicleMap = vehicleMap;
@@ -66,23 +50,26 @@ public class ActionPointQuery implements IQuery {
 	
 	@SuppressWarnings("unchecked")
 	public String execute(IServletConfig config, String[] parameters) {
-
+		
 		String vehicleId = parameters[3];
 		String apIndexString = parameters[4];
 		
 		if (vehicleId == null || "".equals(vehicleId) || apIndexString == null || !apIndexString.matches("\\d+")) {
+//			LOG.info("action point " + parameters[0] + ":" + parameters[1] + ":" + parameters[2] + ":" + parameters[3] + ":" + parameters[4] + "  Invalid query!");
 			return JSONValue.toJSONString("Invalid query!");
 		}
 		
 		IVirtualVehicle vehicle = vehicleMap.get(vehicleId);
 			
 		if (vehicle == null) {
+//			LOG.info("action point " + parameters[0] + ":" + parameters[1] + ":" + parameters[2] + ":" + parameters[3] + ":" + parameters[4] + "  Vehicle not found (anymore)!");
 			return JSONValue.toJSONString("Vehicle not found (anymore)!");
 		}
 		
 		int actionPointIndex = Integer.valueOf(apIndexString);
 
 		if (actionPointIndex > vehicle.getCommandList().size()-1) {
+//			LOG.info("action point " + parameters[0] + ":" + parameters[1] + ":" + parameters[2] + ":" + parameters[3] + ":" + parameters[4] + "  No such action point!");
 			return JSONValue.toJSONString("No such action point!");
 		}
 		
@@ -112,6 +99,8 @@ public class ActionPointQuery implements IQuery {
 			act.add(a);
 		}
 		props.put(PROP_VEHICLE_ACTIONS, act);
+		
+//		LOG.info("action point " + parameters[0] + ":" + parameters[1] + ":" + parameters[2] + ":" + parameters[3] + ":" + parameters[4] + "  " + JSONValue.toJSONString(props));
 		
 		return JSONValue.toJSONString(props);
 	}

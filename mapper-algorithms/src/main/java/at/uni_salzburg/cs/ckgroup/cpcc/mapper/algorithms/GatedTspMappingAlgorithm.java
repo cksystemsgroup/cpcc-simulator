@@ -73,7 +73,6 @@ public class GatedTspMappingAlgorithm extends SimpleMappingAlgorithm implements 
 	 */
 	private IGeodeticSystem geodeticSystem = new WGS84();
 
-//	private Map<String,RealVehicleInfo> realVehicles = new HashMap<String, RealVehicleInfo>();
 	
 	private AcoTsp tspSolver = new AcoTsp(geodeticSystem);
 	

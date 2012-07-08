@@ -1,0 +1,20 @@
+
+This simulation system demonstrates information-acquisition-as-a-service of mobile sensor networks for cyber-physical cloud computing (CPCC) as proposed in [1]. Based on the JNavigator project [2] the implementation provides
+
+ * the simulation of physical helicopter swarms,
+ * the simulation of sensors,
+ * the virtual abstraction of autonomous vehicles (virtual vehicles), and
+ * the migration of virtual vehicles among flying physical helicopters (real vehicles).
+
+
+The implemented system currently allows the simulation of helicopter fleets of several dozens of vehicles and supports the simulation of sensors like GPS receivers and photo cameras. To simulate air-pressure sensors, temperature sensors, etc. the system utilizes random number generators, which deliver values in a defined range and precision.
+
+Simulated helicopters do not access the onboard sensors for data collection.  It is a virtual abstraction of autonomous vehicles, Virtual Vehicles (VVs) for short, that gathers data. One helicopter is able to carry several VVs. To complete their missions, VVs may migrate between helicopters.
+
+
+
+[1] Craciunas, S.S., Haas, A., Kirsch, C.M., Payer, H., ock, H., Rottmann, A., Sokolova, A., Trummer, R., Love, J., and Sengupta, R.: Information-acquisition-as-a-service for cyber-physical cloud computing. In Proc. Workshop on Hot Topics in Cloud Computing (HotCloud). USENIX, 2010.
+
+[2] Krainer, Clemens D.: JNavigator - An Autonomous Navigation System for the JAviator Quadrotor Helicopter. Master's thesis, University of Salzburg, Austria, 2009.
+
+

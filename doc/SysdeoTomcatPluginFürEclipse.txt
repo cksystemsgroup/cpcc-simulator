@@ -1,0 +1,116 @@
+Hallo Leute,
+
+wie heute versprochen:
+
+1. download http://tweedo.com/mirror/apache/tomcat/tomcat-7/v7.0.23/bin/apache-tomcat-7.0.23-windows-x64.zip
+
+2. apache-tomcat-7.0.23-windows-x64.zip auspacken, z.B. ins
+Verzeichnis c:\programme\apache-tomcat-7.0.23
+
+3. Anhang devloader-7.0.1-SNAPSHOT.jar ins Verzeichnis
+c:\programme\apache-tomcat-7.0.23\lib kopieren.
+   Einen eventuell vorhandenen anderen DevLoader bitte aus diesem
+Verzeichnis entfernen.
+
+4. download http://www.eclipsetotale.com/tomcatPlugin/tomcatPluginV33.zip
+
+5. Das File tomcatPluginV33.zip im Subverzeichnis plugin der
+Eclipse-Installation auspacken.
+Siehe auch: http://www.eclipsetotale.com/tomcatPlugin.html
+
+
+# Weitere Einstellungen im Eclipse:
+Window -> Preferences:
+
+-> Java -> Build Path:
+ "Output folder name" ändern auf target/classes
+
+-> Tomcat:
+ "Tomcat Version" auf "Version 7.x" stellen.
+ In "Tomcat Home" das Tomcat-Installationsverzeichnis eintragen,
+z.B.: c:\programme\apache-tomcat-7.0.23
+
+
+Nach dem Auschecken von
+https://svn.cosy.sbg.ac.at/stud/bzechmei/ESEP/trunk/progam müssen in
+Eclipse vier Ordner zu sehen sein: engine, ese-project, mapper und
+utils.
+
+
+# Tomcat-Einstellungen für "engine":
+rechte Maustaste auf Folder "engine" -> Properties:
+
+-> Tomcat -> Tab Allgemein:
+
+- "Ist ein Tomcat-Projekt" anhaken.
+- "Anwendungs-URI" auf "/engine" stellen.
+- Unterverzeichnis, das als root ..." auf /src/main/webapp" stellen.
+
+-> Tomcat -> Tab DevLoader Classpath:
+
+- "Aktiviere DevLoader" anhaken
+- "/engine/target/classes" anhaken
+- "org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER" anhaken.
+
+rechte Maustaste auf Folder "engine" -> Tomcat Projekt -> Kontext in
+Tomcat aktualisieren.
+
+
+Zum Debuggen wird der Tomcat über das Tomcat-Symbol gestartet.
+
+Die Applikation wird mit einem Browser unter
+http://localhost:8080/engine angesprochen.
+
+Die Einstellungen für die "mapper"-Web-Applikation sind analog vorzunehmen.
+
+
+LG, Clemens.
+
+
+--------------------------------------------------------------------------------
+
+
+Hallo Bernhard,
+
+bitte stelle noch folgendes im Eclipse ein:
+
+Window -> Preferences -> Tomcat -> JVM Einstellungen
+
+Im Feld "Zu JVM Parametern hinzufügen" folgende Zeile ergänzen:
+
+       -Ddevloader.workspace.rootPath=C:\eclipse\workspace\ESEP\program
+
+wobei C:\eclipse\workspace\ESEP\program durch den entsprechenden
+Ordner auf deiner Festplatte zu ersetzen ist.
+
+Ich bitte um baldige Rückmeldung.
+
+
+LG, Clemens.
+
+
+
+--------------------------------------------------------------------------------
+
+
+Hallo Leute,
+
+ich habe mit Bernhard das Debugging-Problem von neulich beheben können.
+
+Bitte stellt noch folgendes im Eclipse ein:
+
+Window -> Preferences -> Tomcat -> JVM Einstellungen
+
+Im Feld "Zu JVM Parametern hinzufügen" folgende Zeile ergänzen:
+
+      -Ddevloader.workspace.rootPath=C:\eclipse\workspace\ESEP\program
+
+wobei C:\eclipse\workspace\ESEP\program durch den entsprechenden
+Ordner auf euren Festplatten zu ersetzen ist.
+
+
+LG, Clemens.
+
+--------------------------------------------------------------------------------
+
+

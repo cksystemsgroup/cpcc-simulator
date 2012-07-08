@@ -1,0 +1,21 @@
+
+Hallo Leute,
+
+ich habe nun die erste Version des Google-Map-Viewers fertig.
+
+Ihr müsst euch dafür zusätzlich den Port 9040 über SSH forwarden, d.h. der OpenSSH-Aufruf sieht dann so aus:
+
+ssh -L 9010:192.168.1.11:9010 -L 9020:192.168.1.11:9020 -L 9030:192.168.1.11:9030 -L 9040:192.168.1.11:9040 username@beta.cs.uni-salzburg.at
+
+Den Viewer könnt iht dann unter folgendem Link benutzen:
+
+http://localhost:9040/gmview/index.tpl
+
+Der "Belly-Mounted-Photo-Camera" Sensor ist nun auch fertig.
+
+LG, Clemens.
+
+
+--------------------------------------------------------------------------------
+
+

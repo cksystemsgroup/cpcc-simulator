@@ -66,7 +66,8 @@ Colors:
 - Green Lines: VVs carried by physical helicopters.
 - Red Lines: VV cyber moves.
 - Blue Lines: intended VV paths.
-- Grey Lines: physical helicopter set courses.
+- Gray Lines: physical helicopter set courses.
+- Gray Squares: cell boundaries.
 - Blue Circles: not completed VV action points, i.e., unfinished data collection.
 - Red Circles: completed VV action points, i.e., all data collected.
 - Yellow Text: names of active VVs

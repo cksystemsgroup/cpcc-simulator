@@ -1,0 +1,16 @@
+##
+## @(#) set course VV 4
+##
+go auto
+takeoff 1 for 5s
+fly to(47.69204962,13.38516480,20.00)abs precision 1m 0.1mps
+fly to(47.69204240,13.38551885,20.00)abs precision 1m 0.1mps
+fly to(47.69201712,13.38595873,20.00)abs precision 1m 0.1mps
+fly to(47.69199907,13.38636643,20.00)abs precision 1m 0.1mps
+fly to(47.69198462,13.38673121,20.00)abs precision 1m 0.1mps
+fly to(47.69199907,13.38695115,20.00)abs precision 1m 0.1mps
+fly to(47.69199907,13.38748759,20.00)abs precision 1m 0.1mps
+hover for 20s
+land
+go manual
+

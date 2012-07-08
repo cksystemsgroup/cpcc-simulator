@@ -1,0 +1,16 @@
+##
+## @(#) set course Zone 3
+##
+go auto
+takeoff 1 for 5s
+fly to(47.69323399,13.38599735,0.00)abs precision 1m 0.1mps
+fly to(47.69323399,13.38666128,0.00)abs precision 1m 0.1mps
+fly to(47.69296678,13.38692824,0.00)abs precision 1m 0.1mps
+fly to(47.69269958,13.38666128,0.00)abs precision 1m 0.1mps
+fly to(47.69269958,13.38599735,0.00)abs precision 1m 0.1mps
+fly to(47.69296678,13.38573039,0.00)abs precision 1m 0.1mps
+fly to(47.69323399,13.38599735,0.00)abs precision 1m 0.1mps
+hover for 20s
+land
+go manual
+

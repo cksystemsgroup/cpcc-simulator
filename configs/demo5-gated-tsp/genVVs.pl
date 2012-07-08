@@ -19,7 +19,7 @@ my $cfg = {
 
 my $vv = new VirtualVehicle ($cfg);
 
-for (my $counter=1, my $l=$cfg->{vehicleCount}; $counter < $l; ++$counter) {
+for (my $counter=1, my $l=$cfg->{vehicleCount}; $counter <= $l; ++$counter) {
    my $id = sprintf "%03d", $counter;
    print "Creating virtual vehicle $id\n";
    $vv->create($id);

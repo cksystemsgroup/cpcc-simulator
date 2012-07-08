@@ -32,6 +32,25 @@ by installing file tomcat-pilot4-patch-*.tar.bz2 as follows:
 
 	cd $CPCC_SIM_HOME
 	tar -xjf /path/to/archive/tomcat-pilot4-patch-*.tar.bz2
+
+Then, you have to change the "catalinaBase" path in the tomcat server
+deployment configuration. To do this, change the path /mnt/local_homes/ckrainer
+to the content of your $CPCC_SIM_HOME variable in the files
+$CPCC_SIM_HOME/tomcat-pilot4/pom.xml by using vi:
+
+	vi $CPCC_SIM_HOME/tomcat-pilot4/pom.xml
+
+or by using perl:
+
+	perl -pi -e 's#/mnt/local_homes/ckrainer#'"$CPCC_SIM_HOME"'#;' $CPCC_SIM_HOME/tomcat-pilot4/pom.xml
+
+Change the environment variables JAVA_HOME and JRE_HOME in file
+$CPCC_SIM_HOME/tomcat-pilot4/conf/profile.shi, if you can't use the Java
+installation in $CPCC_SIM_HOME/.jdk/jdk1.6.0_29-x64 .
+
+After that, update your software:
+
+	cd $CPCC_SIM_HOME
 	./deploy.sh
 
 

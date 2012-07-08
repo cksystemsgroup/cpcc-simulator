@@ -1,0 +1,5 @@
+##
+## @(#) set course RVs demo 5
+##
+go auto
+takeoff 2 for 10s

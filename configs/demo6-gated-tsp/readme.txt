@@ -109,6 +109,9 @@ demo6-gated-tsp.avi
 demo6-snapshot.png
     Demonstration in action.
 
+demo6-info-window.png
+    Action point info window.
+
 readme.txt
     This file.
 

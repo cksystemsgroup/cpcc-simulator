@@ -82,6 +82,10 @@ algorithm initiates a migration of this VV to the RV.  After a VV has completed
 its mission, i.e., all APs have been processed, the mapping algorithm initiates
 a migration back to the central Engine.
 
+Video demo6-heatmap.avi visualizes the measured temperature values of the APs
+as a heatmap overlay.  The values vary from -15 °C (transparent blue) to 35 °C
+(red).
+
 Picture demo6-snapshot.png shows an advanced stage of this demonstration mission
 displaying three VVs in action.  Green lines show VVs carried by RVs and red
 lines indicate migrations of VVs among RVs.
@@ -95,16 +99,19 @@ Colors:
 - Blue Lines: intended VV paths.
 - Grey Lines: physical helicopter set courses.
 - Grey Hexagons: cell boundaries.
-- Blue Circles: not completed VV action points, i.e., unfinished data collection.
+- Light Blue Circles: not completed VV action points, i.e., unfinished data collection.
 - Red Circles: completed VV action points, i.e., all data collected.
 - Yellow Text: names of active VVs
 - Red Text: names of flying helicopters
-
+- Gradient from Blue to Red: heat map
 
 Files:
 -----
 demo6-gated-tsp.avi
     Demonstration video (speed up).
+
+demo6-heatmap.avi
+    Demonstration video like demo6-gated-tsp.avi with heatmap visualization enabled.
 
 demo6-snapshot.png
     Demonstration in action.

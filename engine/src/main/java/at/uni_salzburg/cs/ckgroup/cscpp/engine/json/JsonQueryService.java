@@ -38,6 +38,7 @@ public class JsonQueryService extends QueryService {
 		super (servletConfig);
 		queries.put("vehicle", new VehicleQuery());
 		queries.put("actionPoint", new ActionPointQuery());
+		queries.put("temperature", new TemperatureQuery());
 	}
 
 	public void setVehicleMap (Map<String,IVirtualVehicle> vehicleMap) {
@@ -48,6 +49,9 @@ public class JsonQueryService extends QueryService {
 			} else if (query instanceof ActionPointQuery) {
 				ActionPointQuery actionPointQuery = (ActionPointQuery)query;
 				actionPointQuery.setVehicleMap(vehicleMap);
+			} else if (query instanceof TemperatureQuery) {
+				TemperatureQuery temperatureQuery = (TemperatureQuery)query;
+				temperatureQuery.setVehicleMap(vehicleMap);
 			}
 		}
 	}

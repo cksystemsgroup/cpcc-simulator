@@ -3,7 +3,9 @@ var positionUrl = '/gmview/json/position';
 var waypointsUrl = '/gmview/json/waypoints';
 var vehicleUrl = '/gmview/json/virtualVehicle';
 var zonesUrl = '/gmview/json/zones';
+var temperatureUrl = '/gmview/json/temperature';
 var map;
+var heatmap;
 var markers = {};
 var waypointPolylines = {};
 var position = {};
@@ -50,8 +52,7 @@ function updateMap() {
 			loadWaypoints = true;
 		}
 		markers[m].setPilotFlying(a.autoPilotFlight);
-		markers[m].setVehicles(vehicles[m].vehicles);
-		
+		markers[m].setVehicles(vehicles[m] ? vehicles[m].vehicles : null);
 	}
 	
 }
@@ -238,7 +239,7 @@ function updateWaypoints (waypoints) {
 			path[k] = new google.maps.LatLng(wp[k].latitude, wp[k].longitude);
 		}
 		
-		if (wp.length == 1) {
+		if (wp.length == 1 && position[m]) {
 			var a = position[m].position;
 			path[1] = new google.maps.LatLng(a.latitude, a.longitude);			
 		}
@@ -352,11 +353,13 @@ function onLoad() {
 	
 	infoWindow = new google.maps.InfoWindow();
 	
-//	Ajax.Responders.register({ 
-//        onException: function(request, exception) { 
-//                (function() { throw exception; }).defer(); 
-//        } 
-//	});
+	Ajax.Responders.register({ 
+        onException: function(request, exception) { 
+        	(function() { throw exception; }).defer(); 
+        } 
+	});
+	
+	heatmap = new Heatmap(temperatureUrl, map);
 	
 	new PeriodicalExecuter(
 		function() {
@@ -367,7 +370,7 @@ function onLoad() {
 			      position = transport.responseText.evalJSON();
 			      updateMap();
 			    },
-			    onFailure: function(){ alert('Something went wrong...') },
+			    onFailure: function(){ alert('Something went wrong 1 ...') },
 			  });
 		},
 	1);
@@ -383,7 +386,7 @@ function onLoad() {
 					updatePointsOfInterest();
 					updateVvPaths();
 			    },
-			    onFailure: function(){ alert('Something went wrong...') },
+			    onFailure: function(){ alert('Something went wrong 2 ...') },
 			  });
 		},
 	1);
@@ -397,19 +400,22 @@ function onLoad() {
 					var waypoints = transport.responseText.evalJSON();
 					updateWaypoints(waypoints);
 			    },
-			    onFailure: function(){ alert('Something went wrong...') },
+			    onFailure: function(){ alert('Something went wrong 3 ...') },
 			  });
 		},
 	1);
 	
 	new PeriodicalExecuter(
-		function() {
+		function(pe) {
 			new Ajax.Request(zonesUrl,
 			  {
 			    method:'get',
 			    onSuccess: function(transport){
 					var zones = transport.responseText.evalJSON();
 					updateZones(zones);
+//					if (zones) {
+//						pe.stop();
+//			    	}
 			    },
 			    onFailure: function(){ alert('Something went wrong 4 ...') },
 			  });
@@ -428,4 +434,8 @@ function openImageWindow (url) {
 	win.focus();
 	return false;
 } 
+
+function toggleHeatmap() {
+	heatmap.toggle();
+}
 

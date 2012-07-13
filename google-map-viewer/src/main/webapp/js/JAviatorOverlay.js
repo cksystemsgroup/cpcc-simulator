@@ -24,6 +24,9 @@ JAviatorOverlay.prototype.onAdd = function() {
 
 JAviatorOverlay.prototype.draw = function() {
 	var overlayProjection = this.getProjection();
+	if (!overlayProjection) {
+		return;
+	}
 	var pos = overlayProjection.fromLatLngToDivPixel(this.point_);
 	pos.x -= 19;
 	pos.y -= 19;
@@ -46,6 +49,10 @@ JAviatorOverlay.prototype.setPilotFlying = function(flying) {
 }
 
 JAviatorOverlay.prototype.setVehicles = function(vehicles) {
+	if (!this.div_) {
+		return;
+	}
+	
 	while (this.div_.childNodes.length > 0) {
 		this.div_.removeChild(this.div_.firstChild);
 	}

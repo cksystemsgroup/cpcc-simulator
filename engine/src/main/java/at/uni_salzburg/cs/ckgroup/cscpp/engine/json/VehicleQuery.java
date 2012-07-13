@@ -56,7 +56,7 @@ public class VehicleQuery implements IQuery {
 	private Map<String, IVirtualVehicle> vehicleMap;
 	
 	@SuppressWarnings("serial")
-	private Map<String,String> actionsMap = new HashMap<String, String>() {{
+	static Map<String,String> actionsMap = new HashMap<String, String>() {{
 		put("AIRPRESSURE", "airPressure");
 		put("ALTITUDE", "altitude");
 		put("COURSE", "course");

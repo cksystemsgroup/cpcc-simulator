@@ -1,4 +1,6 @@
 
 <div id="map_canvas" style="width:100%;height:600px"></div>
 
+<button onclick="toggleHeatmap()">Toggle Heatmap</button>
+
 <!-- end #content -->

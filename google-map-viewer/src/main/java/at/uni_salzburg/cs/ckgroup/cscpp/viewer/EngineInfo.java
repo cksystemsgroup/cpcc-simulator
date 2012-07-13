@@ -28,14 +28,16 @@ public class EngineInfo {
 	private String vehicleStatusUrl;
 	private String actionPointUrl;
 	private String vehicleDataUrl;
+	private String temperatureUrl;
 	
-	public EngineInfo(String pilotName, String positionUrl, String waypointsUrl, String vehicleStatusUrl, String actionPointUrl, String vehicleDataUrl) {
+	public EngineInfo(String pilotName, String positionUrl, String waypointsUrl, String vehicleStatusUrl, String actionPointUrl, String vehicleDataUrl, String temperatureUrl) {
 		this.pilotName = pilotName;
 		this.positionUrl = positionUrl;
 		this.waypointsUrl = waypointsUrl;
 		this.vehicleStatusUrl = vehicleStatusUrl;
 		this.actionPointUrl = actionPointUrl;
 		this.vehicleDataUrl = vehicleDataUrl;
+		this.temperatureUrl = temperatureUrl;
 	}
 	
 	public String getPilotName() {
@@ -62,4 +64,7 @@ public class EngineInfo {
 		return vehicleDataUrl;
 	}
 	
+	public String getTemperatureUrl() {
+		return temperatureUrl;
+	}
 }

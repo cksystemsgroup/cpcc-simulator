@@ -38,6 +38,9 @@ VvPointOverlay.prototype.setPosition = function(point) {
 }
 
 VvPointOverlay.prototype.setVehicle = function(vehicle) {
+	if (!this.div_) {
+		return;
+	}
 	while (this.div_.childNodes.length > 0) {
 		this.div_.removeChild(this.div_.firstChild);
 	}

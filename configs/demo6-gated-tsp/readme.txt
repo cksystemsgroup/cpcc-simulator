@@ -82,13 +82,14 @@ algorithm initiates a migration of this VV to the RV.  After a VV has completed
 its mission, i.e., all APs have been processed, the mapping algorithm initiates
 a migration back to the central Engine.
 
-Video demo6-heatmap.avi visualizes the measured temperature values of the APs
-as a heatmap overlay.  The values vary from -15 °C (transparent blue) to 35 °C
-(red).
-
 Picture demo6-snapshot.png shows an advanced stage of this demonstration mission
 displaying three VVs in action.  Green lines show VVs carried by RVs and red
 lines indicate migrations of VVs among RVs.
+
+Video demo6-heatmap.avi visualizes the measured temperature values of the APs
+as a heatmap overlay.  The values vary from -15 °C (transparent blue) to 35 °C
+(red).  Image demo6-heatmap-snapshot.png presents an advanced stage of this
+video.
 
 
 Colors:
@@ -115,6 +116,9 @@ demo6-heatmap.avi
 
 demo6-snapshot.png
     Demonstration in action.
+
+demo6-heatmap-snapshot.png
+    Heatmap demonstration in action.
 
 demo6-info-window.png
     Action point info window.

@@ -53,6 +53,9 @@ After that, update your software:
 	cd $CPCC_SIM_HOME
 	./deploy.sh
 
+Analoguous to real vehicle four, you get real vehicles five, six, and seven by
+installing file tomcat-pilot567-patch-*.tar.bz2 .
+
 
 
 3. Startup

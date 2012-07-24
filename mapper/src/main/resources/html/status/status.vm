@@ -29,35 +29,51 @@
 #set( $rd = $reg.get($key) )
 					<tr>
 #if( $rd.isCentralEngine() )
-						<td style="color: brown;">Central Engine URL: <a href="$key">$key</a> <br/>
+						<td><span style="color: brown;">Central Engine URL: </span><a href="$key">$key</a>
 #else
-						<td>Engine URL: <a href="$key">$key</a> <br/>
+						<td>Engine URL: <a href="$key">$key</a>
 #end
 #if( $rd.getPilotUrl() )
-Pilot URL: <a href="$rd.getPilotUrl()">$rd.getPilotUrl()</a> <br/>
+<br/>Pilot URL: <a href="$rd.getPilotUrl()">$rd.getPilotUrl()</a> <br/>
 #set( $pilotName = false )
 #set( $pilotName = $rd.getPilotConfig().get("pilotName") )
 #if( $pilotName )
-Pilot Name: <a href="$rd.getPilotUrl()">$pilotName</a> <br/>
+Pilot Name: <a href="$rd.getPilotUrl()">$pilotName</a>
 #end
 #end
 #if ( $rd.getSensors() )
-Available sensors:
+<br/>Available sensors:
 #set( $first = true )
 #set( $su = $rd.getPilotUrl() + "/sensor" )
 #foreach( $sensor in $rd.getSensors() )#if( !$first ),#{end} <a href="$su/$sensor">$sensor</a>#set( $first = false )#end
-#set( $vehMap = $algo.getVirtualVehicleMap().get($key) )
-#if( $vehMap.size() > 0 )
-<br/>Vehicles: 
+#end
+
+#set( $vehList = $algo.getVirtualVehicleList() )
+#set( $vs = [] )
+#foreach( $vehicleInfo in $vehList )
+#if( $vehicleInfo.getEngineUrl() == $key )
+#set( $nul = $vs.add( $vehicleInfo ) )
+#end
+#end
+
+#if( $vs.size() > 0 )
+<br/>Vehicles:
 #set( $fvs = 1 )
-#foreach( $vehicleStatus in $vehMap.values() )
+#foreach( $vehicleInfo in $vs )
+<!-- $vehicleInfo.getVehicleStatus().getState() -->
+#set( $st = $vehicleInfo.getVehicleStatus().getState() )
+#set( $col = "white" )
+#if( $st == "SUSPENDED" )#set( $col = "grey" )#end
+#if( $st == "ACTIVE" )#set( $col = "green" )#end
+#if( $st == "CORRUPT" )#set( $col = "red" )#end
+#if( $st == "COMPLETED" )#set( $col = "blue" )#end
+
 #if( $fvs == 1 )
 #set( $fvs = 0 )
 #else
 ,
 #end
-<a href="$key/vehicleDetail.tpl?vehicle=$vehicleStatus.getName()">$vehicleStatus.getId()</a>
-#end
+<a href="$key/vehicleDetail.tpl?vehicle=$vehicleInfo.getVehicleName()"><span style="color: $col;">$vehicleInfo.getVehicleStatus().getId()</span></a>
 #end
 #end
 						</td>

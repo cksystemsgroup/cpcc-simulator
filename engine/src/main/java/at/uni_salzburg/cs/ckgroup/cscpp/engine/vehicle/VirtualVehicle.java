@@ -2,7 +2,7 @@
  * @(#) VirtualVehicle.java
  *
  * This code is part of the ESE CPCC project.
- * Copyright (c) 2011  Clemens Krainer, Andreas Schroecker, Bernhard Zechmeister
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
@@ -36,22 +32,20 @@ import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ActionPicture;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Parser;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Position;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.TaskListBuilder;
+
 
 public class VirtualVehicle extends AbstractVirtualVehicle {
-	
+
 	Logger LOG = Logger.getLogger(VirtualVehicle.class);
 	
 	private boolean programCorrupted = true;
         
-    private ListIterator<Command> listIter;
-	private List<Command> commandList;
-    private Command currentCommand;
+	private List<Task> taskList;
+    private Task currentTask;
+    private int currentIndex;
 
     private IGeodeticSystem geodeticSystem = new WGS84();
     private String postponedLogging = null;
@@ -62,95 +56,42 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 * @param workDir the working directory of this virtual vehicle.
 	 * @throws IOException thrown in case of missing files or folders.
 	 */
-	public VirtualVehicle (File workDir) throws IOException
-	{
+	public VirtualVehicle (File workDir) throws IOException {
+		
 		super(workDir);
 		
-		boolean parse = !readVehicleState();
+		File input = vehicleStatusTxt.exists() ? vehicleStatusTxt : program;
 		
-		try 
-		{
-			currentCommand = null;
+		Scanner scanner = new Scanner(new FileInputStream(input));
+		
+		TaskListBuilder	builder = new TaskListBuilder(dataDir);
+		
+		try {
+			currentIndex = 0;
+			taskList = builder.build(scanner);
 			
-			if (parse)
-			{
-				Scanner sc = new Scanner(program.getAbsolutePath());
-				Parser pa = new Parser(dataDir);
-	
-				commandList = pa.run(sc);
-			}
-			
-			listIter = commandList.listIterator();
-			
-			// get first command which have to be executed
-			while (listIter.hasNext())
-			{
-				currentCommand = listIter.next();
-				
-				if (!currentCommand.isFinished())
+			currentTask = null;
+			for (Task task : taskList) {
+				if (!task.isComplete()) {
+					currentTask = task;
 					break;
+				}
+				++currentIndex;
 			}
 			
-			if (currentCommand==null || currentCommand.isFinished()) {
-				currentCommand = null;
+			if (currentTask == null) {
 				setCompleted();
 			}
 			
 			programCorrupted = false;
 
-			storeVehicleState();
-		} 
-		catch(Exception e)
-		{
+			saveState();
+			
+		} catch(Exception e) {
 			addLogEntry("Vehicle " + workDir.getName() + " is corrupt. Execution refused.", e);
 			LOG.error("Vehicle " + workDir.getName() + " is corrupt. Execution refused.", e);
 		}
 
-	}
-
-	@SuppressWarnings("unchecked")
-	private boolean readVehicleState()
-	{
-		if (!vehicleStatus.exists() || vehicleStatus.length() == 0) {
-			LOG.info("Vehicle " + workDir + " has no state yet. Reading state cancelled.");
-			return false;
-		}
-		
-		try 
-		{
-			FileInputStream fin = new FileInputStream(vehicleStatus);
-			ObjectInputStream objStream = new ObjectInputStream(fin);
-			commandList = (List<Command>)objStream.readObject();
-			for (Command cmd : commandList) {
-				for (IAction action : cmd.getActions()) {
-					if (action instanceof ActionPicture) {
-						((ActionPicture)action).setDataDir(dataDir);
-					}
-				}
-			}
-		} 
-		catch (Exception e) 
-		{
-			LOG.error("Error at reading state of vehicle " + workDir + " from file.", e);
-			return false;
-		}
-		
-		return true;
-	}
-	
-	private void storeVehicleState()
-	{
-		super.saveState();
-		try 
-		{
-			FileOutputStream fout = new FileOutputStream(vehicleStatus);
-			ObjectOutputStream objStream = new ObjectOutputStream(fout);
-			objStream.writeObject(commandList);
-		} 
-		catch (IOException e) 
-		{
-			LOG.error("Error at storing state of vehicle " + workDir + " to file.", e);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -162,8 +103,9 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		//get current position
 		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
 		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
-		if (currentPosition == null || isCompleted() || currentCommand == null || altitudeOverGround == null)
+		if (currentPosition == null || isCompleted() || currentTask == null || altitudeOverGround == null) {
 			return;
+		}
 		currentPosition = new PolarCoordinate(currentPosition.getLatitude(), currentPosition.getLongitude(), altitudeOverGround.doubleValue());
 		CartesianCoordinate currentPosCartesian = geodeticSystem.polarToRectangularCoordinates(currentPosition);
 		
@@ -172,59 +114,55 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			postponedLogging = null;
 		}
 		
-		//check if command position is reached
-		Position position = currentCommand.getPosition();
-		PolarCoordinate commandPosition = position.getPoint();
-		CartesianCoordinate commandPosCartesian = geodeticSystem.polarToRectangularCoordinates(commandPosition);
-		double distance = commandPosCartesian.subtract(currentPosCartesian).norm();
+		//check if task position is reached
+		PolarCoordinate taskPosition = currentTask.getPosition();
+		CartesianCoordinate taskPosCartesian = geodeticSystem.polarToRectangularCoordinates(taskPosition);
+		double distance = taskPosCartesian.subtract(currentPosCartesian).norm();
 		
-		if (distance <= position.getTolerance()) {
-			currentCommand.execute(sensorProxy);
+		if (distance <= currentTask.getTolerance()) {
+			currentTask.execute(sensorProxy);
 			
-			if (currentCommand.isFinished()) {
-				if (listIter.hasNext()) {
-					currentCommand = listIter.next();
-				} else {
-					currentCommand = null;
+			if (currentTask.isComplete()) {
+				if (currentIndex >= taskList.size()-1) {
+					currentTask = null;
+					++currentIndex;
 					try {
 						setCompleted();
 					} catch (IOException e) {
 						LOG.error("Can not set vehicle " + getWorkDir() + " to completed.", e);
 					}
+				} else {
+					currentTask = taskList.get(++currentIndex);
 				}
 			}
 
-			storeVehicleState();
+			saveState();
 		}
 		
 	}
 
 	/* (non-Javadoc)
-	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCommandList()
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getTaskList()
 	 */
 	@Override
-	public List<Command> getCommandList() {
-		return commandList;
+	public List<Task> getTaskList() {
+		return taskList;
 	}
 	
 	/* (non-Javadoc)
-	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCurrentCommandIndex()
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCurrentTaskIndex()
 	 */
 	@Override
-	public int getCurrentCommandIndex() {
-		if (listIter == null || commandList == null || currentCommand == null)
-			return -1;
-		
-		int next = listIter.nextIndex();
-		return next > commandList.size() ? -1 : next-1;
+	public int getCurrentTaskIndex() {
+		return currentIndex;
 	}
 	
 	/* (non-Javadoc)
-	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCurrentCommand()
+	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCurrentTask()
 	 */
 	@Override
-	public Command getCurrentCommand() {
-		return currentCommand;
+	public Task getCurrentTask() {
+		return currentTask;
 	}
 
 	/* (non-Javadoc)

@@ -1,8 +1,8 @@
 /*
  * @(#) Scanner.java
- * 
- * This code is part of the ESE CPCC project.
- * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ *
+ * This code is part of the CPCC project.
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,189 +20,160 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 
+public class Scanner {
+	
+	@SuppressWarnings("serial")
+	private static final Map<String,Token> charMap = new HashMap<String, Token>() {{
+		put(Symbol.LEFT_PAREN.getSymbolString(),	new Token(Symbol.LEFT_PAREN, Symbol.LEFT_PAREN.getSymbolString(), null));
+		put(Symbol.LEFT_BRACK.getSymbolString(),	new Token(Symbol.LEFT_BRACK, Symbol.LEFT_BRACK.getSymbolString(), null));
+		put(Symbol.LEFT_BRACE.getSymbolString(),	new Token(Symbol.LEFT_BRACE, Symbol.LEFT_BRACE.getSymbolString(), null));
+		put(Symbol.RIGHT_PAREN.getSymbolString(),	new Token(Symbol.RIGHT_PAREN, Symbol.RIGHT_PAREN.getSymbolString(), null));
+		put(Symbol.RIGHT_BRACK.getSymbolString(),	new Token(Symbol.RIGHT_BRACK, Symbol.RIGHT_BRACK.getSymbolString(), null));
+		put(Symbol.RIGHT_BRACE.getSymbolString(),	new Token(Symbol.RIGHT_BRACE, Symbol.RIGHT_BRACE.getSymbolString(), null));
+		put(Symbol.PERIOD.getSymbolString(),		new Token(Symbol.PERIOD, Symbol.PERIOD.getSymbolString(), null));
+		put(Symbol.PLUS.getSymbolString(),			new Token(Symbol.PLUS, Symbol.PLUS.getSymbolString(), null));
+		put(Symbol.MINUS.getSymbolString(),			new Token(Symbol.MINUS, Symbol.MINUS.getSymbolString(), null));
+		put(Symbol.COLON.getSymbolString(),			new Token(Symbol.COLON, Symbol.COLON.getSymbolString(), null));
+		put(Symbol.SEMICOLON.getSymbolString(),		new Token(Symbol.SEMICOLON, Symbol.SEMICOLON.getSymbolString(), null));
+		put(Symbol.COMMA.getSymbolString(),			new Token(Symbol.COMMA, Symbol.COMMA.getSymbolString(), null));
+		put(Symbol.DIVIDE.getSymbolString(),		new Token(Symbol.DIVIDE, Symbol.DIVIDE.getSymbolString(), null));
+	}};
 
-public class Scanner 
-{
-	private InputStreamReader input_file;
-	private int c;
-	
-	private int int_value;
-	private double double_value;
-	private String identifier;
-	
-	private HashMap<String, Integer> map_keywords;
-	
-	public static final int SymDOUBLE = 1;
-	public static final int SymNUMBER = 2;
-	public static final int SymIDENTIFIER = 3;
-	public static final int SymPOINT = 4;
-	public static final int SymPICTURE = 5;
-	public static final int SymTEMPERATURE = 6;
-	public static final int SymEOF = 7;
-	public static final int SymTOLERANCE = 8;
-	public static final int SymAIRPRESSURE = 9;
-	public static final int SymALTITUDE = 10;
-	public static final int SymCOURSE = 11;
-	public static final int SymRANDOM = 12;
-	public static final int SymSONAR = 13;
-	public static final int SymSPEED = 14;
-	
-	int line;
-
-
-	public Scanner(String strFile) throws FileNotFoundException
-	{ 
-		line = 1;
-		c = 0;
-		map_keywords = new HashMap<String, Integer>();
-		
-		map_keywords.put("POINT", SymPOINT);
-		map_keywords.put("PICTURE", SymPICTURE);
-		map_keywords.put("TEMPERATURE", SymTEMPERATURE);
-		map_keywords.put("TOLERANCE", SymTOLERANCE);
-		map_keywords.put("AIRPRESSURE", SymAIRPRESSURE);
-		map_keywords.put("ALTITUDE", SymALTITUDE);
-		map_keywords.put("COURSE", SymCOURSE);
-		map_keywords.put("RANDOM", SymRANDOM);
-		map_keywords.put("SONAR", SymSONAR);
-		map_keywords.put("SPEED", SymSPEED);
-		
-		FileInputStream input_stream = new FileInputStream(strFile);
-		input_file = new InputStreamReader(input_stream);
+	private static boolean isDigit(int c) {
+		return c >= '0' && c <= '9';
 	}
 	
-	public void next_char()
-	{
-		try 
-		{
-			c = input_file.read();
+	private static boolean isLetter (int c) {
+		return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '_';
+	}
+	
+	private static boolean isSpace(int c) {
+		return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+	}
+	
+	private InputStreamReader reader;
+	
+	private int ch = -2;
+	
+	private int lineNumber = 1;
+	private int columnNumber = 0;
+
+	public Scanner (InputStream inStream) {
+		reader = new InputStreamReader(inStream);
+	}
+	
+	public int getLineNumber() {
+		return lineNumber;
+	}
+	
+	public int getColumnNumber() {
+		return columnNumber;
+	}
+
+	private int getChar() throws IOException {
+		int x = reader.read();
+		++columnNumber;
+		if (x == '\n') {
+			++lineNumber;
+			columnNumber = 0;
+		}
+		return x;
+	}
+	
+	public Token next() throws IOException {
+
+		if (ch == -2) {
+			ch = getChar();
+		}
+		
+		while (isSpace(ch)) {
+			ch = getChar();
+		}
+				
+		if (ch == -1) {
+			return new Token(Symbol.END, null, null);
+		}
+		
+		// number
+		if (isDigit(ch)) {
+			StringBuilder b = new StringBuilder();
+			boolean decimalSeparatorFound = false; 
 			
-			if (c=='\n')
-				line++;
-		} 
-		catch (IOException e) 
-		{
-			c = -1;
-		}
-	}
-	
-	int get_line()
-	{
-		return line;
-	}
-	
-	public int read_sym() 
-	{
-		int sym = 0;
-		while ((c!=-1) && (c<=' '))
-		{
-			next_char();
+			do {
+				b.append((char)ch);
+				ch = getChar();
+				if (!decimalSeparatorFound && ch == '.') {
+					b.append((char)ch);
+					decimalSeparatorFound = true;
+					ch = getChar();
+				}
+			} while (isDigit(ch));
+			
+			return new Token(Symbol.NUMBER, b.toString(), new BigDecimal(b.toString()));
 		}
 		
-		if (c==-1)
-		{
-			sym = SymEOF;
-		}
-		else if ((c>='0') && (c<='9'))
-		{
-			sym = read_number();
-		}
-		else if (((c>='a') && (c<='z')) || ((c>='A') && (c<='Z')))
-		{
-			sym = read_identifier();
-		}
-		
-		return sym;
-	}
-	
-	
-	private int read_number()
-	{
-		int ret = 0;
-		
-		String strNumber = new String();
-		
-		do 
-		{
-			strNumber+=(char)c;
-			next_char();
-		}
-		while ((c>='0') && (c<='9'));
-		
-		if (c=='.')
-		{	
-			do 
-			{
-				strNumber+=(char)c;
-				next_char();
+		// string literal
+		if (ch == '"' || ch == '\'') {
+			int delimiter = ch;
+			
+			StringBuilder b = new StringBuilder();
+			while ( (ch = getChar()) >= 0 && ch != delimiter) {
+				b.append((char)ch);
 			}
-			while ((c>='0') && (c<='9'));
 			
-			double_value = Double.parseDouble(strNumber);
+			ch = getChar();
 			
-			ret = SymDOUBLE;
-		}
-		else
-		{
-			int_value = Integer.parseInt(strNumber);
-			double_value = Double.parseDouble(strNumber);
-			
-			ret = SymNUMBER;
+			return new Token(Symbol.LITERAL, b.toString(), null);
 		}
 		
-		return ret;
-	}
-	
-	
-	private int read_identifier()
-	{
-		identifier = new String();
-		
-		while (((c>='0') && (c<='9')) || 
-				((c>='a') && (c<='z')) || 
-				((c>='A') && (c<='Z')) || (c=='_'))
-		{
-			identifier+=(char)c;
+		// comment
+		if (String.valueOf(ch).equals(Symbol.NUMBER_SIGN.getSymbolString())) {
+			StringBuilder b = new StringBuilder();
 			
-			next_char();
+			while ( (ch = getChar()) >= 0 && ch != '\n' && ch != '\r') {
+				b.append((char)ch);
+			}
+			
+			return new Token(Symbol.COMMENT, b.toString(), null);
 		}
 		
-		return get_keyword();
-	}
-	
-	private int get_keyword()
-	{
-		String str = identifier.toUpperCase();
-		
-		Integer sym = (Integer)map_keywords.get(str);
+		// identifier
+		if (isLetter(ch)) {
+			StringBuilder b = new StringBuilder();
+			b.append((char)ch);
 			
-		return (sym==null ? SymIDENTIFIER : sym.intValue());
+			while ( (ch = getChar()) >= 0 && (isLetter(ch) || isDigit(ch)) ) {
+				b.append((char)ch);
+			}
+			
+			String identifier = b.toString();
+			
+			Symbol sym = Symbol.getSymbol(identifier);
+			
+			if (sym != null) {
+				return new Token(sym, identifier, null);
+			}
+
+			return new Token(Symbol.IDENT, identifier, null);
+		}
+
+		String cs = String.valueOf((char)ch);
+		ch = getChar();
+
+		Token token = charMap.get(cs);
+		
+		if (token != null) {
+			return token;
+		}
+				
+		return new Token(Symbol.OTHER, cs, null);
 	}
 
-	
-	public int get_int_value()
-	{
-		return int_value;
-	}
-	
-	public double get_double_value()
-	{
-		return double_value;
-	}
-	
-	public String get_identifier()
-	{
-		return identifier;
-	}
-	
 }
-
-
-
-

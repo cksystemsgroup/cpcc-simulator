@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -55,7 +55,7 @@ public class VehicleService extends DefaultService {
 	public final static String ACTION_VEHICLE_DOWNLOAD = "vehicleDownload";
 	public final static String ACTION_VEHICLE_MIGRATION = "vehicleMigration";
 	public final static String ACTION_VEHICLE_DATA = "vehicleData";
-	public final static String ACTION_VEHICLE_COMMAND = "vehicleCommand";
+	public final static String ACTION_VEHICLE_TASK = "vehicleTask";
 	
 	public final static String ACTION_VEHICLE_SUSPEND = "suspend";
 	public final static String ACTION_VEHICLE_RESUME = "resume";
@@ -278,12 +278,12 @@ public class VehicleService extends DefaultService {
 			emit422(request, response);
 			return;
 			
-		} else if (ACTION_VEHICLE_COMMAND.equals(action)) {
+		} else if (ACTION_VEHICLE_TASK.equals(action)) {
 			if (cmd.length > 4) {
 				IVirtualVehicle v = getVehicle(config, cmd[4]);
-				Command currentCommand = v.getCurrentCommand();
-				String currentCommandString = currentCommand != null ? currentCommand.toString() : "";
-				emitByteArray(response, "text/plain", currentCommandString.getBytes());
+				Task currentTask = v.getCurrentTask();
+				String currentTaskString = currentTask != null ? currentTask.toString() : "";
+				emitByteArray(response, "text/plain", currentTaskString.getBytes());
 				return;
 			}
 

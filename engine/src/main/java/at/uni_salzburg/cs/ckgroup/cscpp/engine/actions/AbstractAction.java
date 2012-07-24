@@ -1,8 +1,8 @@
 /*
- * @(#) ActionTemperature.java
+ * @(#) AbstractAction.java
  *
- * This code is part of the ESE CPCC project.
- * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * This code is part of the CPCC project.
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
-
-import java.io.Serializable;
+package at.uni_salzburg.cs.ckgroup.cscpp.engine.actions;
 
 import org.json.simple.JSONAware;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 
-public abstract class AbstractAction implements IAction, Serializable, JSONAware
+public abstract class AbstractAction implements IAction, JSONAware
 {
-	private static final long serialVersionUID = -2728056184176401730L;
 	private long timestamp = 0;
-
 	
 	public long getTimestamp() 
 	{
 		return timestamp;
+	}
+	
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 	
 	@Override

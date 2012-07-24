@@ -79,29 +79,29 @@
 				</thead>
 				<tbody>
 #set( $fmt = $servletConfig.getServletContext().getAttribute("timeFormatter") )
-#set( $currentIndex = $vehicle.getCurrentCommandIndex() )
-#set( $commandList = $vehicle.getCommandList() )
+#set( $currentIndex = $vehicle.getCurrentTaskIndex() )
+#set( $taskList = $vehicle.getTaskList() )
 #set( $x = 0 )
-#foreach( $command in $commandList )
-#if( $vehicle.isProgramCorrupted() )
-#set( $lineClassName = "vvProgramLineError" )
-#else
-#if( $x == 	$currentIndex )
-#set( $lineClassName = "vvProgramLineActive" )
-#else
-#if( $command.is_finished() )
-#set( $lineClassName = "vvProgramLineFinished" )
-#else
-#set( $lineClassName = "vvProgramLine" )
-#end
-#end
-#end
+#foreach( $task in $taskList )
+	#if( $vehicle.isProgramCorrupted() )
+		#set( $lineClassName = "vvProgramLineError" )
+	#else
+		#if( $x == 	$currentIndex )
+			#set( $lineClassName = "vvProgramLineActive" )
+		#else
+			#if( $task.isComplete() )
+				#set( $lineClassName = "vvProgramLineFinished" )
+			#else
+				#set( $lineClassName = "vvProgramLine" )
+			#end
+		#end
+	#end
 					<tr class="$lineClassName">
 #set( $pattern1 = '"([^"]+)"' )
 #set( $replacement1 = '<a href="'+"$contextPath/vehicle/html/vehicleData/$name/$1" + '">"$1"</a>' )
 #set( $pattern2 = "'([^']+)'" )
 #set( $replacement2 = "<span style="+'"color: brown"'+">'$1'</span>" )
-#set( $code = $command.toString().replaceAll("\n","</br>").replaceAll($pattern1,$replacement1).replaceAll($pattern2,$replacement2) )
+#set( $code = $task.toString().replaceAll("\n","</br>").replaceAll($pattern1,$replacement1).replaceAll($pattern2,$replacement2) )
 #set( $code = $fmt.formatCode($code) )
 						<td>$code</td>
 					</tr>

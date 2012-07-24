@@ -1,8 +1,8 @@
 /*
- * @(#) ParserException.java
+ * @(#) ParseException.java
  *
- * This code is part of the ESE CPCC project.
- * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * This code is part of the CPCC project.
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,17 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-@SuppressWarnings("serial")
-public class ParserException extends Exception
-{
-	public ParserException(String msg)
-	{
-		super(msg);
+import java.util.Locale;
+
+public class ParseException extends Exception {
+
+	private static final long serialVersionUID = 779626800943886130L;
+
+	public ParseException(Symbol expected, Scanner scanner, Token token) {
+		super(String.format(Locale.US,
+				"Expected a %s but got a %s in line %d column %d",
+				expected.name(), token.getSymbol().name(),
+				scanner.getLineNumber(), scanner.getColumnNumber()));
 	}
 
 }

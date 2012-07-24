@@ -111,7 +111,7 @@ ActionPointOverlay.prototype.actionPointToHTML = function(actionPoint) {
 	
 	return "<div>" + "Virtual Vehicle: " + actionPoint["vehicle.id"] + "</br>"
 		+ "Action Point: " + actionPoint.actionPoint.latitude + " N, " + actionPoint.actionPoint.longitude + " E, " + actionPoint.actionPoint.altitude + " m </br>"
-		+ "Tolerance: " + actionPoint.actionPoint.tolerance + "m </br>"
+		+ "Tolerance: " + actionPoint.tolerance + "m </br>"
 		+ table
 		+ "</div>";
 }

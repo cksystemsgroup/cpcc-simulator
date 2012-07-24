@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 
 public interface IVirtualVehicle {
 
@@ -98,19 +98,19 @@ public interface IVirtualVehicle {
 	Properties getProperties();
 	
 	/**
-	 * @return the virtual vehicle commands as a list of strings.
+	 * @return the virtual vehicle tasks as a list of strings.
 	 */
-	List<Command> getCommandList();
+	List<Task> getTaskList();
 
 	/**
-	 * @return the index of the current command in the command list.
+	 * @return the index of the current task in the task list.
 	 */
-	int getCurrentCommandIndex();
+	int getCurrentTaskIndex();
 	
 	/**
-	 * @return the currently executing command.
+	 * @return the currently executing task.
 	 */
-	Command getCurrentCommand();
+	Task getCurrentTask();
 	
 	/**
 	 * @return the current program is corrupted.

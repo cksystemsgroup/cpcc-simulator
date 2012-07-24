@@ -27,8 +27,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -41,6 +41,7 @@ public class ActionPointQuery implements IQuery {
 	private static final String PROP_VEHICLE_STATE = "state";
 	private static final String PROP_VEHICLE_ACTIONS = "actions";
 	private static final String PROP_VEHICLE_ACTION_POINT = "actionPoint";
+	private static final String PROP_VEHICLE_TOLERANCE = "tolerance";
 
 	private Map<String, IVirtualVehicle> vehicleMap;
 
@@ -68,7 +69,7 @@ public class ActionPointQuery implements IQuery {
 		
 		int actionPointIndex = Integer.valueOf(apIndexString);
 
-		if (actionPointIndex > vehicle.getCommandList().size()-1) {
+		if (actionPointIndex > vehicle.getTaskList().size()-1) {
 //			LOG.info("action point " + parameters[0] + ":" + parameters[1] + ":" + parameters[2] + ":" + parameters[3] + ":" + parameters[4] + "  No such action point!");
 			return JSONValue.toJSONString("No such action point!");
 		}
@@ -90,12 +91,13 @@ public class ActionPointQuery implements IQuery {
 			props.put(PROP_VEHICLE_STATE, "suspended");
 		}
 		
-		Command cmd = vehicle.getCommandList().get(actionPointIndex);
+		Task cmd = vehicle.getTaskList().get(actionPointIndex);
 			
 		props.put(PROP_VEHICLE_ACTION_POINT, cmd.getPosition());
+		props.put(PROP_VEHICLE_TOLERANCE, cmd.getTolerance());
 
 		JSONArray act = new JSONArray();
-		for (IAction a : cmd.getActions()) {
+		for (IAction a : cmd.getActionList()) {
 			act.add(a);
 		}
 		props.put(PROP_VEHICLE_ACTIONS, act);

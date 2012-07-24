@@ -121,7 +121,10 @@ public class GatedTspMappingAlgorithm extends SimpleMappingAlgorithm implements 
 				rvInfo.occupied = false;
 			}
 			
-			if (rvInfo.occupied && rvInfo.isInactive() && statusProxyEntry.getValue().getCurrentPosition().getAltitude() < 0.5) {
+			if (rvInfo.occupied && rvInfo.isInactive() && 
+					statusProxyEntry.getValue().getCurrentPosition() != null &&
+					statusProxyEntry.getValue().getCurrentPosition().getAltitude() < 0.5)
+			{
 				rvInfo.occupied = false;
 				rvInfo.resetInactiveCycles();
 				LOG.info("resetInactiveCycles() called");
@@ -195,7 +198,7 @@ public class GatedTspMappingAlgorithm extends SimpleMappingAlgorithm implements 
 			}
 			
 			IStatusProxy statusProxy = mapper.getStatusProxyMap().get(engineUrl);
-			PolarCoordinate currentPosition = statusProxy.getCurrentPosition();		
+			PolarCoordinate currentPosition = statusProxy.getCurrentPosition();
 
 			List<IRVCommand> courseCommandList = new ArrayList<IRVCommand>();
 			

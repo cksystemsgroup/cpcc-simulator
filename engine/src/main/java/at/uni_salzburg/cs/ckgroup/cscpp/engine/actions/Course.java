@@ -1,8 +1,8 @@
 /*
- * @(#) ActionRandom.java
+ * @(#) Course.java
  *
- * This code is part of the ESE CPCC project.
- * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * This code is part of the CPCC project.
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,53 +18,48 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
+package at.uni_salzburg.cs.ckgroup.cscpp.engine.actions;
 
-import java.io.Serializable;
 import java.util.Locale;
 
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
-public class ActionRandom extends AbstractAction implements Serializable
-{
-	private static final long serialVersionUID = 2187229388004412298L;
-	private int random = 0;
+public class Course extends AbstractAction {
+
+	private Double courseOverGround;
 	
-	public int getRandom() {
-		return random;
+	public Double getCourseOverGround() {
+		return courseOverGround;
 	}
 
+	public void setCourseOverGround(Double courseOverGround) {
+		this.courseOverGround = courseOverGround;
+	}
+	
 	@Override
 	protected boolean retrieveValue(ISensorProxy sprox) {
-		
-		Integer sensorValue = sprox.getSensorValueAsInteger(ISensorProxy.SENSOR_NAME_RANDOM);
-		if (sensorValue == null) {
-			return false;
-		}
-		
-		random = sensorValue;
-		return true;
+		return null != (courseOverGround = sprox.getCourseOverGround());
 	}
 	
 	@Override
 	public String toString() 
 	{
-		if(getTimestamp() != 0)
-			return String.format(Locale.US, "Random (%d %d)", getTimestamp(), random);
-		else
-			return "Random";
+		if (isComplete()) {
+			return String.format(Locale.US, "Course (%d, %.1f)", getTimestamp(), courseOverGround);
+		}
+		return "Course";
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public String toJSONString() {
 		JSONObject o = new JSONObject();
-		o.put("type", ISensorProxy.SENSOR_NAME_RANDOM);
-		if(getTimestamp() != 0) {
+		o.put("type", "course");
+		if (getTimestamp() != 0) {
 			o.put("time", getTimestamp());
-			o.put("value", random);
+			o.put("value", courseOverGround);
 		}
 		return o.toJSONString();
 	}

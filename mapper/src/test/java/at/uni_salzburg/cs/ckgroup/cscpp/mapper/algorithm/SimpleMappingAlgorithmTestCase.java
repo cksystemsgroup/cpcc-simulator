@@ -16,7 +16,7 @@ public class SimpleMappingAlgorithmTestCase {
 		Double d0 = isNear(current, next, point, 0.5, 0.5);
 		Assert.assertNotNull(d0);
 		Double d = oldIsNear(current, next, point, 0.5, 0.5);
-		Assert.assertNotNull(d);
+		Assert.assertNull(d);
 	}
 
 	

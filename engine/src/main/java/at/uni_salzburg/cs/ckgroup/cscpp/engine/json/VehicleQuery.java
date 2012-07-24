@@ -32,9 +32,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Position;
+import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -98,14 +98,14 @@ public class VehicleQuery implements IQuery {
 				props.put(PROP_VEHICLE_STATE, "suspended");
 			}
 
-			if (vehicle.getCurrentCommand() != null) {
-				Position p = vehicle.getCurrentCommand().getPosition();
-				props.put(PROP_VEHICLE_LATITUDE, Double.valueOf(p.getPoint().getLatitude()));
-				props.put(PROP_VEHICLE_LONGITUDE, Double.valueOf(p.getPoint().getLongitude()));
-				props.put(PROP_VEHICLE_ALTITUDE, Double.valueOf(p.getPoint().getAltitude()));
-				props.put(PROP_VEHICLE_TOLERANCE, Double.valueOf(p.getTolerance()));
+			if (vehicle.getCurrentTask() != null) {
+				PolarCoordinate p = vehicle.getCurrentTask().getPosition();
+				props.put(PROP_VEHICLE_LATITUDE, Double.valueOf(p.getLatitude()));
+				props.put(PROP_VEHICLE_LONGITUDE, Double.valueOf(p.getLongitude()));
+				props.put(PROP_VEHICLE_ALTITUDE, Double.valueOf(p.getAltitude()));
+				props.put(PROP_VEHICLE_TOLERANCE, Double.valueOf(vehicle.getCurrentTask().getTolerance()));
 				
-				List<IAction> al = vehicle.getCurrentCommand().getActions();
+				List<IAction> al = vehicle.getCurrentTask().getActionList();
 				JSONArray openActions = new JSONArray();
 				for (IAction action : al) {
 					if (!action.isComplete()) {
@@ -116,12 +116,12 @@ public class VehicleQuery implements IQuery {
 			}
 			
 			JSONArray actionPoints = new JSONArray();
-			for (Command cmd : vehicle.getCommandList()) {
+			for (Task cmd : vehicle.getTaskList()) {
 				JSONObject p = new JSONObject();
-				p.put("latitude", cmd.getPosition().getPoint().getLatitude());
-				p.put("longitude", cmd.getPosition().getPoint().getLongitude());
-//				p.put("altitude", cmd.getPosition().getPt().getAltitude());
-				p.put("completed", Boolean.valueOf(cmd.isFinished()));
+				p.put("latitude", cmd.getPosition().getLatitude());
+				p.put("longitude", cmd.getPosition().getLongitude());
+//				p.put("altitude", cmd.getPosition().getAltitude());
+				p.put("completed", Boolean.valueOf(cmd.isComplete()));
 				actionPoints.add(p);
 			}
 			props.put(PROP_VEHICLE_ACTION_POINTS, actionPoints);

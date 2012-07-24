@@ -27,9 +27,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ActionTemperature;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.IAction;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Temperature;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -52,16 +52,16 @@ public class TemperatureQuery implements IQuery {
 				continue;
 			}
 			
-			List<Command> cmdList = vehicle.getCommandList();
+			List<Task> cmdList = vehicle.getTaskList();
 			
-			for (Command cmd : cmdList) {
-				for (IAction action : cmd.getActions()) {
-					if (action instanceof ActionTemperature && action.isComplete()) {
-						ActionTemperature actionTemp = (ActionTemperature)action;
+			for (Task cmd : cmdList) {
+				for (IAction action : cmd.getActionList()) {
+					if (action instanceof Temperature && action.isComplete()) {
+						Temperature actionTemp = (Temperature)action;
 						JSONObject o = new JSONObject();
-						o.put("lat", Double.valueOf(cmd.getPosition().getPoint().getLatitude()));
-						o.put("lon", Double.valueOf(cmd.getPosition().getPoint().getLongitude()));
-//						o.put("alt", Double.valueOf(cmd.getPosition().getPoint().getAltitude()));
+						o.put("lat", Double.valueOf(cmd.getPosition().getLatitude()));
+						o.put("lon", Double.valueOf(cmd.getPosition().getLongitude()));
+//						o.put("alt", Double.valueOf(cmd.getPosition().getAltitude()));
 						o.put("temp", Double.valueOf(actionTemp.getTemperature()));
 						obj.add(o);
 					}

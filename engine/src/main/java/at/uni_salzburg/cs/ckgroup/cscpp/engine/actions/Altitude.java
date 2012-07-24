@@ -1,8 +1,8 @@
 /*
- * @(#) ActionTemperature.java
+ * @(#) Altitude.java
  *
- * This code is part of the ESE CPCC project.
- * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * This code is part of the CPCC project.
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,54 +18,48 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
+package at.uni_salzburg.cs.ckgroup.cscpp.engine.actions;
 
-import java.io.Serializable;
 import java.util.Locale;
 
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
-public class ActionTemperature extends AbstractAction implements Serializable
-{
-	private static final long serialVersionUID = -6435936757132071656L;
-	private double temperature = 0;
-	
-	public double getTemperature() 
-	{
-		return temperature;
-	}
+public class Altitude extends AbstractAction {
 
+	private Double altitudeOverGround;
+	
+	public Double getAltitudeOverGround() {
+		return altitudeOverGround;
+	}
+	
+	public void setAltitudeOverGround(Double altitudeOverGround) {
+		this.altitudeOverGround = altitudeOverGround;
+	}
+	
 	@Override
 	protected boolean retrieveValue(ISensorProxy sprox) {
-		
-		Double sensorValue = sprox.getSensorValueAsDouble(ISensorProxy.SENSOR_NAME_TEMPERATURE);
-		if (sensorValue == null) {
-			return false;
-		}
-		
-		temperature = sensorValue;
-		return true;
+		return null != (altitudeOverGround = sprox.getAltitudeOverGround());
 	}
 	
 	@Override
 	public String toString() 
 	{
-		if (getTimestamp() != 0)
-			return String.format(Locale.US, "Temperature (%d %.1f)", getTimestamp(), temperature);
-		else
-			return "Temperature";
+		if (isComplete()) {
+			return String.format(Locale.US, "Altitude (%d, %.1f)", getTimestamp(), altitudeOverGround);
+		}
+		return "Altitude";
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public String toJSONString() {
 		JSONObject o = new JSONObject();
-		o.put("type", ISensorProxy.SENSOR_NAME_TEMPERATURE);
+		o.put("type", "altitude");
 		if (getTimestamp() != 0) {
 			o.put("time", getTimestamp());
-			o.put("value", temperature);
+			o.put("value", altitudeOverGround);
 		}
 		return o.toJSONString();
 	}

@@ -1,8 +1,8 @@
 /*
- * @(#) IAction.java
+ * @(#) SymbolTestCase.java
  *
- * This code is part of the ESE CPCC project.
- * Copyright (c) 2011  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * This code is part of the CPCC project.
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,22 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
+import static org.junit.Assert.*;
 
-public interface IAction 
-{
-	public boolean execute(ISensorProxy sprox);
-	
-	public boolean isComplete();
+import org.junit.Test;
+
+public class SymbolTestCase {
+
+	@Test
+	public void testCase01() {
+		
+		for (Symbol s : Symbol.values()) {
+			System.out.println("testCase01:" + s.toString() + ", " + s.getSymbolString());
+		}
+		
+		Symbol s = Symbol.valueOf("LEFT_PAREN");
+		
+		System.out.println("testCase01:" + s.toString() + ", " + s.getSymbolString());
+	}
+
 }

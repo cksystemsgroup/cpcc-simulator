@@ -1,8 +1,8 @@
 /*
- * @(#) ActionPicture.java
+ * @(#) Picture.java
  *
- * This code is part of the ESE CPCC project.
- * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * This code is part of the CPCC project.
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,51 +18,60 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
+package at.uni_salzburg.cs.ckgroup.cscpp.engine.actions;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Locale;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
-public class ActionPicture extends AbstractAction implements Serializable {
+public class Picture extends AbstractAction {
 	
-	private static final long serialVersionUID = -6396710753568266987L;
+	private static final Logger LOG = Logger.getLogger(Picture.class);
+
 	private String filename = null;
+	
 	private File dataDir;
 
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	
+	public File getDataDir() {
+		return dataDir;
+	}
+	
+	public void setDataDir(File dataDir) {
+		this.dataDir = dataDir;
+	}
+	
 	@Override
 	protected boolean retrieveValue(ISensorProxy sprox) 
 	{
-		InputStream instream = sprox.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
-		if (instream == null) {
+		InputStream inStream = sprox.getSensorValueAsStream(ISensorProxy.SENSOR_NAME_PHOTO);
+		if (inStream == null) {
 			return false;
 		}
 		
-		try 
-		{
+		try {
 			File f = File.createTempFile("img", ".png", dataDir);
-			filename = f.getName();
-			FileOutputStream o = new FileOutputStream(f);
-
-			int l;
-			byte[] tmp = new byte[2048];
-			while ((l = instream.read(tmp)) != -1) 
-			{
-				o.write(tmp, 0, l);
-			}
-			o.close();
+			setFilename(f.getName());
+			FileOutputStream outStream = new FileOutputStream(f);			
+			FileUtils.copyStream(inStream, outStream, true);
 			return true;
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+		} catch (IOException e) {
+			LOG.error("Reading sensor " + ISensorProxy.SENSOR_NAME_PHOTO, e);
 		}
 
 		return false;
@@ -71,10 +80,10 @@ public class ActionPicture extends AbstractAction implements Serializable {
 	@Override
 	public String toString() 
 	{
-		if (getTimestamp() != 0)
-			return String.format(Locale.US, "Picture (%d \"%s\")", getTimestamp(), filename);
-		else
-			return "Picture";
+		if (isComplete()) {
+			return String.format(Locale.US, "Picture (%d, \"%s\")", getTimestamp(), getFilename());
+		}
+		return "Picture";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -84,18 +93,8 @@ public class ActionPicture extends AbstractAction implements Serializable {
 		o.put("type", ISensorProxy.SENSOR_NAME_PHOTO);
 		if (getTimestamp() != 0) {
 			o.put("time", getTimestamp());
-			o.put("value", filename);
+			o.put("value", getFilename());
 		}
 		return o.toJSONString();
-	}
-
-	public String getFilename() 
-	{
-		return filename;
-	}
-
-	public void setDataDir(File dataDir) 
-	{
-		this.dataDir = dataDir;
 	}
 }

@@ -89,7 +89,7 @@ public interface IRegistrationData extends JSONAware {
 	Object getMapperData();
 	
 	/**
-	 * Set the mapper internal data for this Ral Vehicle.
+	 * Set the mapper internal data for this Real Vehicle.
 	 * 
 	 * @param mapperData the mapper specific data.
 	 */

@@ -37,7 +37,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Command;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
@@ -68,11 +68,6 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 * The virtual vehicle program to be executed.
 	 */
 	protected File program;
-	
-	/**
-	 * The virtual vehicle status.
-	 */
-	protected File vehicleStatus;
 	
 	/**
 	 * The virtual vehicle status as a text file.
@@ -139,10 +134,6 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		if (!program.exists()) {
 			throw new IOException("Program file not found " + program);
 		}
-		vehicleStatus = new File(workDir, STATUS_PATH);
-		if (!vehicleStatus.exists()) {
-			vehicleStatus.createNewFile();
-		}
 		
 		vehicleStatusTxt = new File(workDir, STATUS_TXT_PATH);
 		
@@ -182,7 +173,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		}
 		
 		while (running) {
-			LOG.info("Waiting for current command to finish.");
+			LOG.info("Waiting for current task to finish.");
 			try { Thread.sleep(1000); } catch (InterruptedException e) { }
 		}
 
@@ -246,7 +237,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 			try {
 				execute();
 			} catch (Throwable t) {
-				LOG.error("Virtual vehicle command failed.", t);
+				LOG.error("Virtual vehicle task failed.", t);
 			}
 		}
 		
@@ -405,8 +396,8 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	protected void saveState() {
 		try {
 			PrintWriter pw = new PrintWriter(vehicleStatusTxt);
-			for (Command command : getCommandList()) {
-				pw.println(command.toString());
+			for (Task task : getTaskList()) {
+				pw.println(task.toString());
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {

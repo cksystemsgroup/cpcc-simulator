@@ -1,8 +1,8 @@
 /*
- * @(#) ActionSpeed.java
+ * @(#) Random.java
  *
- * This code is part of the ESE CPCC project.
- * Copyright (c) 2012  Clemens Krainer, Michael Kleber, Andreas Schroecker, Bernhard Zechmeister
+ * This code is part of the CPCC project.
+ * Copyright (c) 2012  Clemens Krainer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,53 +18,48 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
+package at.uni_salzburg.cs.ckgroup.cscpp.engine.actions;
 
-import java.io.Serializable;
 import java.util.Locale;
 
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
-public class ActionSpeed extends AbstractAction implements Serializable
-{
-	private static final long serialVersionUID = 3336998124182011297L;
-	private double speedOverGround = 0;
+public class Random extends AbstractAction {
+
+	private Integer random;
 	
-	public double getSpeedOverGround() {
-		return speedOverGround;
+	public Integer getRandom() {
+		return random;
+	}
+	
+	public void setRandom(Integer random) {
+		this.random = random;
 	}
 
 	@Override
 	protected boolean retrieveValue(ISensorProxy sprox) {
-		
-		Double sensorValue = sprox.getSpeedOverGround();
-		if (sensorValue == null) {
-			return false;
-		}
-		
-		speedOverGround = sensorValue;
-		return true;
+		return null != (random = sprox.getSensorValueAsInteger(ISensorProxy.SENSOR_NAME_RANDOM));
 	}
 	
 	@Override
 	public String toString() 
 	{
-		if(getTimestamp() != 0)
-			return String.format(Locale.US, "Speed (%d %.1f)", getTimestamp(), speedOverGround);
-		else
-			return "Speed";
+		if (isComplete()) {
+			return String.format(Locale.US, "Random (%d, %d)", getTimestamp(), random);
+		}
+		return "Random";
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public String toJSONString() {
 		JSONObject o = new JSONObject();
-		o.put("type", "speed");
-		if (getTimestamp() != 0) {
+		o.put("type", ISensorProxy.SENSOR_NAME_RANDOM);
+		if(getTimestamp() != 0) {
 			o.put("time", getTimestamp());
-			o.put("value", speedOverGround);
+			o.put("value", random);
 		}
 		return o.toJSONString();
 	}

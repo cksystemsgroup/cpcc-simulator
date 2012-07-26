@@ -44,6 +44,7 @@
 		<module>mapper-api</module>
 		<module>google-map-viewer</module>
 		<module>utils</module>
+		<module>javascript</module>
 	</modules>
 
 	<scm>

@@ -29,6 +29,11 @@
 			<scope>test</scope>
 		</dependency>
 -->
+		<dependency>
+			<groupId>at.uni-salzburg.cs.cpcc.utils</groupId>
+			<artifactId>utils</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 <!--
 	<properties>

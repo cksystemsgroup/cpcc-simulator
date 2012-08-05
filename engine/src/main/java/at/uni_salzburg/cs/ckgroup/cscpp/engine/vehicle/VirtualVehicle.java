@@ -103,6 +103,17 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		//get current position
 		PolarCoordinate currentPosition = sensorProxy.getCurrentPosition();
 		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
+		if (!isCompleted() && currentTask == null) {
+			currentIndex = 0;
+			for (Task task : taskList) {
+				if (!task.isComplete()) {
+					currentTask = task;
+					break;
+				}
+				++currentIndex;
+			}
+		}
+		
 		if (currentPosition == null || isCompleted() || currentTask == null || altitudeOverGround == null) {
 			return;
 		}

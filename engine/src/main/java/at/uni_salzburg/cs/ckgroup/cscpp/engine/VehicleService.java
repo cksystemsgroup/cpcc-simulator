@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ParseException;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.TaskListBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -56,6 +60,7 @@ public class VehicleService extends DefaultService {
 	public final static String ACTION_VEHICLE_MIGRATION = "vehicleMigration";
 	public final static String ACTION_VEHICLE_DATA = "vehicleData";
 	public final static String ACTION_VEHICLE_TASK = "vehicleTask";
+	public final static String ACTION_VEHICLE_ADD_TASK = "vehicleAddTask";
 	
 	public final static String ACTION_VEHICLE_SUSPEND = "suspend";
 	public final static String ACTION_VEHICLE_RESUME = "resume";
@@ -89,7 +94,7 @@ public class VehicleService extends DefaultService {
 		String action = cmd[3];
 		MimeEntry uploadedFile = null;
 		
-		if (request.getContentType() != null) {
+		if (request.getContentType() != null && !"text/plain".equals(request.getContentType())) {
 			MimeParser parser = new MimeParser(request.getContentType());
 			List<MimeEntry> list = parser.parse(request.getInputStream());
 			String name = null;
@@ -287,6 +292,38 @@ public class VehicleService extends DefaultService {
 				return;
 			}
 
+			emit422(request, response);
+			return;
+			
+		} else if (ACTION_VEHICLE_ADD_TASK.equals(action)) {
+			if (cmd.length > 4) {
+				IVirtualVehicle v = getVehicle(config, cmd[4]);
+				List<Task> taskList = v.getTaskList();
+				
+				List<Task> newTasks = null;
+				try {
+					InputStream inStream = request.getInputStream();
+					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+					FileUtils.copyStream(inStream, outStream, false);
+					TaskListBuilder	builder = new TaskListBuilder(v.getDataDir());
+					newTasks = builder.build(new Scanner(new ByteArrayInputStream(outStream.toByteArray())));
+				} catch (ParseException e) {
+					emit400(request, response, e.getMessage());
+					return;
+				}
+				
+				if (newTasks == null || newTasks.size() == 0) {
+					emit400(request, response, "Can not extract new tasks from request.");
+					return;
+				}
+				
+				taskList.addAll(newTasks);
+				v.saveState();
+				v.setIncomplete();
+				emit200(request, response);
+				return;
+			}
+			
 			emit422(request, response);
 			return;
 			

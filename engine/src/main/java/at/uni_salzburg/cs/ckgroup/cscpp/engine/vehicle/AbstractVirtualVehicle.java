@@ -57,6 +57,8 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	public static final String PROP_VEHICLE_ID = "vehicle.id";
 	public static final String PROP_VEHICLE_FROZEN = "vehicle.frozen";
 	
+	private Object lock = new Object[0];
+	
 	/**
 	 * The working directory of this virtual vehicle. It contains the virtual
 	 * vehicle program, a log of events, and a sub-directory containing all
@@ -375,6 +377,14 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		this.completed = true;
 	}
 	
+	@Override
+	public void setIncomplete() throws IOException {
+		if (this.completed) {
+			this.completed = false;
+			resume();
+		}
+	}
+	
 	public void addLogEntry(String entry) throws IOException {
 		PrintWriter vehicleLog = new PrintWriter(new FileWriter(new File(workDir, LOG_PATH), true));
 		vehicleLog.printf("%d %s\n",System.currentTimeMillis(), entry);
@@ -390,18 +400,24 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	
 	public String getLog() throws IOException {
 		File logFile = new File(workDir, LOG_PATH);
+		if (!logFile.exists()) {
+			logFile.createNewFile();
+		}
 		return FileUtils.loadFileAsString(logFile);
 	}
 
-	protected void saveState() {
-		try {
-			PrintWriter pw = new PrintWriter(vehicleStatusTxt);
-			for (Task task : getTaskList()) {
-				pw.println(task.toString());
+	@Override
+	public void saveState() {
+		synchronized (lock) {
+			try {
+				PrintWriter pw = new PrintWriter(vehicleStatusTxt);
+				for (Task task : getTaskList()) {
+					pw.println(task.toString());
+				}
+				pw.close();
+			} catch (FileNotFoundException e) {
+				LOG.error("Can not save state of vehicle " + workDir, e);
 			}
-			pw.close();
-		} catch (FileNotFoundException e) {
-			LOG.error("Can not save state of vehicle " + workDir, e);
 		}
 	}
 	

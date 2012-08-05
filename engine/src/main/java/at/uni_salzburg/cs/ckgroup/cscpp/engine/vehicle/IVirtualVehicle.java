@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 
+
 public interface IVirtualVehicle {
 
 	/**
@@ -128,5 +129,17 @@ public interface IVirtualVehicle {
 	 * @throws IOException in case of logging fails.
 	 */
 	void addLogEntry(String entry) throws IOException;
+	
+	/**
+	 * Save the state of this virtual vehicle.
+	 */
+	void saveState();
+	
+	/**
+	 * Mark this virtual vehicle as incomplete.
+	 * 
+	 * @throws IOException in case of resuming this virtual vehicle fails.
+	 */
+	void setIncomplete() throws IOException;
 	
 }

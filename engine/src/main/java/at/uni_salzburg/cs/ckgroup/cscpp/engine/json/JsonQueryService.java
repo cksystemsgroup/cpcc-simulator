@@ -37,6 +37,7 @@ public class JsonQueryService extends QueryService {
 	public JsonQueryService (IServletConfig servletConfig) {
 		super (servletConfig);
 		queries.put("vehicle", new VehicleQuery());
+		queries.put("vehicleDetails", new VehicleDetailsQuery());
 		queries.put("actionPoint", new ActionPointQuery());
 		queries.put("temperature", new TemperatureQuery());
 	}
@@ -46,6 +47,9 @@ public class JsonQueryService extends QueryService {
 			if (query instanceof VehicleQuery) {
 				VehicleQuery vehicleQuery = (VehicleQuery)query;
 				vehicleQuery.setVehicleMap(vehicleMap);
+			} else if (query instanceof VehicleDetailsQuery) {
+				VehicleDetailsQuery vehicleDetailsQuery = (VehicleDetailsQuery)query;
+				vehicleDetailsQuery.setVehicleMap(vehicleMap);
 			} else if (query instanceof ActionPointQuery) {
 				ActionPointQuery actionPointQuery = (ActionPointQuery)query;
 				actionPointQuery.setVehicleMap(vehicleMap);

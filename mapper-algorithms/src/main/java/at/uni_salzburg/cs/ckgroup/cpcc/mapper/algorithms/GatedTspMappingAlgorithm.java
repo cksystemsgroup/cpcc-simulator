@@ -123,7 +123,7 @@ public class GatedTspMappingAlgorithm extends SimpleMappingAlgorithm implements 
 			
 			if (rvInfo.occupied && rvInfo.isInactive() && 
 					statusProxyEntry.getValue().getCurrentPosition() != null &&
-					statusProxyEntry.getValue().getCurrentPosition().getAltitude() < 0.5)
+					statusProxyEntry.getValue().getCurrentPosition().getAltitude() < 1.0)
 			{
 				rvInfo.occupied = false;
 				rvInfo.resetInactiveCycles();
@@ -182,8 +182,8 @@ public class GatedTspMappingAlgorithm extends SimpleMappingAlgorithm implements 
 			}
 			
 			PolarCoordinate depotPosition = rd.getAssignedZone().getDepotPosition();
-			if (depotPosition.getAltitude() < 0.5) {
-				depotPosition.setAltitude(0.5);
+			if (depotPosition.getAltitude() < 1.0) {
+				depotPosition.setAltitude(1.0);
 			}
 			
 			RealVehicleInfo rvInfo = (RealVehicleInfo)rd.getMapperData();

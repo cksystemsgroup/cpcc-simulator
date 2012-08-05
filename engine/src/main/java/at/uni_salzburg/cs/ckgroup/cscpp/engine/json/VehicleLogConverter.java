@@ -32,6 +32,9 @@ public class VehicleLogConverter {
 		String[] msgs = log.split("\\s*\\r?\\n\\s*");
 		for (String m : msgs) {
 			String[] parts = m.split("\\s+", 4);
+			if (parts.length < 4) {
+				continue;
+			}
 			Action action = Action.valueOf(parts[1]);
 			if (action == Action.upload && lastEntry != null) {
 				lastEntry.put("motion", Motion.cyber.toString());

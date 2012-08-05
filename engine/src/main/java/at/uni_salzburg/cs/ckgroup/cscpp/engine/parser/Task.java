@@ -23,11 +23,15 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.parser;
 import java.util.List;
 import java.util.Locale;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
-public class Task {
+public class Task implements JSONAware {
 	
 	private PolarCoordinate position;
 	private Double tolerance;
@@ -82,4 +86,23 @@ public class Task {
 		}
 		return String.format(Locale.US, "Point %.8f %.8f %.8f Tolerance %.2f%s\n", position.getLatitude(), position.getLongitude(), position.getAltitude(), tolerance, b.toString());
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toJSONString() {
+		
+		JSONObject obj = new JSONObject();
+		obj.put("point", getPosition());
+		obj.put("tolerance", getTolerance());
+
+		JSONArray act = new JSONArray();
+		for (IAction a : getActionList()) {
+			act.add(a);
+		}
+		obj.put("actions", act);
+		
+		return obj.toJSONString();
+	}
+	
+	
 }

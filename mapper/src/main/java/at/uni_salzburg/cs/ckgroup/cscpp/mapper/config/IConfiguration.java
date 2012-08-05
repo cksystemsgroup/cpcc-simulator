@@ -20,8 +20,10 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper.config;
 
+import java.util.List;
 import java.util.Set;
 
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 
 
@@ -30,7 +32,7 @@ public interface IConfiguration {
 	/**
 	 * @return the class instance of the mapping algorithm. 
 	 */
-	Class<?> getMapperAlgorithmClass();
+	List<Class<IMappingAlgorithm>> getMapperAlgorithmClassList();
 
 	/**
 	 * @return the configured real vehicle zones.

@@ -42,7 +42,7 @@ public class ConfigurationParser {
 	public static final String ERROR_MESSAGE_UNKNOWN_TYPE = "# unknown type!";
 	public static final String ERROR_MESSAGE_UNKNOWN_SENSOR_TYPE = "# unknown sensor type!";
 	public static final String ERROR_CLASS_NOT_FOUND = "# class not found!";
-	public static final String ERROR_MUST_IMPLEMENT_INTERFACE = "# class must implement interface %s";
+	public static final String ERROR_MUST_IMPLEMENT_INTERFACE = "# all classes must implement interface %s";
 	
 	/**
 	 * The uploaded configuration.
@@ -135,43 +135,65 @@ public class ConfigurationParser {
 	}
 	
 	/**
+	 * @param <T>
 	 * @param param the property to be parsed. 
 	 * @return the parsed property as a <code>Class</code> object.
 	 */
-	protected Class<?> parseClassName (String param, Class<?> requiredInterface) {
-		String className = conf.getProperty(param);
-		if (className == null || "".equals(className.trim())) {
+	@SuppressWarnings("unchecked")
+	protected <T> List<Class<T>> parseClassName (String param, Class<T> requiredInterface) {
+		String classNameString = conf.getProperty(param);
+		if (classNameString == null || "".equals(classNameString.trim())) {
 			configErrors.put(param, ERROR_MESSAGE_MISSING_VALUE);
 			configOk = false;
 			return null;
 		}
 		
-		Class<?> c = null;
-		for (ClassLoader loader : classLoaders) {
-			try {
-				c = Class.forName(className,true,loader);
-			} catch (Throwable e) {
+		String[] classNames = classNameString.split("\\s*,\\s*");
 		
+		List<Class<T>> classes = new ArrayList<Class<T>>();
+		StringBuilder sb = new StringBuilder();
+		sb.append(ERROR_CLASS_NOT_FOUND);
+		boolean allClassesFound = true;
+		
+		for (String className : classNames) {
+		
+			Class<?> c = null;
+			for (ClassLoader loader : classLoaders) {
+				try {
+					c = Class.forName(className,true,loader);
+				} catch (Throwable e) {
+			
+				}
+			}
+	
+			if (c == null) {
+				sb.append(" ").append(className);
+				allClassesFound = false;
+				return null;
+			}
+			
+			Class<?>[] interfaces = c.getInterfaces();
+			boolean found = false;
+			for (Class<?> i : interfaces) {
+				if (i.getName().equals(requiredInterface.getName())) {
+					found = true;
+					break;
+				}
+			}
+			
+			if (found) {
+				classes.add((Class<T>)c);	
 			}
 		}
-
-		if (c == null) {
-			configErrors.put(param, ERROR_CLASS_NOT_FOUND);
+		
+		if (!allClassesFound) {
+			configErrors.put(param, sb.toString());
 			configOk = false;
 			return null;
 		}
 		
-		Class<?>[] interfaces = c.getInterfaces();
-		boolean found = false;
-		for (Class<?> i : interfaces) {
-			if (i.getName().equals(requiredInterface.getName())) {
-				found = true;
-				break;
-			}
-		}
-		
-		if (found) {
-			return c;	
+		if (classes.size() == classNames.length) {
+			return classes;
 		}
 		
 		configErrors.put(param, String.format(ERROR_MUST_IMPLEMENT_INTERFACE,requiredInterface.getName()));

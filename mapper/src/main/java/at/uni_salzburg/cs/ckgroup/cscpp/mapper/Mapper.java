@@ -61,18 +61,18 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	private Set<String> centralEngines = new HashSet<String>();
 	private Set<IZone> zones;
 	private Set<IZone> neighborZones;
-	private IMappingAlgorithm mappingAlgorithm;
+	private List<IMappingAlgorithm> mappingAlgorithms;
 	
 	public void setRegistrationData(Map<String, IRegistrationData> registrationData) {
 		this.registrationData = registrationData;
 	}
 	
-	public void setMappingAlgorithm(IMappingAlgorithm mappingAlgorithm) {
-		this.mappingAlgorithm = mappingAlgorithm;
+	public void setMappingAlgorithms(List<IMappingAlgorithm> mappingAlgorithm) {
+		this.mappingAlgorithms = mappingAlgorithm;
 	}
 
-	public IMappingAlgorithm getMappingAlgorithm() {
-		return mappingAlgorithm;
+	public List<IMappingAlgorithm> getMappingAlgorithm() {
+		return mappingAlgorithms;
 	}
 
 	@Override
@@ -138,8 +138,10 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 			e1.printStackTrace();
 		}
 		
-		if (mappingAlgorithm != null) {
-			mappingAlgorithm.execute(this);
+		if (mappingAlgorithms != null) {
+			for (IMappingAlgorithm algorithm : mappingAlgorithms) {
+				algorithm.execute(this);
+			}
 		} else {
 			LOG.error("No mapping algorithm found. Mapping stopped.");
 			cease();

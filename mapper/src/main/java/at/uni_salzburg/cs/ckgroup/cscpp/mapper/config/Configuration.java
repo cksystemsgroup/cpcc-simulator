@@ -79,7 +79,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	/**
 	 * The class name of the mapping algorithm. 
 	 */
-	private Class<?> mapperAlgorithmClass;
+	private List<Class<IMappingAlgorithm>> mapperAlgorithmClassList;
 	
 	/**
 	 * 
@@ -108,7 +108,9 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	@Override
 	public void loadConfig (InputStream inStream) throws IOException {
 		super.loadConfig(inStream);
-		mapperAlgorithmClass = parseClassName(PROP_MAPPER_ALGORITHM, IMappingAlgorithm.class);
+		mapperAlgorithmClassList = new ArrayList<Class<IMappingAlgorithm>>();
+		mapperAlgorithmClassList.addAll(parseClassName(PROP_MAPPER_ALGORITHM, IMappingAlgorithm.class));
+		
 		zoneSet.clear();
 		
 		String zoneListString = parseString(PROP_ZONE_LIST);
@@ -195,8 +197,8 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.IConfiguration#getMapperAlgorithmClass()
 	 */
 	@Override
-	public Class<?> getMapperAlgorithmClass() {
-		return mapperAlgorithmClass;
+	public List<Class<IMappingAlgorithm>> getMapperAlgorithmClassList() {
+		return mapperAlgorithmClassList;
 	}
 
 	@Override

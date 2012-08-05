@@ -24,8 +24,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -180,16 +182,19 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 		if (configFile != null && configFile.exists()) {
 			configuration.loadConfig(new FileInputStream(configFile));
 			LOG.info("Loading configuration from " + configFile);
-			IMappingAlgorithm algorithm = null;
-			Class<?> mapperAlgorithmClass = configuration.getMapperAlgorithmClass();
-			if (mapperAlgorithmClass != null) {
-				try {
-					algorithm = (IMappingAlgorithm)mapperAlgorithmClass.newInstance();
-				} catch (Exception e) {
-					throw new IOException("Can not instantiate mapper algorithm", e);
+			List<IMappingAlgorithm> algorithms = new ArrayList<IMappingAlgorithm>();
+			List<Class<IMappingAlgorithm>> mapperAlgorithmClassList = configuration.getMapperAlgorithmClassList();
+			if (mapperAlgorithmClassList != null) {
+				for (Class<IMappingAlgorithm> cls : mapperAlgorithmClassList) {
+					try {
+						algorithms.add(cls.newInstance());
+					} catch (Exception e) {
+						LOG.error("Can not instantiate mapper algorithm", e);
+						throw new IOException("Can not instantiate mapper algorithm", e);
+					}
 				}
 			}
-			mapper.setMappingAlgorithm(algorithm);
+			mapper.setMappingAlgorithms(algorithms);
 		}
 		if (registryFile != null && registryFile.exists()) {
 			RegistryPersistence.loadRegistry(registryFile, regdata);

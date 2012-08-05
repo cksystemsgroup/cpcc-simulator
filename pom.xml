@@ -45,6 +45,7 @@
 		<module>google-map-viewer</module>
 		<module>utils</module>
 		<module>javascript</module>
+		<module>sim-conf</module>
 	</modules>
 
 	<scm>

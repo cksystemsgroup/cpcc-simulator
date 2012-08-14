@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,6 +95,8 @@ public class VehicleService extends DefaultService {
 		String action = cmd[3];
 		MimeEntry uploadedFile = null;
 		
+		Map<String,String> formDataMap = new HashMap<String, String>();
+		
 		if (request.getContentType() != null && !"text/plain".equals(request.getContentType())) {
 			MimeParser parser = new MimeParser(request.getContentType());
 			List<MimeEntry> list = parser.parse(request.getInputStream());
@@ -104,8 +107,10 @@ public class VehicleService extends DefaultService {
 				Map<String, String> headerMap = entry.getHeaders();
 				String contentDisposition = headerMap.get(MimeEntry.CONTENT_DISPOSITION);
 				
-				if (contentDisposition.matches(".*\\sname=\"(\\S*)\"[\000-\377]*"))
-					name = contentDisposition.replaceFirst(".*\\sname=\"(\\S*)\".*", "$1");
+				if (contentDisposition.matches(".*\\sname=\"(\\S*)\"[\000-\377]*")) {
+					name = contentDisposition.replaceFirst(".*\\sname=\"(\\S*)\".*", "$1").replace("\r", "").replace("\n", "");
+					formDataMap.put(name, new String(entry.getBody()));
+				}
 				
 				if (contentDisposition.matches(".*\\sfilename=\"(\\S*)\"[\000-\377]*"))
 					fileName = contentDisposition.replaceFirst(".*\\sfilename=\"(\\S*)\".*", "$1");
@@ -235,9 +240,14 @@ public class VehicleService extends DefaultService {
 		} else if (ACTION_VEHICLE_DELETE.equals(action)) {
 //			if (cmd.length > 4) {
 			if (cmd.length > 3) {
-				String p2 = request.getParameter("deleteVehicleIDs");
-				if ( (p2 == null || p2.trim().isEmpty()) &&  cmd.length > 4) {
-					p2 = cmd[4];
+				String p2;
+				if (formDataMap.size() > 0) {
+					p2 = formDataMap.get("deleteVehicleIDs");
+				} else {
+					p2 = request.getParameter("deleteVehicleIDs");
+					if ( (p2 == null || p2.trim().isEmpty()) &&  cmd.length > 4) {
+						p2 = cmd[4];
+					}
 				}
 				if (p2 == null || p2.trim().isEmpty()) {
 					emit400(request, response, "Invalid or empty virtual vehicle ID.");
@@ -253,9 +263,14 @@ public class VehicleService extends DefaultService {
 			
 		} else if (ACTION_VEHICLE_FREEZE.equals(action) || ACTION_VEHICLE_UNFREEZE.equals(action)) {
 			if (cmd.length > 3) {
-				String p2 = request.getParameter("freezeVehicleIDs");
-				if ( (p2 == null || p2.trim().isEmpty()) &&  cmd.length > 4) {
-					p2 = cmd[4];
+				String p2;
+				if (formDataMap.size() > 0) {
+					p2 = formDataMap.get("freezeVehicleIDs");
+				} else {
+					p2 = request.getParameter("freezeVehicleIDs");
+					if ( (p2 == null || p2.trim().isEmpty()) &&  cmd.length > 4) {
+						p2 = cmd[4];
+					}
 				}
 				if (p2 == null || p2.trim().isEmpty()) {
 					emit400(request, response, "Invalid or empty virtual vehicle ID.");

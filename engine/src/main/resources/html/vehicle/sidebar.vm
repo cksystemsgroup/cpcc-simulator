@@ -98,13 +98,13 @@
 					</td>
 				</tr>
 			</table>
-			<form action="vehicle/html/freeze" id="freezeForm" method="get">
+			<form action="vehicle/html/freeze" id="freezeForm" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="freezeVehicleIDs" name="freezeVehicleIDs" value="" />
 			</form>
-			<form action="vehicle/html/unfreeze" id="unfreezeForm" method="get">
+			<form action="vehicle/html/unfreeze" id="unfreezeForm" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="unfreezeVehicleIDs" name="freezeVehicleIDs" value="" />
 			</form>
-			<form action="vehicle/html/delete" id="deleteForm" method="get">
+			<form action="vehicle/html/delete" id="deleteForm" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="deleteVehicleIDs" name="deleteVehicleIDs" value="" />
 			</form>
 			</p>

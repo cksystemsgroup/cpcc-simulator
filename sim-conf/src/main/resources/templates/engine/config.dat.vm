@@ -1,0 +1,8 @@
+#set( $basePortNumber =  $webAppProps.getProperty("basePortNumber") )
+#set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
+#set( $masterContext = $webAppProps.getProperty("webapp.master.context") )
+#set( $context = $webAppProps.getProperty("webapp.context") )
+
+web.app.base.url=http\://localhost\:${httpConnectorPort}/$context
+pilot.url = http\://localhost\:${httpConnectorPort}/$masterContext
+mapper.registry.url = http\://localhost\:${basePortNumber}/mapper/registry

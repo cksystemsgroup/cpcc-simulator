@@ -1,0 +1,18 @@
+	<div id="header" class="container">
+		<div id="logo">
+			<h1><a href="index.tpl">Sim Conf</a></h1>
+			<p><a href="http://cs.uni-salzburg.at/~ck/group/">CPCC Project</a></p>
+		</div>
+		<div id="menu">
+			<ul>
+				<li class="current_page_item"><a href="$contextPath/simconf.tpl">Sim Conf</a></li>
+#set( $cfg = $servletConfig.getServletContext().getAttribute("configuration") )
+#if( $cfg.isConfigOk() )
+				<li><a href="$contextPath/config.tpl">Configuration</a></li>
+#else
+				<li><a href="$contextPath/config.tpl" style="color: red;">Configuration</a></li>
+#end
+			</ul>
+		</div>
+	</div>
+	<!-- end #header -->

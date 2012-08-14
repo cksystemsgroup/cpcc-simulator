@@ -1,0 +1,28 @@
+#set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
+#set( $context = $webAppProps.getProperty("webapp.context") )
+
+web.app.base.url=http\://localhost\:${httpConnectorPort}/$context
+
+mapper.algorithm = at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms.RandomTaskGenerator, \
+	at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms.GatedTspMappingAlgorithm
+
+#set( $r = "" )
+#set( $n = 1 )
+#set( $f = 1 )
+#foreach( $zone in $zones )
+#if( $f == 1 )
+#set( $f = 0 )
+#else
+#set( $r = "$r, " )
+#end
+#set( $r = "$r$n" )
+#set( $n = $n + 1 )
+#end
+zone.list = $r
+
+#set( $n = 1 )
+#foreach( $zone in $zones )
+zone.${n}.type=polygon
+zone.${n}.vertices=$zone
+#set( $n = $n + 1 )
+#end

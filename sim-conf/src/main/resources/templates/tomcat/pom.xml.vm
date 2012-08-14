@@ -1,0 +1,49 @@
+#set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
+#set( $tomcatName =  $webAppProps.getProperty("tomcat.name") )
+#set( $tomcatDir =  $webAppProps.getProperty("tomcat.dir") )
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>at.ac.sbg.cosy.sim</groupId>
+  <artifactId>$tomcatName</artifactId>
+  <version>1.0</version>
+
+  <packaging>pom</packaging>
+
+  <name>Tomcat Configuration $tomcatName</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.maven.plugins</groupId>
+        <artifactId>tomcat-maven-plugin</artifactId>
+        <version>1.5.5</version>
+        <configuration>
+          <url>http://localhost:$httpConnectorPort/manager-$tomcatName</url>
+          <catalinaBase>${cpcc.sim.home}/$tomcatDir</catalinaBase>
+          <restartTomcat>true</restartTomcat>
+          <restartTimeout>30</restartTimeout>
+          <webapps>
+#foreach ( $webApp in $deployedWebApps.keySet() )
+#set( $groupId = $deployedWebApps.get($webApp).getGroupId() )
+#set( $artifactId = $deployedWebApps.get($webApp).getArtifactId() )
+#set( $version = $deployedWebApps.get($webApp).getVersion() )
+#set( $type = $deployedWebApps.get($webApp).getType() )
+            <webapp>
+              <groupId>$groupId</groupId>
+              <artifactId>$artifactId</artifactId>
+              <version>$version</version>
+              <type>$type</type>
+              <webappName>$webApp</webappName>
+            </webapp>
+#end
+          </webapps>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
+

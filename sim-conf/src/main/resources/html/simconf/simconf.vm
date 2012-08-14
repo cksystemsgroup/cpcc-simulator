@@ -1,0 +1,59 @@
+<div id="content">
+	<div class="post">
+		<h2 class="title"><a href="#">Simulator Configuration</a></h2>
+		<div style="font-size: 90%; line-height: 130%">
+#set( $parm = $servletConfig.getServletContext().getAttribute("parameters") )
+			<form action="simconf/html/generate" method="post" >
+				<p>
+				Please change the values below, and press the Configure button to download the newly generated simulator as a ZIP file.<br>
+				
+				<table>
+					<tr>
+						<td>Zone shape</td>
+						<td>quadratic</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Zone width in Meters</td>
+						<td><input type="text" id="zoneWidth" name="zoneWidth" maxlength="5" value="$!parm.zoneWidth" /></td>
+						<td>#if(!$parm.zoneWidth)<span style="color: red">*</span>#{end}</td>
+					</tr>
+					<tr>
+						<td>Zone height in Meters</td>
+						<td><input type="text" id="zoneHeight" name="zoneHeight" maxlength="5" value="$!parm.zoneHeight" /></td>
+						<td>#if(!$parm.zoneHeight)<span style="color: red">*</span>#{end}</td>
+					</tr>
+					<tr>
+						<td>Horizontal number of Zones</td>
+						<td><input type="text" id="horizontalZones" name="horizontalZones" maxlength="2" value="$!parm.horizontalZones" /></td>
+						<td>#if(!$parm.horizontalZones)<span style="color: red">*</span>#{end}</td>
+					</tr>
+					<tr>
+						<td>Vertical number of Zones</td>
+						<td><input type="text" id="verticalZones" name="verticalZones" maxlength="2" value="$!parm.verticalZones" /></td>
+						<td>#if(!$parm.verticalZones)<span style="color: red">*</span>#{end}</td>
+					</tr>
+					<tr>
+						<td>Zones center latitude in Degrees</td>
+						<td><input type="text" id="zoneCenterLat" name="zoneCenterLat" maxlength="14" value="$!parm.zoneCenterLat" /></td>
+						<td>#if(!$parm.zoneCenterLat)<span style="color: red">*</span>#{end}</td>
+					</tr>
+					<tr>
+						<td>Zones center longitude in Degrees</td>
+						<td><input type="text" id="zoneCenterLng" name="zoneCenterLng" maxlength="14" value="$!parm.zoneCenterLng" /></td>
+						<td>#if(!$parm.zoneCenterLng)<span style="color: red">*</span>#{end}</td>
+					</tr>
+					<tr>
+						<td>Number of Real Vehicles per Tomcat</td>
+						<td><input type="text" id="rvsPerTomcat" name="rvsPerTomcat" maxlength="2" value="$!parm.rvsPerTomcat" /></td>
+						<td>#if(!$parm.rvsPerTomcat)<span style="color: red">*</span>#{end}</td>
+					</tr>
+				</table>
+				
+				<input type="submit" name="configure" value="Configure" />
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- end #content -->

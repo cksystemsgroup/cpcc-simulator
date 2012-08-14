@@ -1,0 +1,6 @@
+#
+#Mon Jul 23 02:52:43 CEST 2012
+pilot.url=
+web.app.base.url=http\://localhost\:9040/engine
+pilot.available=false
+mapper.registry.url=http\://localhost\:9040/mapper/registry

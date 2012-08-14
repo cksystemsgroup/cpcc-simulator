@@ -1,0 +1,3 @@
+
+#set( $basePortNumber =  $webAppProps.getProperty("basePortNumber") )
+mapper.url = http\://localhost\:${basePortNumber}/mapper

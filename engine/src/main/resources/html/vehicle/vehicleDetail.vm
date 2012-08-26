@@ -12,16 +12,16 @@
 				<thead>
 					<tr>
 						<th></th>
-						<th>status</th>
-						<th>local name</th>
-						<th>unique identification</th>
+						<th>Status</th>
+						<th>Local Name</th>
+						<th>Unique Identification</th>
 						<th></th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td><input type="checkbox" name="vehicles" value="$name" /></td>
+						<td align="center"><input type="checkbox" name="vehicles" value="$name" /></td>
 #if( $vehicle.isFrozen() )
 						<td><span style="color: white; background-color: pink;">frozen</span></td>						
 #else
@@ -74,7 +74,8 @@
 			<table class="vvProgram">
 				<thead>
 					<tr>
-						<th>Virtual Vehicle Program</th>
+						<th>#</th>
+						<th>Virtual Vehicle Tasks</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -97,6 +98,7 @@
 		#end
 	#end
 					<tr class="$lineClassName">
+						<td align="right">$x</td>
 #set( $pattern1 = '"([^"]+)"' )
 #set( $replacement1 = '<a href="'+"$contextPath/vehicle/html/vehicleData/$name/$1" + '">"$1"</a>' )
 #set( $pattern2 = "'([^']+)'" )

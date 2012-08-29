@@ -20,13 +20,14 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer;
 
+import java.net.URI;
 import java.util.List;
 
 public interface IMapperProxy {
 	
-	String getMapperValue(String name);
-	
 	List<EngineInfo> getEngineInfoList();
 	
 	String getZoneInfo();
+
+	String getMapperValue(URI mapper, String name);
 }

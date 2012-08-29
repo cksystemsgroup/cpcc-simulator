@@ -21,12 +21,13 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.viewer.config;
 
 import java.net.URI;
+import java.util.List;
 
 public interface IConfiguration {
 	
 	/**
-	 * @return the base URL of the associated mapper. 
+	 * @return the base URLs of the associated mappers. 
 	 */
-	public URI getMapperUrl();
+	List<URI> getMapperUrlList();
 
 }

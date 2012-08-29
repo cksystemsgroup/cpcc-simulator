@@ -23,6 +23,7 @@ package at.uni_salzburg.cs.ckgroup.cscpp.viewer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,38 +63,47 @@ public class MapperProxy extends Thread implements IMapperProxy {
 		running = true;
 		while (running) {
 			List<EngineInfo> newEngineInfoList = new ArrayList<EngineInfo>();
-			String jsonString = getMapperValue("mapperStatus");
-			if (jsonString != null && !jsonString.isEmpty()) {
-				try {
-					JSONArray obj = (JSONArray)parser.parse(jsonString);
-					
-					for (int k=0, l=obj.size(); k < l; ++k) {
-						JSONObject o = (JSONObject)obj.get(k);
-						
-						JSONObject rd = (JSONObject)o.get("regDat");
-						String engineUrl = (String)rd.get("engUri");
-						String pilotUri = (String)rd.get("pilotUri");
-						String pilotName = (String)rd.get("pilotName");
-						String positionUrl = null;
-						String waypointsUrl = null;
-						if (pilotUri != null && !pilotUri.isEmpty()) {
-							positionUrl = pilotUri + "/json/position";
-							waypointsUrl = pilotUri + "/json/waypoints";
-						}
-						String vehicleStatusUrl = engineUrl + "/json/vehicle";
-						String actionPointUrl = engineUrl + "/json/actionPoint";
-						String vehicleDataUrl = engineUrl + "/vehicle/html/vehicleData";
-						String temperatureUrl = engineUrl + "/json/temperature";
-						
-						newEngineInfoList.add(new EngineInfo(pilotName, positionUrl, waypointsUrl, vehicleStatusUrl, actionPointUrl, vehicleDataUrl, temperatureUrl));			
-					}
-				} catch (ParseException e1) {
-					LOG.error("Error at parsing JSON string '" + jsonString + "'", e1);
+			String newZoneInfo = null;
+			for (URI mapper : configuration.getMapperUrlList()) {
+				if (newZoneInfo == null) {
+					newZoneInfo = getMapperValue(mapper, "zones");
 				}
-			}
-			engineInfoList = newEngineInfoList;
+				
+				String jsonString = getMapperValue(mapper, "mapperStatus");
+				if (jsonString != null && !jsonString.isEmpty()) {
+					try {
+						JSONArray obj = (JSONArray)parser.parse(jsonString);
+						
+						for (int k=0, l=obj.size(); k < l; ++k) {
+							JSONObject o = (JSONObject)obj.get(k);
+							
+							JSONObject rd = (JSONObject)o.get("regDat");
+							String engineUrl = (String)rd.get("engUri");
+							String pilotUri = (String)rd.get("pilotUri");
+							String pilotName = (String)rd.get("pilotName");
+							String positionUrl = null;
+							String waypointsUrl = null;
+							if (pilotUri != null && !pilotUri.isEmpty()) {
+								positionUrl = pilotUri + "/json/position";
+								waypointsUrl = pilotUri + "/json/waypoints";
+							}
+							String vehicleStatusUrl = engineUrl + "/json/vehicle";
+							String actionPointUrl = engineUrl + "/json/actionPoint";
+							String vehicleDataUrl = engineUrl + "/vehicle/html/vehicleData";
+							String temperatureUrl = engineUrl + "/json/temperature";
+							
+							newEngineInfoList.add(new EngineInfo(pilotName, positionUrl, waypointsUrl, vehicleStatusUrl, actionPointUrl, vehicleDataUrl, temperatureUrl));			
+						}
+					} catch (ParseException e1) {
+						LOG.error("Error at parsing JSON string '" + jsonString + "'", e1);
+					}
+				}
 			
-			zoneInfo = getMapperValue("zones");
+			}
+			
+			
+			engineInfoList = newEngineInfoList;
+			zoneInfo = newZoneInfo;
 			
 			try { Thread.sleep(CYCLE); } catch (InterruptedException e) { }
 		}
@@ -105,8 +115,8 @@ public class MapperProxy extends Thread implements IMapperProxy {
 	}
 	
 	@Override
-	public String getMapperValue(String name) {
-		InputStream inStream = getMapperValueAsStream(name);
+	public String getMapperValue(URI mapper, String name) {
+		InputStream inStream = getMapperValueAsStream(mapper, name);
 		if (inStream == null) {
 			return null;
 		}
@@ -127,8 +137,8 @@ public class MapperProxy extends Thread implements IMapperProxy {
 		return bo.toString();
 	}
 	
-	public InputStream getMapperValueAsStream(String name) {
-		String mapperUrl = configuration.getMapperUrl().toString();
+	public InputStream getMapperValueAsStream(URI mapper, String name) {
+		String mapperUrl = mapper.toString();
 		if (mapperUrl == null) {
 			return null;
 		}

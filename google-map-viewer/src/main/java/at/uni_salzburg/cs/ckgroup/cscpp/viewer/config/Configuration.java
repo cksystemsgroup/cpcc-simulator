@@ -23,7 +23,9 @@ package at.uni_salzburg.cs.ckgroup.cscpp.viewer.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -57,7 +59,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	/**
 	 * The URL of the central mapper
 	 */
-	private URI mapperUrl;
+	private List<URI> mapperUrlList = new ArrayList<URI>();
 	
 	public Configuration() {
 		super(parameters, configErrors);
@@ -72,15 +74,15 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	public void loadConfig (InputStream inStream) throws IOException {
 		super.loadConfig(inStream);
 		
-		mapperUrl = parseURI(PROP_MAPPER_URL);
+		mapperUrlList = parseUriList(PROP_MAPPER_URL);
 	}
 
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.viewer.config.IConfiguration#getMapperUrl()
 	 */
 	@Override
-	public URI getMapperUrl() {
-		return mapperUrl;
+	public List<URI> getMapperUrlList() {
+		return mapperUrlList;
 	}
 
 }

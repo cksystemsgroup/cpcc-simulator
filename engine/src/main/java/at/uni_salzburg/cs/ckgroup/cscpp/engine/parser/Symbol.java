@@ -46,6 +46,10 @@ public enum Symbol {
 
 	POINT		("point"),			// action point position
 	TOLERANCE	("tolerance"),		// action point tolerance specification
+	ARRIVAL		("arrival"),		// action point arrival time (optional)
+	ACTIVATION	("activation"),		// action point activation time (optional)
+	DELAY		("delay"),			// action point delay time (optional)
+	LIFETIME	("lifetime"),		// action point lifetime (optional)
 
 	AIRPRESSURE	("airPressure"),	// air pressure sensor
 	ALTITUDE	("altitude"),		// altitude sensor

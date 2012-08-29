@@ -365,6 +365,10 @@ public class VehicleService extends DefaultService {
 
 	private void migrateVehicle(ServletConfig config, String uploadUrl, String name) throws IOException {
 		IVirtualVehicle vehicle = getVehicle(config, name);
+		if (vehicle == null) {
+			throw new IOException("Vehicle " + name + " not found. Migration aborted.");
+		}
+		
 		Object cnf = config.getServletContext().getAttribute("configuration");
 		IConfiguration configuration = (IConfiguration)cnf;
 		Object vhl = config.getServletContext().getAttribute("vehicleMap");

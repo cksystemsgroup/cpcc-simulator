@@ -125,9 +125,48 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			postponedLogging = null;
 		}
 		
-		//check if task position is reached
+		long now = System.currentTimeMillis();
+		
+		// check if task has arrived
+		if (currentTask.getArrivalTime() > now) {
+			return;
+		}
+		
+		// activate the task
+		if (currentTask.getActivationTime() == 0) {
+			currentTask.setActivationTime(now);
+			saveState();
+		}
+		
+		// check if task position is reached
 		PolarCoordinate taskPosition = currentTask.getPosition();
 		CartesianCoordinate taskPosCartesian = geodeticSystem.polarToRectangularCoordinates(taskPosition);
+		
+		if (currentTask.getDelayTime() < 0) {
+			
+			ITaskDelayAlgorithm delayAlgorithm = getDelayAlgorithm();
+			
+			if (delayAlgorithm != null && currentIndex > 0) {
+				Task oldTask = taskList.get(currentIndex-1);
+				PolarCoordinate oldTaskPosition = oldTask.getPosition();
+				CartesianCoordinate oldTaskPosCartesian = geodeticSystem.polarToRectangularCoordinates(oldTaskPosition);
+				
+				double distance = oldTaskPosCartesian.subtract(taskPosCartesian).norm();
+				long delay = oldTask.getDelayTime() >= 0 ? oldTask.getDelayTime() : 0;
+				long arrival = oldTask.getArrivalTime();
+				double v1 = 1000.0 * distance / (now - arrival - delay);
+				
+				if (!delayAlgorithm.checkFreeResources((int)v1)) {
+					return;
+				}
+	
+				delayAlgorithm.consumeResources((int)v1);
+			}
+
+			currentTask.setDelayTime(now - currentTask.getActivationTime());
+			saveState();
+		}
+		
 		double distance = taskPosCartesian.subtract(currentPosCartesian).norm();
 		
 		if (distance <= currentTask.getTolerance()) {
@@ -173,7 +212,19 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 */
 	@Override
 	public Task getCurrentTask() {
-		return currentTask;
+		Task ct = currentTask;
+		
+		if (ct == null || ct.getDelayTime() < 0) {
+			return null;
+		}
+
+		long now = System.currentTimeMillis();
+		
+		if (ct.getArrivalTime() + ct.getDelayTime() >= now) {
+			return null;
+		}
+		
+		return ct;
 	}
 
 	/* (non-Javadoc)

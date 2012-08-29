@@ -35,6 +35,10 @@ public class Task implements JSONAware {
 	
 	private PolarCoordinate position;
 	private Double tolerance;
+	private long arrivalTime;
+	private long activationTime;
+	private long delayTime;
+	private long lifeTime;
 	private List<IAction> actionList;
 
 	public PolarCoordinate getPosition() {
@@ -51,6 +55,38 @@ public class Task implements JSONAware {
 	
 	public void setTolerance(Double tolerance) {
 		this.tolerance = tolerance;
+	}
+	
+	public long getArrivalTime() {
+		return arrivalTime;
+	}
+	
+	public void setArrivalTime(long arrivalTime) {
+		this.arrivalTime = arrivalTime;
+	}
+	
+	public long getActivationTime() {
+		return activationTime;
+	}
+	
+	public void setActivationTime(long activationTime) {
+		this.activationTime = activationTime;
+	}
+	
+	public long getDelayTime() {
+		return delayTime;
+	}
+	
+	public void setDelayTime(long delayTime) {
+		this.delayTime = delayTime;
+	}
+	
+	public long getLifeTime() {
+		return lifeTime;
+	}
+	
+	public void setLifeTime(long lifeTime) {
+		this.lifeTime = lifeTime;
 	}
 	
 	public List<IAction> getActionList() {
@@ -81,10 +117,21 @@ public class Task implements JSONAware {
 	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder();
+		if (activationTime > 0) {
+			b.append(" Activation ").append(activationTime);
+		}
+		if (delayTime >= 0) {
+			b.append(" Delay ").append(delayTime);
+		}
+		if (lifeTime > 0) {
+			b.append(" LifeTime").append(lifeTime);
+		}
 		for (IAction action : actionList) {
 			b.append("\n").append(action.toString());
 		}
-		return String.format(Locale.US, "Point %.8f %.8f %.8f Tolerance %.2f%s\n", position.getLatitude(), position.getLongitude(), position.getAltitude(), tolerance, b.toString());
+		return String.format(Locale.US, "Point %.8f %.8f %.3f Tolerance %.1f\nArrival %d%s\n",
+				position.getLatitude(), position.getLongitude(), position.getAltitude(),
+				tolerance, arrivalTime, b.toString());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -94,7 +141,8 @@ public class Task implements JSONAware {
 		JSONObject obj = new JSONObject();
 		obj.put("point", getPosition());
 		obj.put("tolerance", getTolerance());
-
+		// TODO arrival time, delay, and lifetime in JSON string?
+		
 		JSONArray act = new JSONArray();
 		for (IAction a : getActionList()) {
 			act.add(a);

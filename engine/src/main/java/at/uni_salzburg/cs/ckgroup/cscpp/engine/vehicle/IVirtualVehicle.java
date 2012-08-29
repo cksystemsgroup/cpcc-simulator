@@ -136,10 +136,17 @@ public interface IVirtualVehicle {
 	void saveState();
 	
 	/**
+	 * Save the virtual vehicle properties.
+	 * 
+	 * @throws IOException in case of I/O errors.
+	 */
+	void saveProperties();
+	
+	/**
 	 * Mark this virtual vehicle as incomplete.
 	 * 
 	 * @throws IOException in case of resuming this virtual vehicle fails.
 	 */
 	void setIncomplete() throws IOException;
-	
+
 }

@@ -73,10 +73,25 @@ public class VehicleQuery implements IQuery {
 	
 	@SuppressWarnings("unchecked")
 	public String execute(IServletConfig config, String[] parameters) {
-
+		
+		boolean sendAPs = true;
+		boolean sendVVpath = true;
+		
+		if (parameters.length > 3) {
+			for (String p : parameters[3].trim().split("\\s*,\\s*")) {
+				if ("noAPs".equals(p)) {
+					sendAPs = false;
+				} else if ("noVvPath".equals(p)) {
+					sendVVpath = false;
+				}
+			}
+		}
+		
+		
 		Map<String, Object> obj=new LinkedHashMap<String, Object>();
 		
 		for (IVirtualVehicle vehicle : vehicleMap.values()) {
+			
 			if (vehicle.isFrozen()) {
 				continue;
 			}
@@ -115,31 +130,35 @@ public class VehicleQuery implements IQuery {
 				props.put(PROP_VEHICLE_ACTIONS, openActions);
 			}
 			
-			JSONArray actionPoints = new JSONArray();
-			for (Task cmd : vehicle.getTaskList()) {
-				JSONObject p = new JSONObject();
-				p.put("latitude", cmd.getPosition().getLatitude());
-				p.put("longitude", cmd.getPosition().getLongitude());
-//				p.put("altitude", cmd.getPosition().getAltitude());
-				p.put("completed", Boolean.valueOf(cmd.isComplete()));
-				actionPoints.add(p);
+			if (sendAPs) {
+				JSONArray actionPoints = new JSONArray();
+				for (Task cmd : vehicle.getTaskList()) {
+					JSONObject p = new JSONObject();
+					p.put("latitude", cmd.getPosition().getLatitude());
+					p.put("longitude", cmd.getPosition().getLongitude());
+//					p.put("altitude", cmd.getPosition().getAltitude());
+					p.put("completed", Boolean.valueOf(cmd.isComplete()));
+					actionPoints.add(p);
+				}
+				props.put(PROP_VEHICLE_ACTION_POINTS, actionPoints);
 			}
-			props.put(PROP_VEHICLE_ACTION_POINTS, actionPoints);
 			
-			try {
-				String vehicleLog = vehicle.getLog();
-				VehicleLogConverter c = new VehicleLogConverter();
-				JSONArray a = c.convertToVirtualVehiclePath(vehicleLog);
-				props.put(PROP_VEHICLE_PATH, a);
-				
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				LOG.error("Can not read log of vehicle " + vehicle.getWorkDir().getName());
+			if (sendVVpath) {
+				try {
+					String vehicleLog = vehicle.getLog();
+					VehicleLogConverter c = new VehicleLogConverter();
+					JSONArray a = c.convertToVirtualVehiclePath(vehicleLog);
+					props.put(PROP_VEHICLE_PATH, a);
+					
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					LOG.error("Can not read log of vehicle " + vehicle.getWorkDir().getName());
+				}
 			}
 			
 			obj.put(vehicle.getWorkDir().getName(), props);
 		}
-		
+
 		return JSONValue.toJSONString(obj);
 	}
 

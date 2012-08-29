@@ -56,6 +56,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	
 	public static final String PROP_VEHICLE_ID = "vehicle.id";
 	public static final String PROP_VEHICLE_FROZEN = "vehicle.frozen";
+	public static final String PROP_VEHICLE_TASK_DELAY_ALGORITHM = "vehicle.task.delay.algorithm";
 	
 	private Object lock = new Object[0];
 	
@@ -121,6 +122,11 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 	 * The current way-point list as a string.
 	 */
 	private String waypoints = null;
+	
+	/**
+	 * Algorithm to delay the completion of tasks.
+	 */
+	private ITaskDelayAlgorithm delayAlgorithm;
 		
 	/**
 	 * Construct a virtual vehicle instance.
@@ -152,6 +158,9 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		
 		frozen = Boolean.valueOf(properties.getProperty(PROP_VEHICLE_FROZEN,"false"));
 
+		String algorithmString = properties.getProperty(PROP_VEHICLE_TASK_DELAY_ALGORITHM);
+		delayAlgorithm = TaskDelayAlgorithmBuilder.build(algorithmString, this);
+		
 		FileUtils.ensureDirectory(dataDir);
 	}
 
@@ -233,6 +242,10 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		}
 		
 		running = true;
+		
+		if (delayAlgorithm != null) {
+			delayAlgorithm.tick();
+		}
 		
 		if (sensorProxy != null) {
 			logFlightSegmentChange();
@@ -327,8 +340,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		
 		if (this.frozen != frozen) {
 			this.frozen = frozen;
-			properties.setProperty(PROP_VEHICLE_FROZEN, Boolean.valueOf(frozen).toString());
-			properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
+			saveProperties();
 		}
 
 		if (frozen) {
@@ -367,6 +379,10 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 				return true;
 			}
 		});
+	}
+	
+	public ITaskDelayAlgorithm getDelayAlgorithm() {
+		return delayAlgorithm;
 	}
 	
 	public void setCompleted() throws IOException {
@@ -417,6 +433,21 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 				pw.close();
 			} catch (FileNotFoundException e) {
 				LOG.error("Can not save state of vehicle " + workDir, e);
+			}
+		}
+	}
+	
+	@Override
+	public void saveProperties() {
+		synchronized (lock) {
+			try {
+				properties.setProperty(PROP_VEHICLE_FROZEN, Boolean.valueOf(frozen).toString());
+				if (delayAlgorithm != null) {
+					properties.setProperty(PROP_VEHICLE_TASK_DELAY_ALGORITHM, delayAlgorithm.getCurrentState());
+				}
+				properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
+			} catch (IOException e) {
+				LOG.error("Can not save properties of vehicle " + workDir, e);
 			}
 		}
 	}

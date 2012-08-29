@@ -88,9 +88,32 @@ public class TaskListBuilder {
 		
 		Token tolerance = parseSignedNumber(scanner);
 		
-		List<IAction> actionList = new ArrayList<IAction>();
-		
+		Token arrivalTime = null;
+		Token activationTime = null;
+		Token delayTime = null;
+		Token lifeTime = null;
 		token.copyFields(scanner.next());
+		if (Symbol.ARRIVAL == token.getSymbol()) {
+			arrivalTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+		
+		if (Symbol.ACTIVATION == token.getSymbol()) {
+			activationTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+		
+		if (Symbol.DELAY == token.getSymbol()) {
+			delayTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+	
+		if (arrivalTime != null && Symbol.LIFETIME == token.getSymbol()) {
+			lifeTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+		
+		List<IAction> actionList = new ArrayList<IAction>();
 		while (actionSymbols.contains(token.getSymbol())) {
 			IAction action = parseAction(scanner, token);
 			actionList.add(action);
@@ -99,6 +122,10 @@ public class TaskListBuilder {
 		Task task = new Task();
 		task.setPosition(new PolarCoordinate(latitude.getNumber().doubleValue(), longitude.getNumber().doubleValue(), altitude.getNumber().doubleValue()));
 		task.setTolerance(tolerance.getNumber().doubleValue());
+		task.setArrivalTime(arrivalTime != null ? arrivalTime.getNumber().longValue() : System.currentTimeMillis());
+		task.setActivationTime(activationTime != null ? activationTime.getNumber().longValue() : 0);
+		task.setDelayTime(delayTime != null ? delayTime.getNumber().longValue() : -1);
+		task.setLifeTime(lifeTime != null ? lifeTime.getNumber().longValue() : 0);
 		task.setActionList(actionList);
 		return task;
 	}

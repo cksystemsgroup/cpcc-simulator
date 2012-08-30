@@ -1,5 +1,5 @@
 /*
- * @(#) IConfiguration.java
+ * @(#) ZoneInfo.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -18,23 +18,41 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cpcc.sim.config;
+package at.uni_salzburg.cs.ckgroup.cpcc.sim;
 
-import java.util.Map;
+import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
+public class ZoneInfo {
 
-public interface IConfiguration {
-
-	Map<String, TomcatInstance> getTomcatInstances();
-
-	TemplateFiles getTomcatTemplateFiles();
+	private String vertices;
 	
-	String[] getTomcatRequiredDirectories();
+	private WebAppInfo webAppInfo;
+	
+	private PolarCoordinate depotPosition;
 
-	Map<String, WebApplication> getWebApplications();
-
-	int getTomcatBasePort();
-
-	int getWebAppPortDistance();
+	
+	public String getVertices() {
+		return vertices;
+	}
+	
+	public void setVertices(String vertices) {
+		this.vertices = vertices;
+	}
+	
+	public WebAppInfo getWebAppInfo() {
+		return webAppInfo;
+	}
+	
+	public void setWebAppInfo(WebAppInfo webAppInfo) {
+		this.webAppInfo = webAppInfo;
+	}
+	
+	public PolarCoordinate getDepotPosition() {
+		return depotPosition;
+	}
+	
+	public void setDepotPosition(PolarCoordinate depotPosition) {
+		this.depotPosition = depotPosition;
+	}
 	
 }

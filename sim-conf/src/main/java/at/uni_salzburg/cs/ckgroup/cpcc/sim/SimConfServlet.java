@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.sim.config.Configuration;
+import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
@@ -51,6 +52,7 @@ public class SimConfServlet extends HttpServlet implements IServletConfig {
 	
 	private ServiceEntry[] services = {
 		new ServiceEntry("/simconf/.*", new SimConfService(this)),
+		new ServiceEntry("/config/.*", new ConfigService(this)),
 		new ServiceEntry(".*", new DefaultService(this))
 	};
 	

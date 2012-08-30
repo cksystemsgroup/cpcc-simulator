@@ -1,0 +1,53 @@
+##set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
+##set( $context = $webAppProps.getProperty("webapp.context") )
+#set( $httpConnectorPort = $tomcatInfo.getHttpConnectorPort() )
+#set( $context = $webAppInfo.getContext() )
+#set( $slaveContext = $webAppInfo.getSlaveContext() )
+
+web.app.base.url=http\://localhost\:${httpConnectorPort}/$context
+
+#set( $first = 1 )
+#set( $centralEngineString = "" )
+#foreach ( $wa in $centralEngines )
+#if( $first )
+#set( $first = 0 )
+#else
+#set( $centralEngineString = $centralEngineString + ", " )
+#end
+#set( $centralEngineString = $centralEngineString + "http\://localhost\:${wa.getTomcatInfo().getHttpConnectorPort()}/$wa.getContext()" )
+#end
+mapper.central.engines = $centralEngineString
+
+mapper.algorithm = at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms.LocalGatedTspMappingAlgorithm
+
+#set( $r = "" )
+#set( $n = 1 )
+#set( $f = 1 )
+#foreach( $zone in $zones )
+#if( $f == 1 )
+#set( $f = 0 )
+#else
+#set( $r = "$r, " )
+#end
+#set( $r = "$r$n" )
+#set( $n = $n + 1 )
+#end
+zone.list = $r
+
+#set( $n = 1 )
+#foreach( $zone in $zones )
+zone.${n}.type=polygon
+zone.${n}.vertices=$zone.getVertices()
+#if( $zone.getWebAppInfo().getBaseUrl() )
+zone.${n}.engine = $zone.getWebAppInfo().getBaseUrl()
+#if( $zone.getWebAppInfo().getBaseUrl().equals("http://localhost:${httpConnectorPort}/$slaveContext") )
+zone.${n}.group = local
+#else
+zone.${n}.group = foreign
+#end
+#else
+zone.${n}.group = local
+#end
+
+#set( $n = $n + 1 )
+#end

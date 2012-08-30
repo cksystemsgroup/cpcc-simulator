@@ -1,8 +1,12 @@
-#set( $basePortNumber =  $webAppProps.getProperty("basePortNumber") )
-#set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
-#set( $context = $webAppProps.getProperty("webapp.context") )
+##set( $basePortNumber =  $webAppProps.getProperty("basePortNumber") )
+##set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
+##set( $context = $webAppProps.getProperty("webapp.context") )
+
+#set( $httpConnectorPort = $tomcatInfo.getHttpConnectorPort() )
+#set( $context = $webAppInfo.getContext() )
+#set( $masterContext = $webAppInfo.getMasterContext() )
 
 web.app.base.url=http\://localhost\:${httpConnectorPort}/$context
 pilot.url=
 pilot.available = false
-mapper.registry.url = http\://localhost\:${basePortNumber}/mapper/registry
+mapper.registry.url = http\://localhost\:${httpConnectorPort}/$masterContext/registry

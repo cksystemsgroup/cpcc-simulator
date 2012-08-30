@@ -1,7 +1,11 @@
-#set( $serverPort = $webAppProps.getProperty("serverPort") )
-#set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
-#set( $httpsConnectorPort = $webAppProps.getProperty("httpsConnectorPort") )
-#set( $ajpConnectorPort =  $webAppProps.getProperty("ajpConnectorPort") )
+##set( $serverPort = $webAppProps.getProperty("serverPort") )
+##set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
+##set( $httpsConnectorPort = $webAppProps.getProperty("httpsConnectorPort") )
+##set( $ajpConnectorPort =  $webAppProps.getProperty("ajpConnectorPort") )
+#set( $serverPort = $tomcatInfo.getServerPort() )
+#set( $httpConnectorPort = $tomcatInfo.getHttpConnectorPort() )
+#set( $httpsConnectorPort = $tomcatInfo.getHttpsConnectorPort() )
+#set( $ajpConnectorPort = $tomcatInfo.getAjpConnectorPort() )
 <Server port="${serverPort}" shutdown="SHUTDOWN">
 
   <GlobalNamingResources>
@@ -29,7 +33,7 @@
     <Engine name="Catalina" defaultHost="localhost">
       <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
              resourceName="UserDatabase" />
-      <Host name="localhost" appBase="webapps" autoDeploy="false" copyXML="true" />
+      <Host name="localhost" appBase="webapps" autoDeploy="false" copyXML="true" startStopThreads="0" />
     </Engine>
     
   </Service>

@@ -29,8 +29,11 @@ public class WebApplication {
 	private static final String PROP_ARTIFACT = "artifact";
 	private static final String PROP_CONTEXT_TEMPLATE = "context.template";
 	private static final String PROP_MASTER_CONTEXT_TEMPLATE = "master.context.template";
+	private static final String PROP_SLAVE_CONTEXT_TEMPLATE = "slave.context.template";
 //	private static final String PROP_TEMPLATE_FILES = "template.files";
 	private static final String PROP_QUANTITY = "quantity";
+	private static final String PROP_ZONE_ASSIGNMENT = "zone.assignment";
+	private static final String PROP_CENTRAL_ENGINE = "is.a.central.engine";
 
 	private String groupId;
 	private String artifactId;
@@ -39,8 +42,11 @@ public class WebApplication {
 	
 	private String contextTemplate;
 	private String masterContextTemplate;
+	private String slaveContextTemplate;
 	private boolean multiple;
 	private TemplateFiles templateFiles;
+	private boolean zoneAssigned;
+	private boolean centralEngine;
 
 	
 	public void setFromProperties (String prefix, Properties props, List<String[]> pars, Map<String, String> configErrors) {
@@ -67,11 +73,17 @@ public class WebApplication {
 		if (contextTemplate == null) {
 			configErrors.put(contextTemplateProperty, "# missing");
 		}
-		
+
 		String masterContextTemplateProperty = prefix + PROP_MASTER_CONTEXT_TEMPLATE;
 		masterContextTemplate = props.getProperty(masterContextTemplateProperty);
 		if (masterContextTemplate != null) {
 			pars.add(new String[]{masterContextTemplate});
+		}
+
+		String slaveContextTemplateProperty = prefix + PROP_SLAVE_CONTEXT_TEMPLATE;
+		slaveContextTemplate = props.getProperty(slaveContextTemplateProperty);
+		if (slaveContextTemplate != null) {
+			pars.add(new String[]{slaveContextTemplate});
 		}
 
 		templateFiles = new TemplateFiles();
@@ -85,23 +97,20 @@ public class WebApplication {
 			props.setProperty(quantityProperty, quantityString);
 		}
 		multiple = quantityString.equals("multiple");
+		
+		String zoneAssignedProperty = prefix + PROP_ZONE_ASSIGNMENT;
+		zoneAssigned = Boolean.parseBoolean(props.getProperty(zoneAssignedProperty, "false"));
+		if (zoneAssigned) {
+			pars.add(new String[]{zoneAssignedProperty});
+		}
+		
+		String centralEngineString = prefix + PROP_CENTRAL_ENGINE;
+		centralEngine = Boolean.parseBoolean(props.getProperty(centralEngineString, "false"));
+		if (centralEngine) {
+			pars.add(new String[]{centralEngineString});
+		}
+		
 	}
-	
-//	public static String getPropArtifact() {
-//		return PROP_ARTIFACT;
-//	}
-//
-//	public static String getPropContextTemplate() {
-//		return PROP_CONTEXT_TEMPLATE;
-//	}
-//
-//	public static String getPropTemplateFiles() {
-//		return PROP_TEMPLATE_FILES;
-//	}
-//
-//	public static String getPropQuantity() {
-//		return PROP_QUANTITY;
-//	}
 
 	public String getGroupId() {
 		return groupId;
@@ -127,12 +136,24 @@ public class WebApplication {
 		return masterContextTemplate;
 	}
 
+	public String getSlaveContextTemplate() {
+		return slaveContextTemplate;
+	}
+	
 	public TemplateFiles getTemplateFiles() {
 		return templateFiles;
 	}
 
 	public boolean isMultiple() {
 		return multiple;
+	}
+	
+	public boolean isZoneAssigned() {
+		return zoneAssigned;
+	}
+	
+	public boolean isCentralEngine() {
+		return centralEngine;
 	}
 	
 }

@@ -1,10 +1,19 @@
-#set( $plantListener = $webAppProps.getProperty("plantListener") )
-#set( $locationSystemListener = $webAppProps.getProperty("locationSystemListener") )
-#set( $controllerConnector = $webAppProps.getProperty("controllerConnector") )
-#set( $tomcatName =  $webAppProps.getProperty("tomcat.name") )
-#set( $originLatitude = $parameters.getZoneCenterLat() )
-#set( $originLongitude = $parameters.getZoneCenterLng() )
-#set( $serialNumber = $webAppProps.getProperty("webapp.serial.number") )
+##set( $plantListener = $webAppProps.getProperty("plantListener") )
+##set( $locationSystemListener = $webAppProps.getProperty("locationSystemListener") )
+##set( $controllerConnector = $webAppProps.getProperty("controllerConnector") )
+##set( $tomcatName =  $webAppProps.getProperty("tomcat.name") )
+##set( $originLatitude = $parameters.getZoneCenterLat() )
+##set( $originLongitude = $parameters.getZoneCenterLng() )
+##set( $serialNumber = $webAppProps.getProperty("webapp.serial.number") )
+
+#set( $plantListener = $webAppInfo.getPlantListener() )
+#set( $locationSystemListener = $webAppInfo.getLocationSystemListener() )
+#set( $controllerConnector = $webAppInfo.getControllerConnector() )
+#set( $tomcatName = $tomcatInfo.getTomcatName() )
+#set( $originLatitude = $webAppInfo.getZoneInfo().getDepotPosition().getLatitude() )
+#set( $originLongitude = $webAppInfo.getZoneInfo().getDepotPosition().getLongitude() )
+#set( $serialNumber = $webAppInfo.getWebAppSerialNumber() )
+
 #
 # Complete configuration $tomcatName
 #

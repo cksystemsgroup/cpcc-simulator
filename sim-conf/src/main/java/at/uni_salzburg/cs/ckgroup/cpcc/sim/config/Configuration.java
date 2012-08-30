@@ -37,18 +37,21 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	private static final String PROP_TOMCAT_PREFIX = "tomcat.";
 	private static final String PROP_TOMCAT_INSTANCES = PROP_TOMCAT_PREFIX + "instances";
 	private static final String PROP_TOMCAT_REQUIRED_DIRECTORIES = PROP_TOMCAT_PREFIX + "required.directories";
-	
+	private static final String PROP_TOMCAT_BASE_PORT = PROP_TOMCAT_PREFIX + "base.port";
 	
 	private static final String PROP_WEBAPP_PREFIX = "webapp.";
 	private static final String PROP_WEBAPP_LIST = PROP_WEBAPP_PREFIX + "list";
-	
+	private static final String PROP_WEBAPP_PORT_DISTANCE = PROP_WEBAPP_PREFIX + "port.distance";
+
 	
 	/**
 	 * The parameters and their default values. 
 	 */
 	public static final String [][] parameters = {
+		{ PROP_TOMCAT_BASE_PORT },
 		{ PROP_TOMCAT_INSTANCES },
 		{ PROP_TOMCAT_REQUIRED_DIRECTORIES },
+		{ PROP_WEBAPP_PORT_DISTANCE },
 		{ PROP_WEBAPP_LIST }
 	};
 	
@@ -59,14 +62,18 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	 */
 	@SuppressWarnings("serial")
 	private static final Map<String,String> configErrors = new HashMap<String,String>() {{
+		put(PROP_TOMCAT_BASE_PORT, ERROR_MESSAGE_MISSING_VALUE);
 		put(PROP_TOMCAT_INSTANCES, ERROR_MESSAGE_MISSING_VALUE);
 		put(PROP_TOMCAT_REQUIRED_DIRECTORIES, ERROR_MESSAGE_MISSING_VALUE);
+		put(PROP_WEBAPP_PORT_DISTANCE, ERROR_MESSAGE_MISSING_VALUE);
 		put(PROP_WEBAPP_LIST, ERROR_MESSAGE_MISSING_VALUE);
 	}};
 	
+	private int tomcatBasePort;
 	private Map<String, TomcatInstance> tomcatInstances = new HashMap<String, TomcatInstance>();
 	private String[] tomcatRequiredDirectories = null;
 	private TemplateFiles tomcatTemplateFiles = new TemplateFiles();
+	private int webAppPortDistance;
 	private Map<String,WebApplication> webApplications = new HashMap<String, WebApplication>();
 
 	public Configuration() {
@@ -84,9 +91,11 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 		
 		List<String[]> pars = getParameters();
 		
+		tomcatBasePort = parseInt(PROP_TOMCAT_BASE_PORT);
+		
 		tomcatInstances.clear();
 		String tomcatInstanceString = parseString(PROP_TOMCAT_INSTANCES);
-		if (tomcatInstanceString == null || !"".equals(tomcatInstanceString.trim())) {
+		if (tomcatInstanceString != null && !"".equals(tomcatInstanceString.trim())) {
 			String[] tomcatInstanceNames = tomcatInstanceString.trim().split("\\s*,\\s*");
 			for (String name : tomcatInstanceNames) {
 				TomcatInstance tcInst = new TomcatInstance();
@@ -106,15 +115,24 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 		
 		String webAppListString = parseString(PROP_WEBAPP_LIST);
 		
+		webAppPortDistance = parseInt(PROP_WEBAPP_PORT_DISTANCE);
+		
 		webApplications.clear();
-		String[] webAppNames =  webAppListString.split("\\s*,\\s*");
-		for (String name : webAppNames) {
-			WebApplication webApplication = new WebApplication();
-			webApplication.setFromProperties(PROP_WEBAPP_PREFIX + name + ".", getConfig(), pars, configErrors);
-			webApplications.put(name, webApplication);
+		if (webAppListString != null && !"".equals(webAppListString)) {
+			String[] webAppNames =  webAppListString.split("\\s*,\\s*");
+			for (String name : webAppNames) {
+				WebApplication webApplication = new WebApplication();
+				webApplication.setFromProperties(PROP_WEBAPP_PREFIX + name + ".", getConfig(), pars, configErrors);
+				webApplications.put(name, webApplication);
+			}
 		}
 		
 		LOG.info("Configuration loaded.");
+	}
+	
+	@Override
+	public int getTomcatBasePort() {
+		return tomcatBasePort;
 	}
 	
 	@Override
@@ -128,6 +146,11 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	}
 	
 	@Override
+	public int getWebAppPortDistance() {
+		return webAppPortDistance;
+	}
+	
+	@Override
 	public Map<String, WebApplication> getWebApplications() {
 		return webApplications;
 	}
@@ -136,4 +159,5 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	public String[] getTomcatRequiredDirectories() {
 		return tomcatRequiredDirectories;
 	}
+	
 }

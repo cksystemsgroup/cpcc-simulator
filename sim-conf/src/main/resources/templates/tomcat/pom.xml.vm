@@ -1,6 +1,10 @@
-#set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
-#set( $tomcatName =  $webAppProps.getProperty("tomcat.name") )
-#set( $tomcatDir =  $webAppProps.getProperty("tomcat.dir") )
+##set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
+##set( $tomcatName =  $webAppProps.getProperty("tomcat.name") )
+##set( $tomcatDir =  $webAppProps.getProperty("tomcat.dir") )
+#set( $httpConnectorPort = $tomcatInfo.getHttpConnectorPort() )
+#set( $tomcatDir = $tomcatInfo.getTomcatDir() )
+#set( $tomcatName = $tomcatInfo.getTomcatName() )
+
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -26,17 +30,22 @@
           <restartTomcat>true</restartTomcat>
           <restartTimeout>30</restartTimeout>
           <webapps>
-#foreach ( $webApp in $deployedWebApps.keySet() )
-#set( $groupId = $deployedWebApps.get($webApp).getGroupId() )
-#set( $artifactId = $deployedWebApps.get($webApp).getArtifactId() )
-#set( $version = $deployedWebApps.get($webApp).getVersion() )
-#set( $type = $deployedWebApps.get($webApp).getType() )
+##foreach ( $webApp in $deployedWebApps.keySet() )
+##set( $groupId = $deployedWebApps.get($webApp).getGroupId() )
+##set( $artifactId = $deployedWebApps.get($webApp).getArtifactId() )
+##set( $version = $deployedWebApps.get($webApp).getVersion() )
+##set( $type = $deployedWebApps.get($webApp).getType() )
+#foreach ( $webApp in $tomcatInfo.getWebAppInfo() )
+#set( $groupId = $webApp.getGroupId() )
+#set( $artifactId = $webApp.getArtifactId() )
+#set( $version = $webApp.getVersion() )
+#set( $type = $webApp.getPackaging() )
             <webapp>
               <groupId>$groupId</groupId>
               <artifactId>$artifactId</artifactId>
               <version>$version</version>
               <type>$type</type>
-              <webappName>$webApp</webappName>
+              <webappName>$webApp.getContext()</webappName>
             </webapp>
 #end
           </webapps>

@@ -1,10 +1,12 @@
 #!/bin/echo "please include this script an do not run it!"
-#set( $tcDir = $webAppProps.getProperty("tomcat.dir") )
-#set( $tcName = $webAppProps.getProperty("tomcat.name") )
+##set( $tcDir = $webAppProps.getProperty("tomcat.dir") )
+##set( $tcName = $webAppProps.getProperty("tomcat.name") )
+#set( $tcDir = $tomcatInfo.getTomcatDir() )
+#set( $tcName = $tomcatInfo.getTomcatName() )
 
 [ "$CPCC_SIM_HOME" = "" ] && export CPCC_SIM_HOME=$HOME
 
-export JAVA_HOME=$CPCC_SIM_HOME/.jdk/jdk1.6.0_29-x64
+export JAVA_HOME=$CPCC_SIM_HOME/.jdk/jdk1.6.0_33-x64
 export JAVA_ROOT=$JAVA_HOME
 export JDK_HOME=$JAVA_HOME
 export JRE_HOME=$JAVA_HOME/jre
@@ -22,6 +24,7 @@ export CATALINA_TMPDIR="/tmp"
 export JAVA_OPTS=-Dserver.id=$tcName 
 export JAVA_OPTS="$JAVA_OPTS -Denvironment=$(hostname)";
 export JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote"
+export JAVA_OPTS="$JAVA_OPTS -Djava.security.egd=file:/dev/./urandom"
 
 export DISABLE_JAVADUMP=true
 

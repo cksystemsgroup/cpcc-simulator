@@ -20,6 +20,7 @@
  */
 package at.uni_salzburg.cs.ckgroup.cpcc.sim;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,11 +28,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.TreeMap;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -43,62 +45,36 @@ import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
 import at.uni_salzburg.cs.ckgroup.cpcc.sim.config.IConfiguration;
-import at.uni_salzburg.cs.ckgroup.cpcc.sim.config.TemplateFiles;
 import at.uni_salzburg.cs.ckgroup.cpcc.sim.config.TomcatInstance;
 import at.uni_salzburg.cs.ckgroup.cpcc.sim.config.WebApplication;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.VariableReplacer;
 
 public class SimConfFactory {
 	
 	private static final Logger LOG = Logger.getLogger(SimConfFactory.class);
 
-	private static final String PROP_WEB_APP_CONTEXT = "webapp.context";
-	private static final String PROP_WEB_APP_MASTER_CONTEXT = "webapp.master.context";
-	private static final String PROP_WEB_APP_SERIAL_NUMBER = "webapp.serial.number";
-	private static final String PROP_TOMCAT_NAME = "tomcat.name";
-	private static final String PROP_TOMCAT_DIR = "tomcat.dir";
-	
-//	tomcat.required.directories
-
-	private static final String PROP_BASE_PORT_NUMBER = "basePortNumber";
-	
-	private static final String PROP_TOMCAT_SERVER_PORT = "serverPort";
-	private static final String PROP_TOMCAT_HTTP_CONNECTOR_PORT = "httpConnectorPort";
-	private static final String PROP_TOMCAT_HTTPS_CONNECTOR_PORT = "httpsConnectorPort";
-	private static final String PROP_TOMCAT_AJP_CONNECTOR_PORT = "ajpConnectorPort";
-	
-	private static final String PROP_PLANT_LISTENER_PORT = "plantListener";
-	private static final String PROP_LOCATION_SYSTEM_LISTENER_PORT = "locationSystemListener";
-	private static final String PROP_CONTROLLER_CONNECTOR_PORT = "controllerConnector";
-	
-	private int basePortNumber = 9000;
-	private int webAppPortNumberDistance = 10;
-	
 	private SimConfParameters parameters;
 	private IConfiguration configuration;
-	private VariableReplacer variableReplacer;
-	private Properties webAppProps;
-	private Map<String, WebApplication> deployedWebApps;
+//	private VariableReplacer variableReplacer;
+//	private Properties webAppProps;
 	
-	private ArrayList<String> zones;
+	private List<ZoneInfo> zones;
+	
+	private List<TomcatInfo> tomcatInfoList = new ArrayList<TomcatInfo>();
+	
+	private Set<WebAppInfo> centralEngines = new HashSet<WebAppInfo>();
 
 
 	public SimConfFactory(SimConfParameters parameters, IConfiguration configuration) {
 		this.parameters = parameters;
 		this.configuration = configuration;
-		webAppProps = new Properties();
-		variableReplacer = new VariableReplacer(webAppProps);
-		webAppProps.setProperty(PROP_BASE_PORT_NUMBER, Integer.toString(basePortNumber));
-		deployedWebApps = new TreeMap<String, WebApplication>();
+//		webAppProps = new Properties();
+//		variableReplacer = new VariableReplacer(webAppProps);
 	}
 
 	public byte[] build() throws IOException {
 		
 		calculateZones();
-		
-		ByteArrayOutputStream boas = new ByteArrayOutputStream();
-		ZipOutputStream os = new ZipOutputStream(boas);
 
 		int totalRvWebApps = parameters.getHorizontalZones() * parameters.getVerticalZones();
 		int totalRvTomcats = totalRvWebApps / parameters.getRvsPerTomcat();
@@ -107,13 +83,19 @@ public class SimConfFactory {
 		}
 		
 		int tomcatNumber = 0;
+		int zoneNumber = 0;
 		for (Entry<String, TomcatInstance> entry : configuration.getTomcatInstances().entrySet()) {
 			TomcatInstance tcInst = entry.getValue();
 			int maxInst = tcInst.isMultiple() ? totalRvTomcats : 1;
 
 			for (int k=0; k < maxInst; ++k) {
-				calculateTomcatPortNumbers(tomcatNumber);
-				String baseDir = buildTomcatPartOne(os, tcInst, k);
+				TomcatInfo tomcatInfo = new TomcatInfo();
+				tomcatInfo.setTomcatInstanceConfig(tcInst);
+				tomcatInfoList.add(tomcatInfo);
+				
+				calculateTomcatPortNumbers(tomcatInfo, tomcatNumber);
+				
+				buildTomcatPartOne(tomcatInfo, tcInst, k);
 				
 				int numberRvWebApps;
 				if (k+1 == totalRvTomcats) {
@@ -123,7 +105,8 @@ public class SimConfFactory {
 				}
 				LOG.info("Generate tomcat " + k + ", numberRvWebApps=" + numberRvWebApps + ", totalRvTomcats=" + totalRvTomcats);
 				
-				deployedWebApps.clear();
+				List<WebAppInfo> webAppInfoList = new ArrayList<WebAppInfo>();
+				
 				for (String webAppName : tcInst.getWebApps()) {
 					WebApplication webApp = configuration.getWebApplications().get(webAppName);
 					if (webApp == null) {
@@ -132,24 +115,111 @@ public class SimConfFactory {
 						continue;
 					}
 					int maxWebApps = webApp.isMultiple() ? numberRvWebApps : 1;
+
 					for (int w=0; w < maxWebApps; ++w) {
-						calculateWebAppPortNumbers(tomcatNumber, w);
-						String context = deployWebApp(os, baseDir, webApp, k, w);
-						deployedWebApps.put(context, webApp);
+						WebAppInfo webAppInfo = new WebAppInfo();
+						webAppInfo.setTomcatInfo(tomcatInfo);
+						webAppInfo.setWebApplicationConfig(webApp);
+						calculateWebAppPortNumbers(webAppInfo, tomcatNumber, w);
+						deployWebApp(webAppInfo, webApp, k, w);
+						if (webApp.isZoneAssigned()) {
+							ZoneInfo zoneInfo = zones.get(zoneNumber);
+							zoneInfo.setWebAppInfo(webAppInfo);
+							webAppInfo.setZoneInfo(zoneInfo);
+							++zoneNumber;
+						}
+						if (webApp.isCentralEngine()) {
+							centralEngines.add(webAppInfo);
+						}
+						webAppInfoList.add(webAppInfo);
 					}
 				}
 				
-				buildTomcatPartTwo(os, baseDir, configuration.getTomcatTemplateFiles(), k);
+				tomcatInfo.setWebAppInfo(webAppInfoList);
+				
+				// assign any zone information to slaves also.
+				for (WebAppInfo webApp : webAppInfoList) {
+					ZoneInfo zoneInfo = webApp.getZoneInfo();
+					String slaveContext = webApp.getSlaveContext();
+					if (zoneInfo == null || slaveContext == null) {
+						continue;
+					}
+					for (WebAppInfo wa : webAppInfoList) {
+						if (slaveContext.equals(wa.getContext()) && wa.getWebApplicationConfig().isMultiple()) {
+							wa.setZoneInfo(zoneInfo);
+							break;
+						}
+					}
+				}
+				
 				++tomcatNumber;
 			}
 		}
+
+		return packageZipOutputStream();
+	}
+
+	
+	private byte[] packageZipOutputStream() throws IOException {
+				
+		ByteArrayOutputStream boas = new ByteArrayOutputStream();
+		ZipOutputStream os = new ZipOutputStream(boas);
 		
+		
+		for (TomcatInfo tomcatInfo : tomcatInfoList) {
+			
+			String tomcatDir = tomcatInfo.getTomcatDir();
+			
+			for (String dir : configuration.getTomcatRequiredDirectories()) {
+				ZipEntry e = new ZipEntry(tomcatDir + "/" + dir + "/");
+				e.setTime(System.currentTimeMillis());
+				os.putNextEntry(e);
+				os.closeEntry();
+			}
+			
+			for (Entry<String, String> entry : configuration.getTomcatTemplateFiles().getTemplateFiles().entrySet()) {
+				String template = "templates/" + entry.getKey();
+				String target = entry.getValue();
+				emitTemplateFile(os, template, tomcatDir, target, tomcatInfo, null);
+			}
+			
+			for (WebAppInfo webAppInfo : tomcatInfo.getWebAppInfo()) {
+				for (Entry<String, String> entry : webAppInfo.getWebApplicationConfig().getTemplateFiles().getTemplateFiles().entrySet()) {
+					String template = "templates/" + entry.getKey();
+					String target = entry.getValue();
+					emitTemplateFile(os, template, tomcatDir, target, tomcatInfo, webAppInfo);
+				}
+			}
+		}
 		os.close();
 		
 		return boas.toByteArray();
 	}
 
-	
+	private void emitTemplateFile(ZipOutputStream os, String template, String baseDir, String target, TomcatInfo tomcatInfo, WebAppInfo webAppInfo) throws IOException {
+		
+		InputStream tplStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(template);
+		if (tplStream == null) {
+			LOG.error("Can not find template " + template);
+			System.out.println("Can not find template " + template);
+			return;
+		}
+		
+		target = processTemplate(target, tomcatInfo, webAppInfo);
+		
+		ZipEntry e = new ZipEntry(baseDir + "/" + target);
+		e.setTime(System.currentTimeMillis());
+		os.putNextEntry(e);
+		
+		if (template.endsWith(".vm")) {
+			processTemplate(os, tplStream, tomcatInfo, webAppInfo);
+		} else {
+			FileUtils.copyStream(tplStream, os, false);
+		}
+		
+		os.closeEntry();
+	}
+
 	private void calculateZones() {
 		
 		IGeodeticSystem gs = new WGS84();
@@ -168,7 +238,7 @@ public class SimConfFactory {
 		
 		PolarCoordinate southWestCorner = gs.walk(pos, totalHeigth/2.0, -totalWidth/2.0, 0);
 		
-		zones = new ArrayList<String>();
+		zones = new ArrayList<ZoneInfo>();
 		
 		for (int h=0; h < hor; ++h) {
 			for (int v=0; v < vert; ++v) {
@@ -176,12 +246,16 @@ public class SimConfFactory {
 				PolarCoordinate b = gs.walk(a, 0, width, 0);
 				PolarCoordinate c = gs.walk(a, -height, width, 0);
 				PolarCoordinate d = gs.walk(a, -height, 0, 0);
-				zones.add(zoneToString(new PolarCoordinate[]{a,b,c,d,a}));
+				PolarCoordinate depot = gs.walk(a, -height/2.0, width/2.0, 0);
+				ZoneInfo zInfo = new ZoneInfo();
+				zInfo.setVertices(verticesToString(new PolarCoordinate[]{a,b,c,d,a}));
+				zInfo.setDepotPosition(depot);
+				zones.add(zInfo);
 			}
 		}
 	}
 	
-	private String zoneToString(PolarCoordinate[] polarCoordinates) {
+	private String verticesToString(PolarCoordinate[] polarCoordinates) {
 		
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
@@ -198,96 +272,47 @@ public class SimConfFactory {
 		return sb.toString();
 	}
 
-	private String buildTomcatPartOne(ZipOutputStream os, TomcatInstance ti, int number) throws IOException {
+	private void buildTomcatPartOne(TomcatInfo tomcatInfo, TomcatInstance ti, int number) throws IOException {
 		
 		String name = ti.getNameTemplate();
 		if (ti.isMultiple()) {
 			name = String.format(Locale.US,	name, number);
 		}
 		String tomcatDir = "tomcat-" + name;
-		webAppProps.setProperty(PROP_TOMCAT_NAME, name);
-		webAppProps.setProperty(PROP_TOMCAT_DIR, tomcatDir);
-		return tomcatDir;
-	}
-	
-	private void buildTomcatPartTwo(ZipOutputStream os, String tomcatDir, TemplateFiles tf, int number) throws IOException {
 		
-		for (String dir : configuration.getTomcatRequiredDirectories()) {
-			ZipEntry e = new ZipEntry(tomcatDir + "/" + dir + "/");
-			e.setTime(System.currentTimeMillis());
-			os.putNextEntry(e);
-			os.closeEntry();
-		}
-		
-		for (Entry<String, String> entry : tf.getTemplateFiles().entrySet()) {
-			String template = "templates/" + entry.getKey();
-			InputStream tplStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(template);
-			if (tplStream == null) {
-				LOG.error("Can not find template " + template);
-				System.out.println("Can not find template " + template);
-				continue;
-			}
-			
-			String target = entry.getValue();
-			target = variableReplacer.replace(target);
-			ZipEntry e = new ZipEntry(tomcatDir + "/" + target);
-			e.setTime(System.currentTimeMillis());
-			os.putNextEntry(e);
-			
-			if (template.endsWith(".vm")) {
-				processTemplate(os, tplStream, number, 0);
-			} else {
-				FileUtils.copyStream(tplStream, os, false);
-			}
-			
-			os.closeEntry();
-		}
+		tomcatInfo.setTomcatName(name);
+		tomcatInfo.setTomcatDir(tomcatDir);
 	}
-	
-	
-	private String deployWebApp (ZipOutputStream os, String baseDir, WebApplication wa, int tomcatNumber, int webAppNumber) throws IOException {
+
+	private void deployWebApp (WebAppInfo webAppInfo, WebApplication wa, int tomcatNumber, int webAppNumber) throws IOException {
 		
 		String context = wa.getContextTemplate();
 		String masterContext = wa.getMasterContextTemplate();
+		String slaveContext = wa.getSlaveContextTemplate();
 		if (wa.isMultiple()) {
 			context = String.format(Locale.US,	context, webAppNumber);
 			if (masterContext != null) {
 				masterContext = String.format(Locale.US, masterContext, webAppNumber);
-				webAppProps.setProperty(PROP_WEB_APP_MASTER_CONTEXT, masterContext);
+			}
+			if (slaveContext != null) {
+				slaveContext = String.format(Locale.US, slaveContext, webAppNumber);
 			}
 		}
-		webAppProps.setProperty(PROP_WEB_APP_CONTEXT, context);
-		webAppProps.setProperty(PROP_WEB_APP_SERIAL_NUMBER, String.format(Locale.US, "%03d", tomcatNumber * parameters.getRvsPerTomcat() + webAppNumber));
+		webAppInfo.setMasterContext(masterContext);
+		webAppInfo.setSlaveContext(slaveContext);
 
-		for (Entry<String, String> entry : wa.getTemplateFiles().getTemplateFiles().entrySet()) {
-			String template = "templates/" + entry.getKey();
-			InputStream tplStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(template);
-			if (tplStream == null) {
-				LOG.error("Can not find template " + template);
-				System.out.println("Can not find template " + template);
-				continue;
-			}
-			
-			String target = entry.getValue();
-			target = variableReplacer.replace(target);
-			ZipEntry e = new ZipEntry(baseDir + "/" + target);
-			e.setTime(System.currentTimeMillis());
-			os.putNextEntry(e);
-			
-			if (template.endsWith(".vm")) {
-				processTemplate(os, tplStream, tomcatNumber, webAppNumber);
-			} else {
-				FileUtils.copyStream(tplStream, os, false);
-			}
-			
-			os.closeEntry();
-		}
-		
-		return context;
+		webAppInfo.setGroupId(wa.getGroupId());
+		webAppInfo.setArtifactId(wa.getArtifactId());
+		webAppInfo.setVersion(wa.getVersion());
+		webAppInfo.setPackaging(wa.getType());
+		webAppInfo.setContext(context);
+		webAppInfo.setWebAppSerialNumber(String.format(Locale.US, "%03d", tomcatNumber * parameters.getRvsPerTomcat() + webAppNumber));
+		String baseUrl = "http://localhost:" + webAppInfo.getTomcatInfo().getHttpConnectorPort() + "/" + webAppInfo.getContext();
+		webAppInfo.setBaseUrl(baseUrl);
 	}
 	
 	
-	private void processTemplate(OutputStream os, InputStream tplStream, int tomcatNumber, int webAppNumber) {
+	private void processTemplate(OutputStream os, InputStream tplStream, TomcatInfo tomcatInfo, WebAppInfo webAppInfo) {
 		PrintWriter pw = new PrintWriter(os);
 		InputStreamReader reader = new InputStreamReader(tplStream);
         Properties props = new Properties();
@@ -300,43 +325,53 @@ public class SimConfFactory {
         context.put("configuration", configuration);
         context.put("parameters", parameters);
         context.put("systemProperties", System.getProperties());
-        context.put("tomcatNumber", Integer.valueOf(tomcatNumber));
-        context.put("webAppNumber", Integer.valueOf(webAppNumber));
-        context.put("webAppProps", webAppProps);
+        context.put("tomcatInfo", tomcatInfo);
+        context.put("webAppInfo", webAppInfo);
+//        context.put("webAppProps", webAppProps);
+        context.put("tomcatInfoList", tomcatInfoList);
         context.put("zones", zones);
-        context.put("deployedWebApps", deployedWebApps);
+        context.put("centralEngines", centralEngines);
+//        context.put("deployedWebApps", deployedWebApps);
         
 		ve.evaluate(context, pw, "lala", reader);
 		pw.flush();
 	}
 	
-	private void calculateTomcatPortNumbers(int tomcatNumber) {
-//		mapper.registry.url = http\://localhost\:9040/mapper/registry
+	private String processTemplate(String template, TomcatInfo tomcatInfo, WebAppInfo webAppInfo) {
 		
-		int base = basePortNumber + webAppPortNumberDistance * tomcatNumber * parameters.getRvsPerTomcat();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ByteArrayInputStream bais = new ByteArrayInputStream(template.getBytes());
+		processTemplate(baos, bais, tomcatInfo, webAppInfo);
+		
+		return baos.toString();
+	}
+	
+	private void calculateTomcatPortNumbers(TomcatInfo tomcatInfo, int tomcatNumber) {
+		
+		int base = configuration.getTomcatBasePort() + configuration.getWebAppPortDistance() * tomcatNumber * parameters.getRvsPerTomcat();
 		
 		int serverPort = base + 5;
 		int httpConnectorPort = base + 0;
 		int httpsConnectorPort = base + 3;
 		int ajpConnectorPort = base + 9;
 		
-		webAppProps.setProperty(PROP_TOMCAT_SERVER_PORT, Integer.toString(serverPort));
-		webAppProps.setProperty(PROP_TOMCAT_HTTP_CONNECTOR_PORT, Integer.toString(httpConnectorPort));
-		webAppProps.setProperty(PROP_TOMCAT_HTTPS_CONNECTOR_PORT, Integer.toString(httpsConnectorPort));
-		webAppProps.setProperty(PROP_TOMCAT_AJP_CONNECTOR_PORT, Integer.toString(ajpConnectorPort));
-		
+		tomcatInfo.setServerPort(serverPort);
+		tomcatInfo.setHttpConnectorPort(httpConnectorPort);
+		tomcatInfo.setHttpsConnectorPort(httpsConnectorPort);
+		tomcatInfo.setAjpConnectorPort(ajpConnectorPort);
 	}
 	
 	
-	private void calculateWebAppPortNumbers(int tomcatNumber, int webAppNumber) {
-		int base = basePortNumber + webAppPortNumberDistance * (webAppNumber + tomcatNumber * parameters.getRvsPerTomcat());
+	private void calculateWebAppPortNumbers(WebAppInfo webAppInfo, int tomcatNumber, int webAppNumber) {
+		
+		int base = configuration.getTomcatBasePort() + configuration.getWebAppPortDistance() * (webAppNumber + tomcatNumber * parameters.getRvsPerTomcat());
 		
 		int plantListener = base + 1;
 		int locationSystemListener = base + 2;
 		int controllerConnector = base + 4;
 		
-		webAppProps.setProperty(PROP_PLANT_LISTENER_PORT, Integer.toString(plantListener));
-		webAppProps.setProperty(PROP_LOCATION_SYSTEM_LISTENER_PORT, Integer.toString(locationSystemListener));
-		webAppProps.setProperty(PROP_CONTROLLER_CONNECTOR_PORT, Integer.toString(controllerConnector));
+		webAppInfo.setPlantListener(plantListener);
+		webAppInfo.setLocationSystemListener(locationSystemListener);
+		webAppInfo.setControllerConnector(controllerConnector);
 	}
 }

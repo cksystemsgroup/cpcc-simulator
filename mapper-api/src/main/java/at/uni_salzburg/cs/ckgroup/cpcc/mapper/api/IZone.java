@@ -26,9 +26,19 @@ import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 
 public interface IZone extends JSONAware {
 	
+	enum Group { LOCAL, NEIGHBOR, FOREIGN };
+	
 	boolean isInside(PolarCoordinate p);
 	
 	PolarCoordinate getDepotPosition ();
 	
 	void setDepotPosition(PolarCoordinate depotPosition);
+	
+	String getZoneEngineUrl();
+	
+	void setZoneEngineUrl(String url);
+	
+	Group getZoneGroup();
+	
+	void setZoneGroup(Group type);
 }

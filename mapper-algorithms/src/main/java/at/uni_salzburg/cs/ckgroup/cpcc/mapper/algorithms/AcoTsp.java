@@ -89,7 +89,7 @@ public class AcoTsp {
 		costMatrix[START_POINT_INDEX][END_POINT_INDEX] = 0;
 		costMatrix[END_POINT_INDEX][START_POINT_INDEX] = 0;
 		
-		List<Integer> bestPath = AcoTspSimple.calculateBestPath(costMatrix, 1000, 3);
+		List<Integer> bestPath = AcoTspSimple.calculateBestPath(costMatrix, 2000, 3);
 		bestPath = reorderPath(bestPath, START_POINT_INDEX, END_POINT_INDEX);
 		
 		List<PolarCoordinate> r = new ArrayList<PolarCoordinate>();

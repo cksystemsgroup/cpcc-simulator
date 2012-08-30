@@ -135,6 +135,15 @@ public class ConfigurationParser {
 	}
 	
 	/**
+	 * @param param the property to be parsed. 
+	 * @return the parsed property as a <code>String</code> object.
+	 */
+	protected String parseString (String param, String defaultValue) {
+		String p = conf.getProperty(param);
+		return p != null && !"".equals(p.trim()) ? p : defaultValue;
+	}
+	
+	/**
 	 * @param <T>
 	 * @param param the property to be parsed. 
 	 * @return the parsed property as a <code>Class</code> object.
@@ -234,6 +243,31 @@ public class ConfigurationParser {
 			configOk = false;
 		}
 		return u;
+	}
+	
+	/**
+	 * @param param the property to be parsed.
+	 * @return the parsed property as an <code>URI</code> object.
+	 */
+	protected List<URI> parseUriList (String param) {
+		List<URI> uriList = new ArrayList<URI>();
+		try {
+			String[] uris = conf.getProperty(param).trim().split("\\s*,\\s");
+			
+			for (String uriString : uris) {
+				URI u = new URI(uriString);
+				if (u.getScheme() == null || u.getHost() == null || u.getPort() <= 0) {
+					configErrors.put(param, ERROR_MESSAGE_INVALID_VALUE);
+					configOk = false;
+				} else {
+					uriList.add(u);
+				}
+			}
+		} catch (Throwable e) {
+			configErrors.put(param, ERROR_MESSAGE_MISSING_VALUE);
+			configOk = false;
+		}
+		return uriList;
 	}
 	
 	/**

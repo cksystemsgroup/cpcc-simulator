@@ -36,6 +36,8 @@ import org.json.simple.parser.ParseException;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IWayPoint;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
+import at.uni_salzburg.cs.ckgroup.cscpp.mapper.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPointQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.registry.RegistryPersistence;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -81,13 +83,22 @@ public class RegistryService extends DefaultService {
 	        
 	        } else {
 	        	
+	        	IZone assignedZone = null;
+	        	Configuration conf = (Configuration)config.getServletContext().getAttribute("configuration");
+	        	for (IZone zone : conf.getZoneSet()) {
+	        		if (zone.getZoneEngineUrl() != null && eng_uri.equals(zone.getZoneEngineUrl())) {
+	        			assignedZone = zone;
+	        			break;
+	        		}
+	        	}
+	        	
 				@SuppressWarnings("unchecked")
 				Map<String, IRegistrationData> regdata = (Map<String, IRegistrationData>)config.getServletContext().getAttribute("regdata");
 
 		        if(pilot_uri == null || pilot_uri.trim().isEmpty()) {
 		        	// No sensors available, which is OK. This is a central engine.
 		        	LOG.info("Sucessful registration: central engine='" + eng_uri + "'");
-					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null, null, null));
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, null, null, null, null, assignedZone));
 					
 					@SuppressWarnings("unchecked")
 					Set<String> centralEngines = (Set<String>)config.getServletContext().getAttribute("centralEngines");
@@ -125,7 +136,7 @@ public class RegistryService extends DefaultService {
 						LOG.error("Error at retrieving available sensors", e);
 					}
 
-					regdata.put(eng_uri.trim(), new RegData(eng_uri, pilot_uri, wayPointList, sensors, pilotConfig, null));
+					regdata.put(eng_uri.trim(), new RegData(eng_uri, pilot_uri, wayPointList, sensors, pilotConfig, assignedZone));
 
 		        }
 

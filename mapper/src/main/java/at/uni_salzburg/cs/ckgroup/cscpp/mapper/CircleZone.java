@@ -25,15 +25,13 @@ import org.json.simple.JSONObject;
 import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 
-public class CircleZone implements IZone {
+public class CircleZone extends AbstractZone {
 	
 	private PolarCoordinate center;
 	private CartesianCoordinate centerCart;
 	private double radius;
 	private IGeodeticSystem geodeticSystem;
-	private PolarCoordinate depotPosition;
 	
 
 	public CircleZone (PolarCoordinate center, double radius, IGeodeticSystem geodeticSystem) {
@@ -41,7 +39,7 @@ public class CircleZone implements IZone {
 		this.center.setAltitude(0);
 		this.radius = radius;
 		this.geodeticSystem = geodeticSystem;
-		depotPosition = getCenterOfGravity ();
+		setDepotPosition(getCenterOfGravity ());
 		centerCart = geodeticSystem.polarToRectangularCoordinates(center);
 	}
 
@@ -56,17 +54,7 @@ public class CircleZone implements IZone {
 		double distance = centerCart.subtract(pCart).norm();
 		return distance <= radius;
 	}
-
-	@Override
-	public PolarCoordinate getDepotPosition() {
-		return depotPosition;
-	}
-
-	@Override
-	public void setDepotPosition(PolarCoordinate depotPosition) {
-		this.depotPosition = depotPosition;
-	}
-
+	
 	public PolarCoordinate getCenterOfGravity () {
 		return new PolarCoordinate(center);
 	}
@@ -84,10 +72,11 @@ public class CircleZone implements IZone {
 		o.put("center", c);
 		
 		JSONObject d = new JSONObject();
-		d.put("lat", new Double(depotPosition.getLatitude()));
-		d.put("lon", new Double(depotPosition.getLongitude()));
+		d.put("lat", new Double(getDepotPosition().getLatitude()));
+		d.put("lon", new Double(getDepotPosition().getLongitude()));
 		o.put("depot", c);
 		
 		return o.toJSONString();
 	}
+
 }

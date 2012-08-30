@@ -51,10 +51,14 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	
 	private static final String PROP_ZONE_PREFIX = "zone.";
 	private static final String PROP_ZONE_LIST = PROP_ZONE_PREFIX + "list";
+	private static final String PROP_ZONE_ENGINE_POSTFIX = ".engine";
+	private static final String PROP_ZONE_GROUP_POSTFIX = ".group";
 	private static final String PROP_ZONE_TYPE_POSTFIX = ".type";
 	private static final String PROP_ZONE_VERTICES_POSTFIX = ".vertices";
 	private static final String PROP_ZONE_POSITION_POSTFIX = ".position";
 	private static final String PROP_ZONE_RADIUS_POSTFIX = ".radius";
+	
+	private static final String PROP_CENTRAL_ENGINES = "mapper.central.engines";
 	
 	/**
 	 * The parameters and their default values. 
@@ -92,6 +96,11 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	private IGeodeticSystem geodeticSystem = new WGS84();
 	
 	/**
+	 * 
+	 */
+	private Set<String> centralEngineUrls;
+	
+	/**
 	 * Construct a <code>Configuration</code> object.
 	 */
 	public Configuration () {
@@ -111,6 +120,18 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 		mapperAlgorithmClassList = new ArrayList<Class<IMappingAlgorithm>>();
 		mapperAlgorithmClassList.addAll(parseClassName(PROP_MAPPER_ALGORITHM, IMappingAlgorithm.class));
 		
+		List<String[]> pars = getParameters();
+		
+		centralEngineUrls = new HashSet<String>();
+		String propCenralEngines = parseString(PROP_CENTRAL_ENGINES, "").trim();
+		if (!"".equals(propCenralEngines)) {
+			pars.add(new String[] {propCenralEngines});
+			String[] ces = propCenralEngines.split("\\s*,\\s*");
+			for (String ce : ces) {
+				centralEngineUrls.add(ce);
+			}
+		}
+		
 		zoneSet.clear();
 		
 		String zoneListString = parseString(PROP_ZONE_LIST);
@@ -120,14 +141,24 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 		
         Pattern p = Pattern.compile ("\\([^()]+\\)");
 
-		List<String[]> pars = getParameters();
-		
 		String[] zoneNames = zoneListString.trim().split("\\s*,\\s*");
 		for (String name : zoneNames) {
 			
+			String propEngine = PROP_ZONE_PREFIX + name + PROP_ZONE_ENGINE_POSTFIX;
+			String engine = parseString(propEngine, "");
+			if (!"".equals(engine)) {
+				pars.add(new String[] {propEngine});
+			}
+			
+			String propGroup = PROP_ZONE_PREFIX + name + PROP_ZONE_GROUP_POSTFIX;
+			String group = parseString(propGroup, "local");
+			pars.add(new String[] {propGroup});
+
 			String propType = PROP_ZONE_PREFIX + name + PROP_ZONE_TYPE_POSTFIX;
-			pars.add(new String[] {propType});
 			String type = parseString(propType);
+			pars.add(new String[] {propType});
+			
+			IZone zone = null;
 			
 			if ("polygon".equals(type)) {
 				String propVertices = PROP_ZONE_PREFIX + name + PROP_ZONE_VERTICES_POSTFIX;
@@ -155,7 +186,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
                 	vertices.add(new PolarCoordinate(latitude, longitude, 0.0));
                 }
 
-                zoneSet.add(new PolygonZone(vertices.toArray(new PolarCoordinate[0])));
+                zone = new PolygonZone(vertices.toArray(new PolarCoordinate[0]));
 				
 			} else if ("circle".equals(type)) {
 				String propPosition = PROP_ZONE_PREFIX + name + PROP_ZONE_POSITION_POSTFIX;
@@ -182,11 +213,17 @@ public class Configuration extends ConfigurationParser implements IConfiguration
             	double longitude = Double.parseDouble(ll[1]);
 				double radius = parseDouble(propRadius);
 				
-				zoneSet.add(new CircleZone(new PolarCoordinate(latitude, longitude, 0.0), radius, geodeticSystem));
+				zone = new CircleZone(new PolarCoordinate(latitude, longitude, 0.0), radius, geodeticSystem);
 				
 			} else {
 				configErrors.put(propType, ERROR_MESSAGE_INVALID_VALUE);
 				setConfigOk(false);
+			}
+			
+			if (zone != null) {
+				zone.setZoneEngineUrl(engine);
+				zone.setZoneGroup(IZone.Group.valueOf(group.toUpperCase()));
+				zoneSet.add(zone);
 			}
 			
 		}
@@ -205,4 +242,10 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	public Set<IZone> getZoneSet() {
 		return zoneSet;
 	}
+	
+	@Override
+	public Set<String> getCentralEngineUrls() {
+		return centralEngineUrls;
+	}
+	
 }

@@ -55,10 +55,21 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 
 	private long cycleTime = 1000;
 	
+	private long executionTime = 0;
+	
+	private long executionTimeMax = 0;
+	
+	private long executionTimeMin = 0;
+	
+	private double executionTimeAvg = 0;
+	
+	private long executions = 0;
+	
 	private Map<String,at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy> statusProxyMap = new HashMap<String, at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy>();
 	private List<IVirtualVehicleInfo> virtualVehicleList = new ArrayList<IVirtualVehicleInfo>();
 	private Map<String,IRegistrationData> registrationData;
 	private Set<String> centralEngines = new HashSet<String>();
+	private Set<String> registeredCentralEngines = new HashSet<String>();
 	private Set<IZone> zones;
 	private Set<IZone> neighborZones;
 	private List<IMappingAlgorithm> mappingAlgorithms;
@@ -101,6 +112,26 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		paused = false;
 	}
 	
+	public long getExecutionTime() {
+		return executionTime;
+	}
+	
+	public long getExecutionTimeMin() {
+		return executionTimeMin;
+	}
+	
+	public long getExecutionTimeMax() {
+		return executionTimeMax;
+	}
+	
+	public long getExecutionTimeAvg() {
+		return (long)(executionTimeAvg+0.5);
+	}
+	
+	public long getExecutions() {
+		return executions;
+	}
+	
 	@Override
 	public void run() {
 		if (registrationData == null)
@@ -109,14 +140,34 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		running = true;
 		proceed();
 		while (running) {
-			
 			if (!paused) {
 				step();
 			}
+
 			try { Thread.sleep(cycleTime); } catch (InterruptedException e) { }
 		}
 	}
 	
+	private void calculateStatistics() {
+		
+		++executions;
+		
+		if (executionTime > executionTimeMax) {
+			executionTimeMax = executionTime;
+		}
+		
+		if (executionTime != 0 && executionTime < executionTimeMin) {
+			executionTimeMin = executionTime;
+		}
+		
+		if (executions == 1) {
+			executionTimeAvg = executionTime;
+		} else {
+			executionTimeAvg = (executionTimeAvg * (executions - 1.0) + executionTime) / executions;
+		}
+		
+	}
+
 	@Override
 	public void singleStep() {
 		if (paused) {
@@ -125,6 +176,9 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	}
 	
 	private void step () {
+
+		long start = System.currentTimeMillis();
+
 		// create/remove StatusProxy objects.
 		renewStatusProxyMap();
 		
@@ -146,6 +200,9 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 			LOG.error("No mapping algorithm found. Mapping stopped.");
 			cease();
 		}
+		
+		executionTime = System.currentTimeMillis() - start;
+		calculateStatistics();
 	}
 	
 
@@ -154,7 +211,7 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 			if (!statusProxyMap.containsKey(rd.getEngineUrl()) && rd.getPilotUrl() != null) {
 				statusProxyMap.put(rd.getEngineUrl(), new StatusProxy(rd.getPilotUrl()));
 			}
-			if (!centralEngines.contains(rd.getEngineUrl()) && rd.isCentralEngine()) {
+			if (rd.isCentralEngine()) {
 				centralEngines.add(rd.getEngineUrl());
 			}
 		}
@@ -165,6 +222,8 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 				centralEngines.remove(key);
 			}
 		}
+		
+		centralEngines.addAll(registeredCentralEngines);	
 	}
 	
 	private void getPilotStatii() {
@@ -181,7 +240,7 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		virtualVehicleList.clear();
 		for (IRegistrationData rd : registrationData.values()) {
 			String key = rd.getEngineUrl();
-			String engineVehicleURL = key + "/json/vehicle";
+			String engineVehicleURL = key + "/json/vehicle/noAPs,noVvPath";
 			
 			String position = null;
 			try {
@@ -267,6 +326,10 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	@Override
 	public Set<String> getCentralEngines() {
 		return centralEngines;
+	}
+	
+	public void setRegisteredCentralEngines(Set<String> registeredCentralEngines) {
+		this.registeredCentralEngines = registeredCentralEngines;
 	}
 	
 	@Override

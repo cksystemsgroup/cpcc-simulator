@@ -23,22 +23,20 @@ package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 
-public class SquareZone implements IZone {
+public class SquareZone extends AbstractZone {
 
 	private double minLatitude;
 	private double maxLatitude;
 	private double minLongitude;
 	private double maxLongitude;
-	private PolarCoordinate depotPosition;
 	
 	public SquareZone(double minLatitude, double maxLatitude, double minLongitude, double maxLongitude) {
 		this.minLatitude = minLatitude;
 		this.maxLatitude = maxLatitude;
 		this.minLongitude = minLongitude;
 		this.maxLongitude = maxLongitude;
-		depotPosition = getCenterOfGravity();
+		setDepotPosition(getCenterOfGravity());
 	}
 	
 	@Override
@@ -49,17 +47,7 @@ public class SquareZone implements IZone {
 		return	minLatitude  <= p.getLatitude()  && p.getLatitude()  <= maxLatitude &&
 				minLongitude <= p.getLongitude() && p.getLongitude() <= maxLongitude;
 	}
-	
-	@Override
-	public PolarCoordinate getDepotPosition() {
-		return depotPosition;
-	}
-	
-	@Override
-	public void setDepotPosition(PolarCoordinate depotPosition) {
-		this.depotPosition = depotPosition;
-	}
-	
+		
 	public PolarCoordinate getCenterOfGravity () {
 		return new PolarCoordinate((maxLatitude + minLatitude) / 2, (maxLongitude - minLongitude) / 2, 0);
 	}
@@ -86,10 +74,11 @@ public class SquareZone implements IZone {
 		o.put("rightBottom", r);
 
 		JSONObject d = new JSONObject();
-		d.put("lat", new Double(depotPosition.getLatitude()));
-		d.put("lon", new Double(depotPosition.getLongitude()));
+		d.put("lat", new Double(getDepotPosition().getLatitude()));
+		d.put("lon", new Double(getDepotPosition().getLongitude()));
 		o.put("depot", d);
 		
 		return null;
 	}
+
 }

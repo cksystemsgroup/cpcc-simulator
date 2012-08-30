@@ -5,13 +5,33 @@
 			<table class="sensors">
 				<tbody>
 					<tr>
-						<td>Mapper Algorithm: </td>
+						<td>Mapper Algorithm:</td>
 #set( $algo = $servletConfig.getServletContext().getAttribute("mapper") )
 #if( $algo.isPaused() )
 						<td><span style="color: red">paused</span></td>
 #else
 						<td><span style="color: green">active</span></td>
 #end
+					</tr>
+					<tr>
+						<td>Execution Time:</td>
+						<td>$algo.getExecutionTime() ms</td>
+					</tr>
+					<tr>
+						<td>Minimum Execution Time:</td>
+						<td>$algo.getExecutionTimeMin() ms</td>
+					</tr>
+					<tr>
+						<td>Maximum Execution Time:</td>
+						<td>$algo.getExecutionTimeMax() ms</td>
+					</tr>
+					<tr>
+						<td>Average Execution Time:</td>
+						<td>$algo.getExecutionTimeAvg() ms</td>
+					</tr>
+					<tr>
+						<td>Number of Executions:</td>
+						<td>$algo.getExecutions()</td>
 					</tr>
 				</tbody>
 			</table>

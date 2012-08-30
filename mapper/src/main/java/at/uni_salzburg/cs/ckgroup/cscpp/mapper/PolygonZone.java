@@ -27,9 +27,8 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 
-public class PolygonZone implements IZone {
+public class PolygonZone extends AbstractZone {
 	
 	private static final double epsilon = 1E-9;
 	
@@ -38,7 +37,6 @@ public class PolygonZone implements IZone {
 	private double minLat = Double.POSITIVE_INFINITY;
 	private double maxLon = Double.NEGATIVE_INFINITY;
 	private double minLon = Double.POSITIVE_INFINITY;
-	private PolarCoordinate depotPosition;
 	
 	public PolygonZone(PolarCoordinate[] v) {
 		
@@ -68,7 +66,7 @@ public class PolygonZone implements IZone {
 			if (vertices[k].y > maxLon) maxLon = vertices[k].y;
 		}
 		
-		depotPosition = getCenterOfGravity();
+		setDepotPosition(getCenterOfGravity());
 	}
 	
 	@Override
@@ -125,16 +123,6 @@ public class PolygonZone implements IZone {
 		return left % 2 == 1;
 	}
 	
-	@Override
-	public PolarCoordinate getDepotPosition () {
-		return depotPosition;
-	}
-	
-	@Override
-	public void setDepotPosition(PolarCoordinate depotPosition) {
-		this.depotPosition = depotPosition;
-	}
-	
 	public PolarCoordinate getCenterOfGravity () {
 		double x = 0, y = 0;
 		double doubleArea = 0;
@@ -179,7 +167,7 @@ public class PolygonZone implements IZone {
 		}
 		o.put("type", "polygon");
 		o.put("vertices", a);
-		o.put("depot", new TwoTuple(depotPosition.getLatitude(), depotPosition.getLongitude()));
+		o.put("depot", new TwoTuple(getDepotPosition().getLatitude(), getDepotPosition().getLongitude()));
 		return o.toJSONString();
 	}
 	

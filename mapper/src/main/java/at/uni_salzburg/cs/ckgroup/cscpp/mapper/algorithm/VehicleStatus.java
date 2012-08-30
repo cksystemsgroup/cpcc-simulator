@@ -46,15 +46,22 @@ public class VehicleStatus implements IVirtualVehicleStatus, JSONAware {
 		id = (String)obj.get("vehicle.id");
 		state = Status.valueOf(((String)obj.get("state")).toUpperCase());
 		if (state == Status.ACTIVE || state == Status.SUSPENDED) {
-			double latitude = ((Double)obj.get("latitude")).doubleValue();
-			double longitude = ((Double)obj.get("longitude")).doubleValue();
-			double altitude = ((Double)obj.get("altitude")).doubleValue();
-			position = new PolarCoordinate(latitude, longitude, altitude);
-			tolerance = (Double)obj.get("tolerance");
+			Double latitude = (Double)obj.get("latitude");
+			Double longitude = (Double)obj.get("longitude");
+			Double altitude = (Double)obj.get("altitude");
+			if (latitude != null && longitude != null && altitude != null) {
+				position = new PolarCoordinate(latitude.doubleValue(), longitude.doubleValue(), altitude.doubleValue());
+			} else {
+				position = null;
+			}
+			Double t = (Double)obj.get("tolerance");
+			tolerance = t != null ? t.doubleValue() : 5.0;
 			JSONArray as = (JSONArray)obj.get("actions");
 			actions = new HashSet<String>();
-			for (int k=0; k < as.size(); ++k) {
-				actions.add((String)as.get(k));
+			if (as != null) {
+				for (int k=0; k < as.size(); ++k) {
+					actions.add((String)as.get(k));
+				}
 			}
 		}
 	}

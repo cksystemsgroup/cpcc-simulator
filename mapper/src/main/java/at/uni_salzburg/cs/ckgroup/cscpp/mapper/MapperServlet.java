@@ -25,13 +25,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -86,10 +85,13 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 	@Override
 	public void init (ServletConfig servletConfig) throws ServletException {
 		this.servletConfig = servletConfig;
-		regdata = Collections.synchronizedMap(new TreeMap<String, IRegistrationData>());
-		centralEngines = Collections.synchronizedSet(new HashSet<String>());
+//		regdata = Collections.synchronizedMap(new TreeMap<String, IRegistrationData>());
+		regdata = new ConcurrentSkipListMap<String, IRegistrationData>();
+//		centralEngines = Collections.synchronizedSet(new HashSet<String>());
+		centralEngines = new ConcurrentSkipListSet<String>();
 //		zones = Collections.synchronizedSet(new HashSet<IZone>());
-		neighborZones = Collections.synchronizedSet(new HashSet<IZone>());
+//		neighborZones = Collections.synchronizedSet(new HashSet<IZone>());
+		neighborZones = new ConcurrentSkipListSet<IZone>();
 		super.init();
 		myInit();
 	}
@@ -125,6 +127,7 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 			servletConfig.getServletContext().setAttribute("mapper", mapper);
 			mapper.setRegistrationData(regdata);
 			mapper.setZones(configuration.getZoneSet());
+			mapper.setRegisteredCentralEngines(configuration.getCentralEngineUrls());
 			mapper.setNeighborZones(neighborZones);
 			mapper.start();
 			

@@ -38,4 +38,10 @@ public interface IConfiguration {
 	 * @return the configured real vehicle zones.
 	 */
 	Set<IZone> getZoneSet();
+
+	/**
+	 * @return the configured central engines.
+	 */
+	Set<String> getCentralEngineUrls();
+
 }

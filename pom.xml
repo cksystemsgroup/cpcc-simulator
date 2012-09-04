@@ -39,6 +39,7 @@
 	<modules>
 		<module>engine</module>
 		<module>mapper</module>
+		<module>engine-mapper-amalgamation</module>
 		<module>mapper-algorithms</module>
 		<module>mapper-algorithms-ext</module>
 		<module>mapper-api</module>

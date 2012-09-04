@@ -124,7 +124,7 @@ public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 			
 			if (rvInfo.occupied && rvInfo.isInactive() && 
 					statusProxyEntry.getValue().getCurrentPosition() != null &&
-					statusProxyEntry.getValue().getCurrentPosition().getAltitude() < 1.0)
+					statusProxyEntry.getValue().getCurrentPosition().getAltitude() < 0.8)
 			{
 				rvInfo.occupied = false;
 				rvInfo.resetInactiveCycles();

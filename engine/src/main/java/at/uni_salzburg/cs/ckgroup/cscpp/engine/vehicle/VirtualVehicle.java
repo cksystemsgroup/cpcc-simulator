@@ -214,13 +214,14 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	public Task getCurrentTask() {
 		Task ct = currentTask;
 		
-		if (ct == null || ct.getDelayTime() < 0) {
+		if (ct == null) {
 			return null;
 		}
 
 		long now = System.currentTimeMillis();
+		long delay = ct.getDelayTime() < 0 ? 0 : ct.getDelayTime();
 		
-		if (ct.getArrivalTime() + ct.getDelayTime() >= now) {
+		if (ct.getArrivalTime() + delay >= now) {
 			return null;
 		}
 		

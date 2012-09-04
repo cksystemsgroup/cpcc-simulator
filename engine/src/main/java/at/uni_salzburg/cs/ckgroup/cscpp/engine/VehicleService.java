@@ -43,6 +43,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.TaskListBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VehicleStorage;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
@@ -79,7 +80,7 @@ public class VehicleService extends DefaultService {
 	public void service(ServletConfig config, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
-		File contexTempDir = getServletConfig().getContextTempDir();
+//		File contexTempDir = getServletConfig().getContextTempDir();
 		
 		String servicePath = request.getRequestURI();
 		if (request.getRequestURI().startsWith(request.getContextPath()))
@@ -131,8 +132,12 @@ public class VehicleService extends DefaultService {
 				nextPage = request.getContextPath() + "/vehicle.tpl";
 				LOG.info("Virtual Vehicle uploaded.");
 				
-				File workDir = File.createTempFile("vehicle", "", contexTempDir); 
-				workDir.delete();
+//				File workDir = File.createTempFile("vehicle", "", contexTempDir); 
+//				workDir.delete();
+				
+				Object vs = config.getServletContext().getAttribute("vehicleStorage");
+				VehicleStorage vehicleStorage = (VehicleStorage)vs;
+				File workDir = vehicleStorage.createVehicleWorkDir();
 
 				Object vbo = config.getServletContext().getAttribute("vehicleBuilder");
 				VirtualVehicleBuilder vehicleBuilder = (VirtualVehicleBuilder)vbo;
@@ -194,7 +199,12 @@ public class VehicleService extends DefaultService {
 			}
 			
 			for (String name : p2.split("\\s*,\\s*")) {
-				File vd = new File(contexTempDir,name);
+				
+				Object vs = config.getServletContext().getAttribute("vehicleStorage");
+				VehicleStorage vehicleStorage = (VehicleStorage)vs;
+				
+//				File vd = new File(contexTempDir,name);
+				File vd = vehicleStorage.findVehicleWorkDir(name);
 				
 				try {
 					if (!vd.exists()) {
@@ -204,7 +214,9 @@ public class VehicleService extends DefaultService {
 
 					migrateVehicle(config, p1, name);
 					LOG.info("Migration succeeded. Removing folder " + vd.getAbsolutePath());
-					FileUtils.removeRecursively(vd);
+//					FileUtils.removeRecursively(vd);
+					
+					vehicleStorage.removeVehicleWorkDir(vd);
 					
 				} catch (IOException e) {
 					LOG.info("Problems at migrating virtual vehicle " + name, e);
@@ -371,6 +383,10 @@ public class VehicleService extends DefaultService {
 		
 		Object cnf = config.getServletContext().getAttribute("configuration");
 		IConfiguration configuration = (IConfiguration)cnf;
+		
+		Object vs = config.getServletContext().getAttribute("vehicleStorage");
+		VehicleStorage vehicleStorage = (VehicleStorage)vs;
+		
 		Object vhl = config.getServletContext().getAttribute("vehicleMap");
 		@SuppressWarnings("unchecked")
 		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
@@ -391,7 +407,8 @@ public class VehicleService extends DefaultService {
 				throw new IOException(rc[0] + " -- " + rc[1] + " -- " + rc[2]);
 			}
 			File workDir = vehicle.getWorkDir();
-			FileUtils.removeRecursively(workDir);
+//			FileUtils.removeRecursively(workDir);
+			vehicleStorage.removeVehicleWorkDir(workDir);
 		} catch (IOException e) {
 			vehicleMap.put(name, vehicle);
 			if (configuration.isPilotAvailable()) {
@@ -413,10 +430,14 @@ public class VehicleService extends DefaultService {
 	}
 
 	private void removeVehicles(ServletConfig config, String vehicles) {
-
+		
+		Object vs = config.getServletContext().getAttribute("vehicleStorage");
+		VehicleStorage vehicleStorage = (VehicleStorage)vs;
+		
 		Object vhl = config.getServletContext().getAttribute("vehicleMap");
 		@SuppressWarnings("unchecked")
 		Map<String, IVirtualVehicle> vehicleMap = (Map<String, IVirtualVehicle>)vhl;
+		
 		for (String name : vehicles.split("\\s*,\\s*")) {
 			IVirtualVehicle vehicle = vehicleMap.get(name);
 			if (vehicle == null)
@@ -433,7 +454,8 @@ public class VehicleService extends DefaultService {
 				vehicleMap.remove(name);
 				vehicle.suspend();
 				File workDir = vehicle.getWorkDir();
-				FileUtils.removeRecursively(workDir);
+//				FileUtils.removeRecursively(workDir);
+				vehicleStorage.removeVehicleWorkDir(workDir);
 			} catch (IOException e) {
 				LOG.error("At deleting vehicle " + name, e);
 			}

@@ -21,7 +21,6 @@
 package at.uni_salzburg.cs.ckgroup.cscpp.engine;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,10 +40,10 @@ import org.apache.log4j.Logger;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.json.JsonQueryService;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
+import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VehicleStorage;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VirtualVehicleBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
@@ -55,9 +54,10 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	
 	Logger LOG = Logger.getLogger(EngineServlet.class);
 	
-	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
+	private static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
 	private static final String PROP_PATH_NAME = "engine.properties";
-	public final static String PROP_CONFIG_FILE = "vehicle.config.file";
+	private static final String PROP_CONFIG_FILE = "vehicle.config.file";
+	private static final String PROP_STORAGE_DEPTH = "vehicle.storage.depth";
 	
 	private ServletConfig servletConfig;
 	private Properties props = new Properties ();
@@ -67,6 +67,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 	private SensorProxy sensorProxy = new SensorProxy();
 	private File contexTempDir;
 	private File configFile;
+	private VehicleStorage vehicleStorage;
         
 	private EngineRegister reg_thread;
 	
@@ -103,6 +104,16 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			
 			contexTempDir = (File)servletConfig.getServletContext().getAttribute(CONTEXT_TEMP_DIR);
 			configuration.setWorkDir (contexTempDir);
+			
+			int storageDepth = Integer.parseInt(props.getProperty(PROP_STORAGE_DEPTH, "0"));
+			if (storageDepth > 4) {
+				storageDepth = 4;
+			} else if (storageDepth < 0) {
+				storageDepth = 0;
+			}
+			vehicleStorage = new VehicleStorage(contexTempDir, storageDepth);
+			servletConfig.getServletContext().setAttribute("vehicleStorage", vehicleStorage);
+			vehicleBuilder.setVehicleStorage(vehicleStorage);
 			
 			configFile = new File (contexTempDir, props.getProperty(PROP_CONFIG_FILE));
 			reloadConfigFile();
@@ -190,14 +201,31 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		URI pilotUrl = configuration.getPilotUrl();
 		sensorProxy.setPilotUrl(pilotUrl != null ? pilotUrl.toASCIIString() : null);
 		
-		FileFilter vehicleFilter = new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.isDirectory() && pathname.getName().matches("vehicle\\d+");
-			}
-		};
+//		FileFilter vehicleFilter = new FileFilter() {
+//			@Override
+//			public boolean accept(File pathname) {
+//				return pathname.isDirectory() && pathname.getName().matches("vehicle\\d+");
+//			}
+//		};
+//		
+//		for (File vehicleDir : contexTempDir.listFiles(vehicleFilter)) {
+//			IVirtualVehicle vehicle = vehicleMap.get(vehicleDir.getName());
+//			if (vehicle == null) {
+//				try {
+//					vehicle = vehicleBuilder.build(vehicleDir);
+//					if (!vehicle.isActive() && configuration.isPilotAvailable()) {
+//						vehicle.resume();
+//					}
+//					vehicleMap.put(vehicleDir.getName(),vehicle);
+//				} catch (IOException e) {
+//					vehicleMap.remove(vehicleDir.getName());
+//					FileUtils.removeRecursively(vehicleDir);
+//					LOG.error("Virtual vehicle in " + vehicleDir.getName() + " is corrupt and has been removed.");
+//				}
+//			}
+//		}
 		
-		for (File vehicleDir : contexTempDir.listFiles(vehicleFilter)) {
+		for (File vehicleDir : vehicleStorage.listVehicleFolder()) {
 			IVirtualVehicle vehicle = vehicleMap.get(vehicleDir.getName());
 			if (vehicle == null) {
 				try {
@@ -208,11 +236,13 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 					vehicleMap.put(vehicleDir.getName(),vehicle);
 				} catch (IOException e) {
 					vehicleMap.remove(vehicleDir.getName());
-					FileUtils.removeRecursively(vehicleDir);
+//					FileUtils.removeRecursively(vehicleDir);
+					vehicleStorage.removeVehicleWorkDir(vehicleDir);
 					LOG.error("Virtual vehicle in " + vehicleDir.getName() + " is corrupt and has been removed.");
 				}
 			}
 		}
+		
 		
 		if (configuration.isPilotAvailable() && !sensorProxy.isRunning())
 			sensorProxy.start();

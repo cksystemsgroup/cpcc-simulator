@@ -38,12 +38,17 @@ public class VirtualVehicleBuilder {
 	Logger LOG = Logger.getLogger(VirtualVehicleBuilder.class);
 	
 	private SensorProxy sensorProxy = null;
+
+	private VehicleStorage vehicleStorage = null;
 	
 	
 	public void setSensorProxy(SensorProxy sensorProxy) {
 		this.sensorProxy = sensorProxy;
 	}
 
+	public void setVehicleStorage(VehicleStorage vehicleStorage) {
+		this.vehicleStorage  = vehicleStorage;
+	}
 
 	/**
 	 * @param workDir the work directory for the new virtual vehicle.
@@ -90,7 +95,8 @@ public class VirtualVehicleBuilder {
 			vehicle.setSensorProxy(sensorProxy);
 		} catch (IOException e) {
 			LOG.error("Can not instantiate virtual vehicle " + workDir);
-			FileUtils.removeRecursively(workDir);
+//			FileUtils.removeRecursively(workDir);
+			vehicleStorage.removeVehicleWorkDir(workDir);
 			throw new IOException("Can not instantiate virtual vehicle " + workDir, e);
 		}
 		
@@ -109,4 +115,5 @@ public class VirtualVehicleBuilder {
 		vehicle.setSensorProxy(sensorProxy);
 		return vehicle;
 	}
+
 }

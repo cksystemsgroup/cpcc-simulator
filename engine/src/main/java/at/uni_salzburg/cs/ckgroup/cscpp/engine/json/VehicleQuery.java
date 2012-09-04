@@ -22,15 +22,15 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.json;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
@@ -66,6 +66,11 @@ public class VehicleQuery implements IQuery {
 		put("SPEED", "speed");
 		put("TEMPERATURE", "temperature");
 	}};
+	
+	@SuppressWarnings("serial")
+	static Set<String> propSet = new HashSet<String>() {{
+		add("vehicle.id");
+	}};
 
 	public void setVehicleMap(Map<String, IVirtualVehicle> vehicleMap) {
 		this.vehicleMap = vehicleMap;
@@ -88,7 +93,8 @@ public class VehicleQuery implements IQuery {
 		}
 		
 		
-		Map<String, Object> obj=new LinkedHashMap<String, Object>();
+//		Map<String, Object> obj=new LinkedHashMap<String, Object>();
+		JSONObject obj = new JSONObject();
 		
 		for (IVirtualVehicle vehicle : vehicleMap.values()) {
 			
@@ -96,9 +102,13 @@ public class VehicleQuery implements IQuery {
 				continue;
 			}
 			
-			Map<String, Object> props = new LinkedHashMap<String, Object>();
+//			Map<String, Object> props = new LinkedHashMap<String, Object>();
+			JSONObject props = new JSONObject();
 			for (Entry<Object, Object> e : vehicle.getProperties().entrySet()) {
-				props.put((String)e.getKey(), e.getValue());
+				String propertyName = (String)e.getKey();
+				if (propSet.contains(propertyName)) {
+					props.put(propertyName, e.getValue());
+				}
 			}
 			
 			props.put(PROP_VEHICLE_LOCAL_NAME, vehicle.getWorkDir().getName());
@@ -159,7 +169,7 @@ public class VehicleQuery implements IQuery {
 			obj.put(vehicle.getWorkDir().getName(), props);
 		}
 
-		return JSONValue.toJSONString(obj);
+		return obj.toJSONString();
 	}
 
 }

@@ -70,6 +70,7 @@ public class CentralMappingAlgorithm implements IMappingAlgorithm {
 		
 		Set<String> centralEngines = mapper.getCentralEngines();
 		if (centralEngines.isEmpty()) {
+			LOG.error("No central engines available!");
 			return;
 		}
 		
@@ -88,7 +89,7 @@ public class CentralMappingAlgorithm implements IMappingAlgorithm {
 				if (pos == null) {
 					continue;
 				}
-				
+
 				for (IZone z : zones) {
 					if (z.isInside(pos)) {
 						String targetEngineUrl = z.getZoneEngineUrl();

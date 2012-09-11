@@ -1,0 +1,155 @@
+<div id="content">
+	<div class="post">
+		<h2 class="title"><a href="#">Virtual Vehicle Detail</a></h2>
+		<div style="font-size: 90%; line-height: 130%">
+#set( $vehicleNames = $parameters.get("vehicle") )
+#set( $vehicleMap = $servletConfig.getServletContext().getAttribute("vehicleMap") )
+#set( $vehicle = $vehicleMap.get($vehicleNames[0]) )
+#if( $vehicle )
+#set( $id = $vehicle.getProperties().getProperty("vehicle.id") )
+#set( $name = $vehicle.getWorkDir().getName() )
+			<table class="sensors">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Status</th>
+						<th>Local Name</th>
+						<th>Unique Identification</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td align="center"><input type="checkbox" name="vehicles" value="$name" /></td>
+#if( $vehicle.isFrozen() )
+						<td><span style="color: white; background-color: pink;">frozen</span></td>						
+#else
+#if( $vehicle.isProgramCorrupted() )
+						<td><span style="color: red;">corrupt</span></td>
+#else
+#if( $vehicle.isCompleted() )
+						<td><span style="color: blue;">completed</span></td>
+#else
+#if( $vehicle.isActive() )
+						<td><span style="color: green;">active</span></td>
+#else
+						<td><span style="color: grey;">suspended</span></td>
+#end
+#end
+#end
+#end
+						<td><a href="$contextPath/vehicleDetail.tpl?vehicle=$name">$name</a></td>
+						<td>$id</td>
+						<td><a href="$contextPath/vehicle/html/vehicleDownload/$name"><img title="Download Virtual Vehicle" src="$contextPath/img/disk.png" title="download vehicle" /></a></td>
+#if( $vehicle.isFrozen() )
+						<td><a href="$contextPath/vehicle/html/unfreeze/$name"><img src="$contextPath/img/weather_sun.png" title="unfreeze" /></a></td>
+#else
+#if( $vehicle.isProgramCorrupted() )
+						<td><a href="$contextPath/vehicle/html/delete/$name"><img title="Delete Corrupt Virtual Vehicle" src="$contextPath/img/cross.png" title="delete" /></a></td>
+#else
+#if( $vehicle.isCompleted() )
+						<td><img src="$contextPath/img/tick.png" title="completed" /></td>
+#else						
+#if( $vehicle.isActive() )
+						<td><a href="$contextPath/vehicle/html/suspend/$name"><img title="Suspend Virtual Vehicle" src="$contextPath/img/control_pause.png" title="suspend" /></a></td>
+#else
+						<td><a href="$contextPath/vehicle/html/resume/$name"><img title="Resume Virtual Vehicle" src="$contextPath/img/control_play.png" title="resume" /></a></td>
+#end
+#end
+#end
+#end						
+					</tr>
+				<tbody>
+			</table>
+			
+			<div class="vvProgramHeader">
+#if( $vehicle.isProgramCorrupted() )
+				<div class="vvProgramError">This virtual vehicle program is corrupt!</div>
+#else
+				<p/>
+#end
+			</div>
+			
+			<table class="vvProgram">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Virtual Vehicle Tasks</th>
+					</tr>
+				</thead>
+				<tbody>
+#set( $fmt = $servletConfig.getServletContext().getAttribute("timeFormatter") )
+#set( $currentIndex = $vehicle.getCurrentTaskIndex() )
+#set( $taskList = $vehicle.getTaskList() )
+#set( $x = 0 )
+#foreach( $task in $taskList )
+	#if( $vehicle.isProgramCorrupted() )
+		#set( $lineClassName = "vvProgramLineError" )
+	#else
+		#if( $x == 	$currentIndex )
+			#set( $lineClassName = "vvProgramLineActive" )
+		#else
+			#if( $task.isComplete() )
+				#set( $lineClassName = "vvProgramLineFinished" )
+			#else
+				#set( $lineClassName = "vvProgramLine" )
+			#end
+		#end
+	#end
+					<tr class="$lineClassName">
+						<td align="right">$x</td>
+#set( $pattern1 = '"([^"]+)"' )
+#set( $replacement1 = '<a href="'+"$contextPath/vehicle/html/vehicleData/$name/$1" + '">"$1"</a>' )
+#set( $pattern2 = "'([^']+)'" )
+#set( $replacement2 = "<span style="+'"color: brown"'+">'$1'</span>" )
+#set( $code = $task.toString().replaceAll("\n","</br>").replaceAll($pattern1,$replacement1).replaceAll($pattern2,$replacement2) )
+#set( $code = $fmt.formatCode($code) )
+						<td>$code</td>
+					</tr>
+#set( $x = $x + 1 )
+#end
+				<tbody>
+			</table>
+#set( $log = $vehicle.getLog() )
+#if( $log )
+##set( $log = $log.replaceAll("\n","<br/>\n") )
+##$log
+			<div class="vvProgramHeader">
+				Vehicle Log:
+			</div>
+			<table class="vvErrorLog">
+#foreach( $l in $log.split("\n") )
+				<tr class="vvErrorLog"><td class="vvErrorLog">$l</td></tr>
+#end
+			</table>
+#end
+#if( !$vehicle.isProgramCorrupted() )	
+			<div class="vvProgramHeader">
+				Data Files:
+			</div>
+
+#if( $vehicle.getDataFileNames().size() == 0 )
+			No files collected yet.
+#else
+			<table class="vvProgram">
+				<tbody>
+#foreach( $fileName in $vehicle.getDataFileNames() )		
+					<tr class="$lineClassName">
+						<td><a href="$contextPath/vehicle/html/vehicleData/$name/$fileName">$fileName</a></td>
+					</tr>
+#end			
+#end
+				<tbody>
+			</table>
+#end
+
+#else
+<div style="color: red;">No such vehicle: $vehicleNames[0]</div>
+#end
+			
+			
+		</div>
+	</div>
+</div>
+<!-- end #content -->

@@ -1,0 +1,22 @@
+		<div id="sidebar">
+			<h2>Configuration Upload</h2>
+			<form action="config/configUpload" method="post" enctype="multipart/form-data">
+				<p>
+				Please select a configuration file on your machine and press the Upload button.<br>
+				<input type="file" name="configuration" size="13" maxlength="100000" accept="text/*"><br>
+				<input type="submit" name="configUpload" value="Upload" />
+				</p>
+			</form>
+#set( $reg = $servletConfig.getServletContext().getAttribute("engineRegistry") )
+#if( !$reg.isAlive() )
+			<h2>Mapper Registration</h2>
+			<form action="vehicle/html/mapperRegistration" method="get" enctype="text/plain">
+				<p>
+				To register this engine with the mapper (again) press the Register button.<br>
+				<input type="submit" name="mapperRegistration" value="Register" />
+				</p>
+			</form>
+#end
+		</div>
+		<!-- end #sidebar -->
+		<div style="clear: both;">&nbsp;</div>

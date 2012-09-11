@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+	metadata-complete="true"
+	version="3.0"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+	<display-name>CPCC EngMap</display-name>
+	<description>Web based virtual vehicle engine and mapper amalgamation</description>
+
+	<servlet>
+		<servlet-name>EngMap</servlet-name>
+		<servlet-class>at.uni_salzburg.cs.ckgroup.cpcc.engmap.EngMapServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>EngMap</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>user-resource</web-resource-name>
+			<description>pages which require login</description>
+			<url-pattern>/vehicle/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<!--
+		<auth-constraint>
+			<description>Must authenticate before querying the system</description>
+			<role-name>engine-admin</role-name>
+		</auth-constraint>
+		-->
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>CPCC Authentication Realm</realm-name>
+	</login-config>
+
+	<security-role>
+		<description>Any user of the system</description>
+		<role-name>engine-admin</role-name>
+	</security-role>
+</web-app>

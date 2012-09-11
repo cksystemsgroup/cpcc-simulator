@@ -30,7 +30,7 @@ import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 public interface IVirtualVehicleStatus {
 	
 	enum Status {
-		NONE, SUSPENDED, ACTIVE, CORRUPT, COMPLETED
+		NONE, SUSPENDED, ACTIVE, CORRUPT, COMPLETED, FROZEN
 	};
 
 	/**

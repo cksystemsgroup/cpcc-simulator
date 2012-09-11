@@ -20,13 +20,11 @@
 		<dependency>
 			<groupId>at.uni-salzburg.cs.cpcc.engine</groupId>
 			<artifactId>engine</artifactId>
-			<type>war</type>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>at.uni-salzburg.cs.cpcc.mapper</groupId>
 			<artifactId>mapper</artifactId>
-			<type>war</type>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

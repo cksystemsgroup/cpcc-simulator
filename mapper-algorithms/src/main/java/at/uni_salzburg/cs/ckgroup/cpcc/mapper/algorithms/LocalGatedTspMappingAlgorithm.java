@@ -144,7 +144,7 @@ public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 		for (IVirtualVehicleInfo vehicleInfo : vehicleList) {
 			
 			Status status = vehicleInfo.getVehicleStatus().getState();
-			if (status != Status.ACTIVE && status != Status.SUSPENDED) {
+			if (status != Status.ACTIVE && status != Status.SUSPENDED && status != Status.NONE) {
 				if (!mapper.getCentralEngines().isEmpty()) {
 					String centralEngineUrl = mapper.getCentralEngines().iterator().next();
 					LOG.info("Status=" + status.toString() + ": migrate " + vehicleInfo.getVehicleName() + " on " + vehicleInfo.getEngineUrl() + " to central engine " + centralEngineUrl);
@@ -156,6 +156,9 @@ public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 			}
 			
 			PolarCoordinate virtualVehiclePosition = vehicleInfo.getVehicleStatus().getPosition();
+			if (virtualVehiclePosition == null) {
+				continue;
+			}
 			
 			for (IZone zone : mapper.getZones()) {
 				if (zone.isInside(virtualVehiclePosition)) {

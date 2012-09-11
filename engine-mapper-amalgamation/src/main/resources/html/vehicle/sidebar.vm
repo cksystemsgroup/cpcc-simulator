@@ -1,0 +1,113 @@
+		<script type="text/javascript">
+			function getSelectedVehicles() {
+				var vehicleIDs = "";
+				var vs = document.getElementsByName("vehicles");
+				for (var k=0; k < vs.length; k++) {
+					if (vs[k].checked) {
+						if (vehicleIDs != "")
+							vehicleIDs += ",";
+						vehicleIDs += vs[k].value;
+					}
+				}
+				if (vehicleIDs == "") {
+					alert("Please select one or more vehicles in the vehicle list!");
+					return;
+				}
+				return vehicleIDs;
+			}
+			
+			function vehicleMigration() {
+				var vehicleDst = document.getElementById("destination").value;
+				if (vehicleDst == "") {
+					alert("Please provide a migration destination URL!");
+					return;
+				}
+				
+				var vehicleIDs = getSelectedVehicles();
+				if (!vehicleIDs)
+					return;
+				document.getElementById("vehicleDst").value = vehicleDst;
+				document.getElementById("vehicleIDs").value = vehicleIDs;
+				document.getElementById("migrationForm").submit();
+			}
+			
+			function vehicleFreeze() {
+				var vehicleIDs = getSelectedVehicles();
+				if (!vehicleIDs)
+					return;
+				document.getElementById("freezeVehicleIDs").value = vehicleIDs;
+				document.getElementById("freezeForm").submit();
+			}
+			
+			function vehicleUnfreeze() {
+				var vehicleIDs = getSelectedVehicles();
+				if (!vehicleIDs)
+					return;
+				document.getElementById("unfreezeVehicleIDs").value = vehicleIDs;
+				document.getElementById("unfreezeForm").submit();
+			}
+			
+			function vehicleDelete() {
+				var vehicleIDs = getSelectedVehicles();
+				if (!vehicleIDs)
+					return;
+				document.getElementById("deleteVehicleIDs").value = vehicleIDs;
+				document.getElementById("deleteForm").submit();
+			}
+		</script>
+		<div id="sidebar">
+			<h2>Upload Vehicles</h2>
+			<form action="vehicle/html/vehicleUpload" method="post" enctype="multipart/form-data">
+				<p>
+				Please select a vehicle archive on your machine and press the Upload button.<br>
+				<input type="file" name="configuration" size="13" class="sidebarTextInput" maxlength="100000" accept="application/zip" /><br>
+				<input type="submit" name="configUpload" value="Upload" />
+				</p>
+			</form>
+			<h2>Migrate Vehicles</h2>
+			<form action="javascript:vehicleMigration()" method="post" enctype="multipart/form-data">
+				<p>
+				Please select one or more vehicles in the vehicle list, enter a destination URL, and press the Migrate button.<br>
+				<input type="text" id="destination" name="destination" class="sidebarTextInput" maxlength="100000" /><br>
+				<input type="submit" name="migration" value="Migrate" />
+				</p>
+			</form>
+			<form action="vehicle/html/vehicleMigration" id="migrationForm" method="get">
+				<input type="hidden" id="vehicleDst" name="vehicleDst" size="36" maxlength="100000" />
+				<input type="hidden" id="vehicleIDs" name="vehicleIDs" value="" />		
+			</form>
+			<h2>Manage Vehicles</h2>
+			<p class="multiForms">
+			Please select one or more vehicles in the vehicle list, and press one of the buttons below.
+			<table>
+				<tr>
+					<td>
+						<form action="javascript:vehicleFreeze()" method="post" enctype="multipart/form-data">
+							<input type="submit" name="freeze" value="Freeze" />
+						</form>
+					</td>
+					<td>
+						<form action="javascript:vehicleUnfreeze()" method="post" enctype="multipart/form-data">
+							<input type="submit" name="unfreeze" value="Unfreeze" />
+						</form>	
+					</td>
+					<td>
+						<form action="javascript:vehicleDelete()" method="post" enctype="multipart/form-data">
+							<input type="submit" name="delete" value="Delete" />
+						</form>	
+					</td>
+				</tr>
+			</table>
+			<form action="vehicle/html/freeze" id="freezeForm" method="post" enctype="multipart/form-data">
+				<input type="hidden" id="freezeVehicleIDs" name="freezeVehicleIDs" value="" />
+			</form>
+			<form action="vehicle/html/unfreeze" id="unfreezeForm" method="post" enctype="multipart/form-data">
+				<input type="hidden" id="unfreezeVehicleIDs" name="freezeVehicleIDs" value="" />
+			</form>
+			<form action="vehicle/html/delete" id="deleteForm" method="post" enctype="multipart/form-data">
+				<input type="hidden" id="deleteVehicleIDs" name="deleteVehicleIDs" value="" />
+			</form>
+			</p>
+		</div>
+		<!-- end #sidebar -->
+		<div style="clear: both;">&nbsp;</div>

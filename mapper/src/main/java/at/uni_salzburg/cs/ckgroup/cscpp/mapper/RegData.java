@@ -43,9 +43,9 @@ public class RegData implements IRegistrationData {
 	
 	private static final int MAX_ACCESS_ERRORS = 5;
 	
-    private String eng_uri;
+    private String engineUri;
     private String pilotUri;
-    private List<IWayPoint> waypoints;
+    private List<IWayPoint> wayPoints;
     private Set<String> sensors;
     private boolean centralEngine;
     private int accessErrors = 0;
@@ -53,19 +53,19 @@ public class RegData implements IRegistrationData {
     private IZone assignedZone;
     private Object mapperData;
     
-    public RegData(String eu, String pu, List<IWayPoint> wp, Set<String> sensors2, Map<String, String> pilotConfig, IZone assignedZone) {
-        eng_uri = eu;
-        pilotUri = pu;
-        waypoints = wp;
-        sensors = sensors2;
-        centralEngine = pu == null || pu.trim().isEmpty();
+    public RegData(String engineUri, String pilotUri, List<IWayPoint> wayPoints, Set<String> sensors, Map<String, String> pilotConfig, IZone assignedZone) {
+        this.engineUri = engineUri;
+        this.pilotUri = pilotUri;
+        this.wayPoints = wayPoints;
+        this.sensors = sensors;
+        this.centralEngine = pilotUri == null || pilotUri.trim().isEmpty();
         this.pilotConfig = pilotConfig;
         this.assignedZone = assignedZone;
     }
     
 	public RegData(JSONObject obj) {
 		LOG.info("new RegData(): obj=" + obj.toJSONString());
-        eng_uri = (String)obj.get("engUri");
+        engineUri = (String)obj.get("engUri");
         Object ce = obj.get("centralEngine");
         centralEngine = ce == null ? false : ((Boolean)ce).booleanValue();
         pilotUri = (String)obj.get("pilotUri");
@@ -84,12 +84,12 @@ public class RegData implements IRegistrationData {
         
         array = (JSONArray)obj.get("waypoints");
         if (array == null) {
-        	waypoints = null;
+        	wayPoints = null;
         } else {
-            waypoints = new ArrayList<IWayPoint>();
+            wayPoints = new ArrayList<IWayPoint>();
 			for (Object entry : (JSONArray)array) {
 				WayPoint wayPoint = new WayPoint((JSONObject)entry);
-				waypoints.add(wayPoint);
+				wayPoints.add(wayPoint);
 			}
         }
         
@@ -98,7 +98,7 @@ public class RegData implements IRegistrationData {
     
 	@Override
     public String getEngineUrl() {
-        return eng_uri;
+        return engineUri;
     }
 
 	@Override
@@ -108,7 +108,7 @@ public class RegData implements IRegistrationData {
 
 	@Override
     public List<IWayPoint> getWaypoints() {
-        return waypoints;
+        return wayPoints;
     }
     
 	@Override
@@ -158,14 +158,14 @@ public class RegData implements IRegistrationData {
 	@Override
 	public String toJSONString() {
 	    JSONObject obj = new JSONObject();
-	    obj.put("engUri", eng_uri);
+	    obj.put("engUri", engineUri);
 	    obj.put("centralEngine", Boolean.valueOf(centralEngine));
 	    if (pilotConfig != null) {
 		    obj.put("pilotUri", pilotUri);
 	    	obj.put("pilotName", pilotConfig.get("pilotName"));	
 	    }
-	    if (waypoints != null) {
-	    	obj.put("waypoints", waypoints);	
+	    if (wayPoints != null) {
+	    	obj.put("waypoints", wayPoints);	
 	    }
 	    if (sensors != null) {
 		    List<String> ss = new ArrayList<String>();

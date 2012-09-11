@@ -105,6 +105,7 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 		
 		try {
 			props.load(propStream);
+			propStream.close();
 			
 //			ZoneFactory.buildZones(zones);
 //			servletConfig.getServletContext().setAttribute("zones", zones);
@@ -183,7 +184,10 @@ public class MapperServlet extends HttpServlet implements IRegistry, IServletCon
 	@Override
 	public void reloadConfigFile() throws IOException {
 		if (configFile != null && configFile.exists()) {
-			configuration.loadConfig(new FileInputStream(configFile));
+			FileInputStream inStream = new FileInputStream(configFile);
+			configuration.loadConfig(inStream);
+			inStream.close();
+			
 			LOG.info("Loading configuration from " + configFile);
 			List<IMappingAlgorithm> algorithms = new ArrayList<IMappingAlgorithm>();
 			List<Class<IMappingAlgorithm>> mapperAlgorithmClassList = configuration.getMapperAlgorithmClassList();

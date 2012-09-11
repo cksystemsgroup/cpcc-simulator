@@ -93,6 +93,7 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 		
 		try {
 			props.load(propStream);
+			propStream.close();
 					
 			vehicleBuilder.setSensorProxy(sensorProxy);
 			
@@ -195,7 +196,10 @@ public class EngineServlet extends HttpServlet implements IServletConfig {
 			return;
 		}
 		
-		configuration.loadConfig(new FileInputStream(configFile));
+		FileInputStream inStream = new FileInputStream(configFile);
+		configuration.loadConfig(inStream);
+		inStream.close();
+		
 		LOG.info("Loading configuration from " + configFile);
 		
 		URI pilotUrl = configuration.getPilotUrl();

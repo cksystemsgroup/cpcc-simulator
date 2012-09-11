@@ -148,12 +148,16 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		properties = new Properties();
 		File propsFile = new File(workDir, PROPERTY_PATH);
 		if (propsFile.exists()) {
-			properties.load(new FileInputStream(propsFile));
+			FileInputStream inStream = new FileInputStream(propsFile);
+			properties.load(inStream);
+			inStream.close();
 		}
 
 		if (properties.getProperty(PROP_VEHICLE_ID) == null) {
 			properties.setProperty(PROP_VEHICLE_ID, UUID.randomUUID().toString());
-			properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
+			FileOutputStream outStream = new FileOutputStream(new File(workDir, PROPERTY_PATH));
+			properties.store(outStream, "");
+			outStream.close();
 		}
 		
 		frozen = Boolean.valueOf(properties.getProperty(PROP_VEHICLE_FROZEN,"false"));
@@ -195,7 +199,9 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 			LOG.info("Vvehicle " + workDir.getName() + " has already been suspended.");
 		}
 		
-		properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
+		FileOutputStream outStream = new FileOutputStream(new File(workDir, PROPERTY_PATH));
+		properties.store(outStream, "");
+		outStream.close();
 	}
 
 	/* (non-Javadoc)
@@ -445,7 +451,9 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 				if (delayAlgorithm != null) {
 					properties.setProperty(PROP_VEHICLE_TASK_DELAY_ALGORITHM, delayAlgorithm.getCurrentState());
 				}
-				properties.store(new FileOutputStream(new File(workDir, PROPERTY_PATH)), "");
+				FileOutputStream outStream = new FileOutputStream(new File(workDir, PROPERTY_PATH));
+				properties.store(outStream, "");
+				outStream.close();
 			} catch (IOException e) {
 				LOG.error("Can not save properties of vehicle " + workDir, e);
 			}

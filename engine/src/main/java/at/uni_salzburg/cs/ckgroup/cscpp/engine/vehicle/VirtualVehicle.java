@@ -62,7 +62,8 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		
 		File input = vehicleStatusTxt.exists() ? vehicleStatusTxt : program;
 		
-		Scanner scanner = new Scanner(new FileInputStream(input));
+		FileInputStream inStream = new FileInputStream(input);
+		Scanner scanner = new Scanner(inStream);
 		
 		TaskListBuilder	builder = new TaskListBuilder(dataDir);
 		
@@ -92,6 +93,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			LOG.error("Vehicle " + workDir.getName() + " is corrupt. Execution refused.", e);
 		}
 
+		inStream.close();
 	}
 
 	/* (non-Javadoc)

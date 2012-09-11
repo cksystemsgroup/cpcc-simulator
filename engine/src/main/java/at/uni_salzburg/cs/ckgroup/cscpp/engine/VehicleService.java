@@ -303,7 +303,9 @@ public class VehicleService extends DefaultService {
 				File data = new File(v.getDataDir(),cmd[5]);
 				if (data.exists()) {
 					response.setContentType(getContentType(data));
-					emitFile(response.getOutputStream(), new FileInputStream(data));
+					FileInputStream inStream = new FileInputStream(data);
+					emitFile(response.getOutputStream(), inStream);
+					inStream.close();
 					return;
 				}
 			}

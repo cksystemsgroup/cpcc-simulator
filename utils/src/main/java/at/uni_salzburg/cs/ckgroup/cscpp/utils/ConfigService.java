@@ -108,7 +108,10 @@ public class ConfigService extends DefaultService {
 					throw new ServletException(e);
 				}
 				Properties props = new Properties();
-				props.load(new FileInputStream(confFile));
+				FileInputStream inStream = new FileInputStream(confFile);
+				props.load(inStream);
+				inStream.close();
+				
 				props.setProperty(PROP_WEB_APP_BASE_URL, uri.toString());
 				props.store(new FileOutputStream(confFile), "");
 

@@ -70,6 +70,7 @@ public class FileUtils {
 				out.write(buf, 0, len);
 			}
 			out.closeEntry();
+			inStream.close();
 		} else {
 			if (!name.isEmpty()) {
 				out.closeEntry();

@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<assembly>
+	<id>war</id>
+	<formats>
+		<format>war</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<dependencySets>
+		<dependencySet>
+			<useProjectArtifact>true</useProjectArtifact>
+			<outputDirectory>WEB-INF/lib</outputDirectory>
+			<excludes>
+				<exclude>at.uni-salzburg.cs.cpcc.mapper:mapper</exclude>
+			</excludes>
+		</dependencySet>
+                <dependencySet>
+                        <includes>
+                                <include>at.uni-salzburg.cs.cpcc.mapper:mapper</include>
+                        </includes>
+                        <outputDirectory>WEB-INF/classes</outputDirectory>
+                        <unpack>true</unpack>
+                        <unpackOptions>
+                                <excludes>
+                                        <exclude>META-INF/**/*</exclude>
+                                        <exclude>META-INF/*</exclude>
+                                        <exclude>META-INF</exclude>
+                                </excludes>
+                        </unpackOptions>
+                </dependencySet>
+		<dependencySet>
+			<includes>
+				<include>at.uni-salzburg.cs.cpcc.mapper:mapper</include>
+			</includes>
+			<outputDirectory></outputDirectory>
+			<unpack>true</unpack>
+			<unpackOptions>
+				<includes>
+					<include>META-INF/maven/**/*</include>
+				</includes>
+			</unpackOptions>
+		</dependencySet>
+	</dependencySets>
+
+	<fileSets>
+		<fileSet>
+			<directory>src/main/webapp</directory>
+			<outputDirectory></outputDirectory>
+			<includes>
+				<include>**/*.tpl</include>
+				<include>**/*.gif</include>
+				<include>**/*.jpg</include>
+				<include>**/*.png</include>
+				<include>**/*.css</include>
+				<include>**/*.txt</include>
+				<include>WEB-INF/web.xml</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

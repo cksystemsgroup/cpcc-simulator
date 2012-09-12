@@ -39,6 +39,7 @@ public class WebApplication {
 	private String artifactId;
 	private String version;
 	private String type;
+	private String classifier;
 	
 	private String contextTemplate;
 	private String masterContextTemplate;
@@ -55,11 +56,12 @@ public class WebApplication {
 		String artifactString = props.getProperty(artifactProperty);
 		if (artifactString != null) {
 			String[] art = artifactString.trim().split(":"); 
-			if (art.length == 4) {
+			if (art.length == 4 || art.length == 5) {
 				groupId = art[0];
 				artifactId = art[1];
 				version = art[2];
 				type = art[3];
+				classifier = art.length == 5 ? art[4] : null;
 			} else {
 				configErrors.put(artifactProperty, "# incorrect artifact");
 			}
@@ -126,6 +128,10 @@ public class WebApplication {
 
 	public String getType() {
 		return type;
+	}
+	
+	public String getClassifier() {
+		return classifier;
 	}
 
 	public String getContextTemplate() {

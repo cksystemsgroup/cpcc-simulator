@@ -304,6 +304,7 @@ public class SimConfFactory {
 		webAppInfo.setGroupId(wa.getGroupId());
 		webAppInfo.setArtifactId(wa.getArtifactId());
 		webAppInfo.setVersion(wa.getVersion());
+		webAppInfo.setClassifier(wa.getClassifier());
 		webAppInfo.setPackaging(wa.getType());
 		webAppInfo.setContext(context);
 		webAppInfo.setWebAppSerialNumber(String.format(Locale.US, "%03d", tomcatNumber * parameters.getRvsPerTomcat() + webAppNumber));

@@ -34,6 +34,8 @@ public class WebAppInfo {
 	
 	private String version;
 	
+	private String classifier;
+	
 	private String packaging;
 	
 	private String context;
@@ -93,6 +95,14 @@ public class WebAppInfo {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	
+	public String getClassifier() {
+		return classifier;
+	}
+	
+	public void setClassifier(String classifier) {
+		this.classifier = classifier;
 	}
 
 	public String getPackaging() {

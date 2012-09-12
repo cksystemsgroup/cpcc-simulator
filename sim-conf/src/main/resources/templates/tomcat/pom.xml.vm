@@ -46,6 +46,9 @@
               <version>$version</version>
               <type>$type</type>
               <webappName>$webApp.getContext()</webappName>
+#if( $webApp.getClassifier() )
+              <classifier>$webApp.getClassifier()</classifier>
+#end
             </webapp>
 #end
           </webapps>

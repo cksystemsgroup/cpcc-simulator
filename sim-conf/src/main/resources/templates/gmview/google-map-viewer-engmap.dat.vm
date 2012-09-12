@@ -1,0 +1,20 @@
+##set( $basePortNumber =  $webAppProps.getProperty("basePortNumber") )
+##set( $httpConnectorPort = $tomcatInfo.getHttpConnectorPort() )
+##
+## mapper.url = http\://localhost\:${httpConnectorPort}/mapper
+
+#set( $mapperURLs = "" )
+#set( $nr = 0 )
+#foreach( $tc in $tomcatInfoList )
+#foreach( $wa in $tc.getWebAppInfo() )
+#if( $wa.getContext().matches("engmap.*") )
+#if( $nr == 0 )
+#set( $nr = 1 )
+#else
+#set( $mapperURLs = $mapperURLs + ", " )
+#end
+#set( $mapperURLs = $mapperURLs + "http\://localhost\:${tc.getHttpConnectorPort()}/$wa.getContext()" )
+#end
+#end
+#end
+mapper.url = $mapperURLs

@@ -1,0 +1,39 @@
+##set( $basePortNumber =  $webAppProps.getProperty("basePortNumber") )
+##set( $httpConnectorPort = $webAppProps.getProperty("httpConnectorPort") )
+##set( $context = $webAppProps.getProperty("webapp.context") )
+
+#set( $httpConnectorPort = $tomcatInfo.getHttpConnectorPort() )
+#set( $context = $webAppInfo.getContext() )
+#set( $masterContext = $webAppInfo.getMasterContext() )
+
+web.app.base.url=http\://localhost\:${httpConnectorPort}/$context
+pilot.url=
+pilot.available = false
+
+mapper.algorithm = at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms.CentralMappingAlgorithm
+
+#set( $r = "" )
+#set( $n = 1 )
+#set( $f = 1 )
+#foreach( $zone in $zones )
+#if( $f == 1 )
+#set( $f = 0 )
+#else
+#set( $r = "$r, " )
+#end
+#set( $r = "$r$n" )
+#set( $n = $n + 1 )
+#end
+zone.list = $r
+
+#set( $n = 1 )
+#foreach( $zone in $zones )
+zone.${n}.type=polygon
+zone.${n}.vertices=$zone.getVertices()
+#if( $zone.getWebAppInfo().getBaseUrl() )
+zone.${n}.engine = $zone.getWebAppInfo().getBaseUrl()
+#end
+zone.${n}.group = foreign
+
+#set( $n = $n + 1 )
+#end

@@ -15,7 +15,7 @@ export SDK_HOME=$JAVA_HOME
 export LANG=en_US
 export CATALINA_BASE=$CPCC_SIM_HOME/$tcDir
 export CATALINA_HOME=$CPCC_SIM_HOME/.opt/apache-tomcat-7.0.29
-export CATALINA_OPTS="-XX:MaxPermSize=128m -Xmx1024m -Xss256k"
+export CATALINA_OPTS="-XX:MaxPermSize=128m -Xmx8192m -Xss256k"
 export CATALINA_OPTS="$CATALINA_OPTS -Duser.timezone=CET -Dfile.encoding=UTF-8 -Djava.awt.headless=true"
 #export CATALINA_OPTS="$CATALINA_OPTS -Dhttp.proxySet=true -Dhttp.proxyHost=141.201.80.7 -Dhttp.proxyPort=3128 -D'http.nonProxyHosts=beta|beta.cs.uni-salzburg.at|localhost|141.201.106.16|cs.uni-salzburg.at'"
 export CATALINA_OPTS="$CATALINA_OPTS -Dgoogle.maps.api.key=";

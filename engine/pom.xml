@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -11,7 +12,6 @@
 
 	<groupId>at.uni-salzburg.cs.cpcc.engine</groupId>
 	<artifactId>engine</artifactId>
-	<packaging>war</packaging>
 
 	<name>Virtual Vehicle Engine Module</name>
 	<description>Cyber Physical Cloud Computing - Virtual Vehicle Engine Module</description>
@@ -58,4 +58,30 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
+	
+	<!--
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-2</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/engine.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+	-->
 </project>

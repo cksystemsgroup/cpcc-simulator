@@ -30,6 +30,7 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
 
 public class VehicleStatus implements IVirtualVehicleStatus, JSONAware {
@@ -118,4 +119,8 @@ public class VehicleStatus implements IVirtualVehicleStatus, JSONAware {
 		return obj.toJSONString();
 	}
 
+	@Override
+	public ITask getCurrentTask() {
+		return null;
+	}
 }

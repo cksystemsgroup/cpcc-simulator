@@ -28,10 +28,11 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ISensorProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 
-public class Task implements JSONAware {
+public class Task implements ITask, JSONAware {
 	
 	private PolarCoordinate position;
 	private Double tolerance;
@@ -41,6 +42,7 @@ public class Task implements JSONAware {
 	private long lifeTime;
 	private List<IAction> actionList;
 
+	@Override
 	public PolarCoordinate getPosition() {
 		return position;
 	}
@@ -49,6 +51,7 @@ public class Task implements JSONAware {
 		this.position = position;
 	}
 	
+	@Override
 	public Double getTolerance() {
 		return tolerance;
 	}
@@ -57,6 +60,7 @@ public class Task implements JSONAware {
 		this.tolerance = tolerance;
 	}
 	
+	@Override
 	public long getArrivalTime() {
 		return arrivalTime;
 	}
@@ -65,6 +69,7 @@ public class Task implements JSONAware {
 		this.arrivalTime = arrivalTime;
 	}
 	
+	@Override
 	public long getActivationTime() {
 		return activationTime;
 	}
@@ -73,6 +78,7 @@ public class Task implements JSONAware {
 		this.activationTime = activationTime;
 	}
 	
+	@Override
 	public long getDelayTime() {
 		return delayTime;
 	}
@@ -81,6 +87,7 @@ public class Task implements JSONAware {
 		this.delayTime = delayTime;
 	}
 	
+	@Override
 	public long getLifeTime() {
 		return lifeTime;
 	}
@@ -89,6 +96,7 @@ public class Task implements JSONAware {
 		this.lifeTime = lifeTime;
 	}
 	
+	@Override
 	public List<IAction> getActionList() {
 		return actionList;
 	}
@@ -97,6 +105,7 @@ public class Task implements JSONAware {
 		this.actionList = actionList;
 	}
 	
+	@Override
 	public boolean isComplete() {
 		for (IAction action : actionList) {
 			if (!action.isComplete()) {
@@ -106,6 +115,7 @@ public class Task implements JSONAware {
 		return true;
 	}
 	
+	@Override
 	public void execute(ISensorProxy sprox) {
 		for (IAction action : actionList) {
 			if (!action.isComplete()) {

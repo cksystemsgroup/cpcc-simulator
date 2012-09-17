@@ -33,7 +33,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;

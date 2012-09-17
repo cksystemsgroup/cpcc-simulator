@@ -29,8 +29,8 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ISensorProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
 
 public class Picture extends AbstractAction {
 	

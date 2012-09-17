@@ -1,5 +1,5 @@
 /*
- * @(#) IVirtualVehicleInfo.java
+ * @(#) ITask.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -20,25 +20,29 @@
  */
 package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
-/**
- * This interface covers a Virtual Vehicle's status.
- */
-public interface IVirtualVehicleInfo {
-	
-	/**
-	 * @return the Virtual Vehicle's name.
-	 */
-	String getVehicleName();
-	
-	/**
-	 * @return the base URL of the Engine currently transporting the Virtual
-	 *         Vehicle.
-	 */
-	String getEngineUrl();
-	
-	/**
-	 * @return the Virtual Vehicle's status.
-	 */
-	IVirtualVehicleStatus getVehicleStatus();
+import java.util.List;
 
+import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+
+public interface ITask {
+
+	public PolarCoordinate getPosition();
+	
+	public Double getTolerance();
+	
+	public long getArrivalTime();
+	
+	public long getActivationTime();
+	
+	public long getDelayTime();
+	
+	public long getLifeTime();
+	
+	public void setLifeTime(long lifeTime);
+	
+	public List<IAction> getActionList();
+	
+	public boolean isComplete();
+	
+	public void execute(ISensorProxy sprox);
 }

@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.Set;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.AbstractAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.AirPressure;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Altitude;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Course;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Picture;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Random;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Sonar;

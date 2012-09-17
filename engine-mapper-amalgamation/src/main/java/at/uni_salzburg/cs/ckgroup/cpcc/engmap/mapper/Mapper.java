@@ -202,7 +202,11 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 
 		if (mappingAlgorithms != null) {
 			for (IMappingAlgorithm algorithm : mappingAlgorithms) {
-				algorithm.execute(this);
+				try {
+					algorithm.execute(this);
+				} catch (Throwable e) {
+					LOG.error(e);
+				}
 			}
 		} else {
 			LOG.error("No mapping algorithm found. Mapping stopped.");

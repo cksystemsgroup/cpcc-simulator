@@ -1,5 +1,5 @@
 /*
- * @(#) LocalGatedTspMappingAlgorithm.java
+ * @(#) LocalFCFSMappingAlgorithm.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -38,6 +38,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRVCommand;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus.Status;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
@@ -46,9 +47,9 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandFlyTo;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandGoAuto;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
 
-public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
+public class LocalFCFSMappingAlgorithm implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(LocalGatedTspMappingAlgorithm.class);
+	private static final Logger LOG = Logger.getLogger(LocalFCFSMappingAlgorithm.class);
 	
 	private static final int NTHREADS = 10;
 	
@@ -77,9 +78,6 @@ public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 	private IGeodeticSystem geodeticSystem = new WGS84();
 
 	
-	private AcoTsp tspSolver = new AcoTsp(geodeticSystem);
-	
-
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm#execute(at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper)
 	 */
@@ -228,39 +226,31 @@ public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 				continue;
 			}
 			
-			List<PolarCoordinate> wayPoints = new ArrayList<PolarCoordinate>();
-			if (currentPosition != null) {
-				wayPoints.add(currentPosition);
-			} else {
-//				LOG.error("Current position is null!");
-				continue;
-			}
-			wayPoints.add(depotPosition);
+			PolarCoordinate wayPoint = null;
+			long arrivalTime = Long.MAX_VALUE;
+			
 			for (IVirtualVehicleInfo e : rvInfo.vehicleList) {
-				PolarCoordinate p = e.getVehicleStatus().getPosition();
-				if (p != null) {
-					wayPoints.add(p);
-				} else {
-//					LOG.error("Current position of VV " + e.getVehicleName() + " is null!");
+				ITask t = e.getVehicleStatus().getCurrentTask();
+				if (t == null) {
 					continue;
+				}
+				
+				if (t.getArrivalTime() < arrivalTime) {
+					arrivalTime = t.getArrivalTime();
+					wayPoint = t.getPosition();
 				}
 			}
 			
 //			LOG.info("Current position of " + engineUrl + " is " + (currentPosition != null ? currentPosition.toString() : "null"));
 
-			if (wayPoints.size() > 2)  {
-				LOG.info("Waypoint list of " + engineUrl + " has " + wayPoints.size() + " entries.");
+			if (wayPoint != null)  {
+				LOG.info("Engine " + engineUrl + " flies to " + wayPoint.toString());
 				
-				wayPoints = tspSolver.calculateBestPathWithDepot(wayPoints);
-				wayPoints.remove(0); // remove current position
-				wayPoints.remove(wayPoints.size()-1);	// remove depot
-				
-				for (PolarCoordinate wp : wayPoints) {
-					if (wp.getAltitude() < 0.5) {
-						wp.setAltitude(0.5);
-					}
-					courseCommandList.add(new RVCommandFlyTo(wp, 2, 4));
+				if (wayPoint.getAltitude() < 0.5) {
+					wayPoint = new PolarCoordinate(wayPoint.getLatitude(), wayPoint.getLongitude(), 0.5);
 				}
+
+				courseCommandList.add(new RVCommandFlyTo(wayPoint, 2, 4));
 				
 				rvInfo.occupied = true;
 				rvInfo.flyingToDepot = false;

@@ -15,9 +15,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.AbstractAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.AirPressure;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.IAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Picture;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Temperature;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;

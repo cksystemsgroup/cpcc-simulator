@@ -42,6 +42,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ISensorProxy;
 
 public class SensorProxy extends Thread implements ISensorProxy {
 	

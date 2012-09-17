@@ -24,7 +24,7 @@ import java.util.Locale;
 
 import org.json.simple.JSONObject;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ISensorProxy;
 
 public class Speed extends AbstractAction {
 

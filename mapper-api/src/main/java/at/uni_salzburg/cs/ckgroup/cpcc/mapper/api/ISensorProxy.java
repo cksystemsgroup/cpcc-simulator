@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package at.uni_salzburg.cs.ckgroup.cscpp.utils;
+package at.uni_salzburg.cs.ckgroup.cpcc.mapper.api;
 
 import java.io.InputStream;
 import java.util.Map;

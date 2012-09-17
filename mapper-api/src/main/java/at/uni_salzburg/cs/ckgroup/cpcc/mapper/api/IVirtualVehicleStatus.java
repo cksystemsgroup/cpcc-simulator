@@ -68,4 +68,9 @@ public interface IVirtualVehicleStatus {
 	 */
 	Set<String> getActions();
 	
+	
+	/**
+	 * @return the Virtual Vehicle's current task or null.
+	 */
+	ITask getCurrentTask();
 }

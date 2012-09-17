@@ -22,7 +22,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.engine.actions;
 
 import org.json.simple.JSONAware;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.utils.ISensorProxy;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ISensorProxy;
 
 
 public abstract class AbstractAction implements IAction, JSONAware

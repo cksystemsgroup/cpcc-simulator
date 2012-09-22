@@ -53,4 +53,9 @@ public interface IMapperThread {
 	 */
 	void singleStep();
 	
+	/**
+	 * Reset the mapper statistics.
+	 */
+	void resetStatistics();
+	
 }

@@ -3,9 +3,14 @@
 		<h2 class="title"><a href="#">Current Status</a></h2>
 		<div style="font-size: 90%; line-height: 130%">
 			<table class="sensors">
+				<thead>
+					<tr>
+						<th colspan="2">Mapping Algorithm Statistics</th>
+					</tr>
+				</thead>
 				<tbody>
 					<tr>
-						<td>Mapper Algorithm:</td>
+						<td style="width: 50%">Mapper Algorithm:</td>
 #set( $algo = $servletConfig.getServletContext().getAttribute("mapper") )
 #if( $algo.isPaused() )
 						<td><span style="color: red">paused</span></td>
@@ -35,6 +40,51 @@
 					</tr>
 				</tbody>
 			</table>
+			
+			<div style="clear: both;">&nbsp;</div>
+			<table class="sensors">			
+				<thead>
+					<tr>
+						<th colspan="2">Migration Statistics</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="width: 50%">Number of Migrations succeeded:</td>
+						<td>$algo.getMigrationsOk()</td>
+					</tr>
+					<tr>
+						<td>Number of Migrations failed:</td>
+						<td>$algo.getMigrationsFailed()</td>
+					</tr>
+					<tr>
+						<td>Average Migration Time:</td>
+						<td>$algo.getMigrationTimeAvg() ms</td>
+					</tr>
+					
+				</tbody>
+			</table>
+			
+			<div style="clear: both;">&nbsp;</div>
+			<table class="sensors">
+				<thead>
+					<tr>
+						<th colspan="2">Vehicle Statistics</th>
+					</tr>
+				</thead>
+				<tbody>
+#set( $keySet = $algo.getVvStatistics().keySet() )
+#foreach( $key in $keySet )
+#set( $vvstat = $algo.getVvStatistics().get($key) )
+					<tr>
+						<td style="width: 50%">$key</td>
+						<td>$vvstat</td>
+					</tr>
+#end
+				</tbody>
+			</table>	
+			
+			
 			<div style="clear: both;">&nbsp;</div>
 #set( $reg = $servletConfig.getServletContext().getAttribute("regdata") )
 #set( $keySet = $reg.keySet() )
@@ -66,35 +116,6 @@ Pilot Name: <a href="$rd.getPilotUrl()">$pilotName</a>
 #set( $first = true )
 #set( $su = $rd.getPilotUrl() + "/sensor" )
 #foreach( $sensor in $rd.getSensors() )#if( !$first ),#{end} <a href="$su/$sensor">$sensor</a>#set( $first = false )#end
-#end
-
-#set( $vehList = $algo.getVirtualVehicleList() )
-#set( $vs = [] )
-#foreach( $vehicleInfo in $vehList )
-#if( $vehicleInfo.getEngineUrl() == $key )
-#set( $nul = $vs.add( $vehicleInfo ) )
-#end
-#end
-
-#if( $vs.size() > 0 )
-<br/>Vehicles:
-#set( $fvs = 1 )
-#foreach( $vehicleInfo in $vs )
-<!-- $vehicleInfo.getVehicleStatus().getState() -->
-#set( $st = $vehicleInfo.getVehicleStatus().getState() )
-#set( $col = "white" )
-#if( $st == "SUSPENDED" )#set( $col = "grey" )#end
-#if( $st == "ACTIVE" )#set( $col = "green" )#end
-#if( $st == "CORRUPT" )#set( $col = "red" )#end
-#if( $st == "COMPLETED" )#set( $col = "blue" )#end
-
-#if( $fvs == 1 )
-#set( $fvs = 0 )
-#else
-,
-#end
-<a href="$key/vehicleDetail.tpl?vehicle=$vehicleInfo.getVehicleName()"><span style="color: $col;">$vehicleInfo.getVehicleStatus().getId()</span></a>
-#end
 #end
 						</td>
 					</tr>

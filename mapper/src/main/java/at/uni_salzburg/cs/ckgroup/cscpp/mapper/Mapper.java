@@ -49,6 +49,8 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 
 	private static final Logger LOG = Logger.getLogger(Mapper.class);
 	
+	private static final Object statLock = new Object[0];
+	
 	private boolean running = false;
 	
 	private boolean paused = false;
@@ -56,14 +58,14 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	private long cycleTime = 1000;
 	
 	private long executionTime = 0;
-	
 	private long executionTimeMax = 0;
-	
 	private long executionTimeMin = 0;
-	
 	private double executionTimeAvg = 0;
-	
 	private long executions = 0;
+	
+	private double migrationTimeAvg = 0;
+	private long migrationsOk = 0;
+	private long migrationsFailed = 0;
 	
 	private Map<String,at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy> statusProxyMap = new HashMap<String, at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy>();
 	private List<IVirtualVehicleInfo> virtualVehicleList = new ArrayList<IVirtualVehicleInfo>();
@@ -128,6 +130,18 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		return (long)(executionTimeAvg+0.5);
 	}
 	
+	public long getMigrationsFailed() {
+		return migrationsFailed;
+	}
+	
+	public long getMigrationsOk() {
+		return migrationsOk;
+	}
+	
+	public long getMigrationTimeAvg() {
+		return (long) migrationTimeAvg;
+	}
+	
 	public long getExecutions() {
 		return executions;
 	}
@@ -150,28 +164,44 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	
 	private void calculateStatistics() {
 		
-		++executions;
-		
-		if (executionTime > executionTimeMax) {
-			executionTimeMax = executionTime;
+		synchronized (statLock) {
+			++executions;
+			
+			if (executionTime > executionTimeMax) {
+				executionTimeMax = executionTime;
+			}
+			
+			if (executionTime != 0 && executionTime < executionTimeMin) {
+				executionTimeMin = executionTime;
+			}
+			
+			if (executions == 1) {
+				executionTimeAvg = executionTime;
+			} else {
+				executionTimeAvg = (executionTimeAvg * (executions - 1.0) + executionTime) / executions;
+			}
 		}
-		
-		if (executionTime != 0 && executionTime < executionTimeMin) {
-			executionTimeMin = executionTime;
-		}
-		
-		if (executions == 1) {
-			executionTimeAvg = executionTime;
-		} else {
-			executionTimeAvg = (executionTimeAvg * (executions - 1.0) + executionTime) / executions;
-		}
-		
 	}
 
 	@Override
 	public void singleStep() {
 		if (paused) {
 			step();
+		}
+	}
+	
+	@Override
+	public void resetStatistics() {
+		synchronized (statLock) {
+			executionTime = 0;
+			executionTimeMax = 0;
+			executionTimeMin = 0;
+			executionTimeAvg = 0;
+			executions = 0;
+			
+			migrationTimeAvg = 0;
+			migrationsOk = 0;
+			migrationsFailed = 0;
 		}
 	}
 	
@@ -205,7 +235,6 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		calculateStatistics();
 	}
 	
-
 	private void renewStatusProxyMap() {
 		for (IRegistrationData rd : registrationData.values()) {
 			if (!statusProxyMap.containsKey(rd.getEngineUrl()) && rd.getPilotUrl() != null) {
@@ -296,16 +325,25 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		LOG.info("Migration: " + migrationUrl);
 
 		try {
+			long start = System.nanoTime();
 			String ret = HttpQueryUtils.simpleQuery(migrationUrl);
 			if ("OK".equals(ret)) {
-				LOG.info("Migration succeeded. " + migrationUrl + ", " + ret);
+				long migrationTime = 0;
+				synchronized (statLock) {
+					++migrationsOk;
+					migrationTime = System.nanoTime() - start;
+					migrationTimeAvg = (migrationTimeAvg * (migrationsOk - 1.0) + migrationTime/1000.0) / migrationsOk;
+				}
+				LOG.info("Migration succeeded. " + migrationUrl + ", " + ret + ", migrationTime=" + (migrationTime/1000.0) + "ms");
 			} else {
 				LOG.error("Migration failed. " + migrationUrl + ", " + ret);
+				++migrationsFailed;
 			}
 		} catch (IOException ex) {
 			LOG.error("Migration failed. " + migrationUrl, ex);
+			++migrationsFailed;
 		}
-
+		
 	}
 	
 	@Override

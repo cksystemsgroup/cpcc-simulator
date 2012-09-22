@@ -50,6 +50,9 @@ public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 	
 	private static final Logger LOG = Logger.getLogger(LocalGatedTspMappingAlgorithm.class);
 	
+	private static final double RV_SPEED = 10;
+	private static final double RV_PRECISION = 2;
+	
 	private static final int NTHREADS = 10;
 	
 	private class RealVehicleInfo {
@@ -259,7 +262,7 @@ public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 					if (wp.getAltitude() < 0.5) {
 						wp.setAltitude(0.5);
 					}
-					courseCommandList.add(new RVCommandFlyTo(wp, 2, 4));
+					courseCommandList.add(new RVCommandFlyTo(wp, RV_PRECISION, RV_SPEED));
 				}
 				
 				rvInfo.occupied = true;
@@ -274,7 +277,7 @@ public class LocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 				
 				if (distanceToDepot > 5) {
 					LOG.info("Noting to do for " + engineUrl + " -> flying back to depot " + depotPosition);
-					courseCommandList.add(new RVCommandFlyTo(depotPosition, 2, 5));
+					courseCommandList.add(new RVCommandFlyTo(depotPosition, RV_PRECISION, RV_SPEED));
 					rvInfo.flyingToDepot = true;
 				} else {
 					LOG.debug("Noting to do for " + engineUrl + ", depot already reached.");

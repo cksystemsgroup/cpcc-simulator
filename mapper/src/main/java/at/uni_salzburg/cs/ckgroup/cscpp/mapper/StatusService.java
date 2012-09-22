@@ -39,6 +39,7 @@ public class StatusService extends DefaultService {
 	public static final String ACTION_MAPPER_SUSPEND = "mapperSuspend";
 	public static final String ACTION_MAPPER_RESUME = "mapperResume";
 	public static final String ACTION_MAPPER_SINGLE_STEP = "mapperSingleStep";
+	public static final String ACTION_MAPPER_RESET_STATISTICS = "mapperResetStats";
 	
 	public StatusService (IServletConfig configuraton) {
 		super (configuraton);
@@ -76,7 +77,12 @@ public class StatusService extends DefaultService {
 			IMapperThread mapperThread = (IMapperThread)config.getServletContext().getAttribute("mapper");
 			mapperThread.singleStep();
 			nextPage = request.getContextPath() + "/status.tpl";
-			
+
+		} else if (ACTION_MAPPER_RESET_STATISTICS.equals(action)) {
+			IMapperThread mapperThread = (IMapperThread)config.getServletContext().getAttribute("mapper");
+			mapperThread.resetStatistics();
+			nextPage = request.getContextPath() + "/status.tpl";
+
 		} else {
 			LOG.error("Can not handle: " + servicePath);
 			emit404(request, response);

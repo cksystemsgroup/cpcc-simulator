@@ -36,6 +36,15 @@
 				</p>
 			</form>
 #end
+			<h2>Mapper Statistics</h2>
+			<form action="status/mapperResetStats" method="get" enctype="text/plain">
+				<p>
+				To reset the mapper statistics press the Reset button.<br>
+				<input type="submit" name="mapperResetStats" value="Reset" />
+				</p>
+			</form>
+
+
 		</div>
 		<!-- end #sidebar -->
 		<div style="clear: both;">&nbsp;</div>

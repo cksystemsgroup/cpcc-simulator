@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
@@ -46,7 +47,9 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 public class Mapper extends Thread implements IMapperThread, IMapper {
 
 	private static final Logger LOG = Logger.getLogger(Mapper.class);
-
+	
+	private static final Object statLock = new Object[0];
+	
 	private boolean running = false;
 
 	private boolean paused = false;
@@ -54,14 +57,16 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	private long cycleTime = 1000;
 
 	private long executionTime = 0;
-
 	private long executionTimeMax = 0;
-
 	private long executionTimeMin = 0;
-
 	private double executionTimeAvg = 0;
-
 	private long executions = 0;
+	
+	private double migrationTimeAvg = 0;
+	private long migrationsOk = 0;
+	private long migrationsFailed = 0;
+	
+	private Map<String,Long> vvStatistics = null;
 
 	private Map<String, IStatusProxy> statusProxyMap = new HashMap<String, IStatusProxy>();
 	// private List<IVirtualVehicleInfo> virtualVehicleList = new
@@ -144,6 +149,22 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 	public long getExecutions() {
 		return executions;
 	}
+	
+	public long getMigrationsFailed() {
+		return migrationsFailed;
+	}
+	
+	public long getMigrationsOk() {
+		return migrationsOk;
+	}
+	
+	public long getMigrationTimeAvg() {
+		return (long) migrationTimeAvg;
+	}
+	
+	public Map<String, Long> getVvStatistics() {
+		return vvStatistics;
+	}
 
 	@Override
 	public void run() {
@@ -166,29 +187,71 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 
 	private void calculateStatistics() {
 
-		++executions;
-
-		if (executionTime > executionTimeMax) {
-			executionTimeMax = executionTime;
+		synchronized (statLock) {
+			++executions;
+	
+			if (executionTime > executionTimeMax) {
+				executionTimeMax = executionTime;
+			}
+	
+			if (executionTime != 0 && executionTime < executionTimeMin) {
+				executionTimeMin = executionTime;
+			}
+	
+			if (executions == 1) {
+				executionTimeAvg = executionTime;
+			} else {
+				executionTimeAvg = (executionTimeAvg * (executions - 1.0) + executionTime)
+						/ executions;
+			}
 		}
 
-		if (executionTime != 0 && executionTime < executionTimeMin) {
-			executionTimeMin = executionTime;
+		long active, completed, corrupt, frozen, total;
+		active = completed = corrupt = frozen = total = 0;
+		for (IVirtualVehicle v : vehicleMap.values()) {
+			if (v.isActive()) {
+				++active;
+			}
+			if (v.isCompleted()) {
+				++completed;
+			}
+			if (v.isFrozen()) {
+				++frozen;
+			}
+			if (v.isProgramCorrupted()) {
+				++corrupt;
+			}
+			++total;
 		}
-
-		if (executions == 1) {
-			executionTimeAvg = executionTime;
-		} else {
-			executionTimeAvg = (executionTimeAvg * (executions - 1.0) + executionTime)
-					/ executions;
-		}
-
+		
+		Map<String,Long> stats = new TreeMap<String, Long>();
+		stats.put("Active", active);
+		stats.put("Completed", completed);
+		stats.put("Corrupt", corrupt);
+		stats.put("Frozen", frozen);
+		stats.put("Total", total);
+		vvStatistics = stats;
 	}
 
 	@Override
 	public void singleStep() {
 		if (paused) {
 			step();
+		}
+	}
+	
+	@Override
+	public void resetStatistics() {
+		synchronized (statLock) {
+			executionTime = 0;
+			executionTimeMax = 0;
+			executionTimeMin = 0;
+			executionTimeAvg = 0;
+			executions = 0;
+			
+			migrationTimeAvg = 0;
+			migrationsOk = 0;
+			migrationsFailed = 0;
 		}
 	}
 
@@ -260,14 +323,23 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		LOG.info("Migration: " + migrationUrl);
 
 		try {
+			long start = System.nanoTime();
 			String ret = HttpQueryUtils.simpleQuery(migrationUrl);
 			if ("OK".equals(ret)) {
-				LOG.info("Migration succeeded. " + migrationUrl + ", " + ret);
+				long migrationTime = 0;
+				synchronized (statLock) {
+					++migrationsOk;
+					migrationTime = System.nanoTime() - start;
+					migrationTimeAvg = (migrationTimeAvg * (migrationsOk - 1.0) + migrationTime/1000.0) / migrationsOk;
+				}
+				LOG.info("Migration succeeded. " + migrationUrl + ", " + ret + ", migrationTime=" + (migrationTime/1000.0) + "ms");
 			} else {
 				LOG.error("Migration failed. " + migrationUrl + ", " + ret);
+				++migrationsFailed;
 			}
 		} catch (IOException ex) {
 			LOG.error("Migration failed. " + migrationUrl, ex);
+			++migrationsFailed;
 		}
 
 	}
@@ -284,6 +356,9 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 		for (Entry<String, IVirtualVehicle> entry : vehicleMap.entrySet()) {
 			String name = entry.getKey();
 			IVirtualVehicle vehicle = entry.getValue();
+			if (vehicle.isFrozen() || vehicle.isProgramCorrupted()) {
+				continue;
+			}
 			virtualVehicleList.add(new VirtualVehicleInfo(name, localEngineUrl.toASCIIString(), vehicle));
 		}
 		

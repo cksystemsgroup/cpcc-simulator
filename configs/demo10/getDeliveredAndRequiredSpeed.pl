@@ -18,7 +18,7 @@ my %res = ();
 my $lambda = undef;
 my $nrTasks = 20;
 
-print "lambda;E[v_Rn];E[v_D]\n";
+print "lambda;rho;E[v_Rn];E[v_D]\n";
 
 foreach my $f (@ARGV) {
  	print STDERR "Processing file $f\n";
@@ -48,6 +48,7 @@ foreach my $f (@ARGV) {
 
 	my $stDeliveredSpeed = new Statistics;
 	my $stRequiredSpeed = new Statistics;
+	my $stRho = new Statistics;
 	my $buggerIt = 0;
 	
 	foreach my $vv (sort keys %res) {
@@ -64,7 +65,7 @@ foreach my $f (@ARGV) {
 		}
  
 		if (@$t != $nrTasks) {
-			printf "VV $vv has %2d tasks, but should have %2d tasks. Ignoring VV $vv\n", ~~@$t, $nrTasks;
+			printf STDERR "VV $vv has %2d tasks, but should have %2d tasks. Ignoring VV $vv\n", ~~@$t, $nrTasks;
 			next;
 		}
 		
@@ -78,6 +79,8 @@ foreach my $f (@ARGV) {
 		my $sumL_i = 0;
 		my $sumT_i_ex = 0;
 		my $sumT_i_req = 0;
+		my $sumT_i_arr = 0;
+		my $sumT_i_tot = 0;
 		
 #		my $mu_V = 0;
 #		foreach my $task (sort {$a<=>$b} keys %{$res{$vv}}) {
@@ -99,8 +102,10 @@ foreach my $f (@ARGV) {
 #				$mu_V = $res{$vv}->{$task}->{mu_V};
 
 #				$res{$vv}->{$task}->{ARRIVAL_DIFFERENCE} < $T_ci and ++$buggerIt, print STDERR "$lambda $vv $task \\delta T_a=",$res{$vv}->{$task}->{ARRIVAL_DIFFERENCE}," < T_ci=",$T_ci,"\n";
-#				$sumT_i_req += $res{$vv}->{$task}->{ARRIVAL_DIFFERENCE} - $T_ci;
-				$sumT_i_req += $res{$vv}->{$task}->{ARRIVAL_DIFFERENCE};
+				$sumT_i_req += $res{$vv}->{$task}->{ARRIVAL_DIFFERENCE} - $T_ci;
+#				$sumT_i_req += $res{$vv}->{$task}->{ARRIVAL_DIFFERENCE};
+				$sumT_i_arr += $res{$vv}->{$task}->{ARRIVAL_DIFFERENCE};
+				$sumT_i_tot += $T_ci + $res{$vv}->{$task}->{DISTANCE} / $res{$vv}->{$task}->{v_V};
 			}
 	
 			$prevCompletedTime = $res{$vv}->{$task}->{COMPLETED_TIME};
@@ -110,9 +115,12 @@ foreach my $f (@ARGV) {
 		
 		my $reqSpeed = $sumL_i / $sumT_i_req;
 		$stRequiredSpeed->add($reqSpeed);
+		
+		my $rho = $sumT_i_tot / $sumT_i_arr;
+		$stRho->add($rho);
 	}
 	
-	printf "%.5f;%.3f;%.3f\n", $lambda, $stRequiredSpeed->mean(), $stDeliveredSpeed->mean();
+	printf "%.5f;%.5f;%.5f;%.5f\n", $lambda, $stRho->mean(), $stRequiredSpeed->mean(), $stDeliveredSpeed->mean();
 
 	$buggerIt and warn "buggerit! $lambda $f";
 }

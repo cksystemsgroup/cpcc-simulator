@@ -4,256 +4,187 @@ use strict;
 
 
 my $m = new SpreadSheetMerger;
+my @t = (localtime(time()))[5,4,3,2,1,0]; $t[0]+=1900; ++$t[1];
+my $dstDir = sprintf "results-%04d%02d%02d", @t;
 
-########################################################################
-# TB=41, RvV=05
-########################################################################
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=05/fcfs-TB=41-RvV=05.ds.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=05/gtsp-TB=41-RvV=05.ds.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=05/nn-TB=41-RvV=05.ds.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 0,	X_label => 'Arrival rate \\lambda',
-	Y => 1,	Y_label => 'Mean delivered speed E[v^D]',
-	ML_FIG_LABEL => 'Mean delivered speed with increasing arrival rate',
-	ML_PREFIX => 'FIG_5_05',
-});
-
-$m->saveAsCsv('results-20121021/mds-TB_41-RvV_05.csv');
-$m->saveAsMatlab('results-20121021/mds-TB_41-RvV_05.m');
-
-
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=05/fcfs-TB=41-RvV=05.ds.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=05/gtsp-TB=41-RvV=05.ds.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=05/nn-TB=41-RvV=05.ds.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 0,	X_label => 'Arrival rate \\lambda',
-	Y => 2,	Y_label => 'P(delivered speed > virtual speed)',
-	ML_FIG_LABEL => 'Delivery ratio with increasing arrival rate',
-	ML_PREFIX => 'FIG_6_05',
-});
-
-$m->saveAsCsv('results-20121021/delr-TB_41-RvV_05.csv');
-$m->saveAsMatlab('results-20121021/delr-TB_41-RvV_05.m');
-
-
-
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=05/fcfs-TB=41-RvV=05.ms.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=05/gtsp-TB=41-RvV=05.ms.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=05/nn-TB=41-RvV=05.ms.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 1,	X_label => 'Arrival rate \\lambda',
-	Y => 4,	Y_label => 'E[T]',
-	ML_FIG_LABEL => 'Expectation of system time with increasing arrival rate',
-	ML_PREFIX => 'FIG_7_05',
-});
-
-$m->saveAsCsv('results-20121021/syst-TB_41-RvV_05.csv');
-$m->saveAsMatlab('results-20121021/syst-TB_41-RvV_05.m');
-
-
-
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=05/fcfs-TB=41-RvV=05.ms.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=05/gtsp-TB=41-RvV=05.ms.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=05/nn-TB=41-RvV=05.ms.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 1,	X_label => 'Arrival rate \\lambda',
-	Y => 6,	Y_label => 'E[T]',
-	ML_FIG_LABEL => 'Expectation of system time with increasing arrival rate',
-	ML_PREFIX => 'FIG_8_05',
-});
-
-$m->saveAsCsv('results-20121021/stdd-TB_41-RvV_05.csv');
-$m->saveAsMatlab('results-20121021/stdd-TB_41-RvV_05.m');
-
+!-d $dstDir and mkdir($dstDir), printf "Folder $dstDir created.";
+-d $dstDir or die "Can not create folder $dstDir";
 
 
 ########################################################################
-# TB=41, RvV=10
 ########################################################################
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=10/fcfs-TB=41-RvV=10.ds.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=10/gtsp-TB=41-RvV=10.ds.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=10/nn-TB=41-RvV=10.ds.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 0,	X_label => 'Arrival rate \\lambda',
-	Y => 1,	Y_label => 'Mean delivered speed E[v^D]',
-	ML_FIG_LABEL => 'Mean delivered speed with increasing arrival rate',
-	ML_PREFIX => 'FIG_5_10',
-});
-
-$m->saveAsCsv('results-20121021/mds-TB_41-RvV_10.csv');
-$m->saveAsMatlab('results-20121021/mds-TB_41-RvV_10.m');
+sub meanDeliveredSpeed {
+	my $tbSZ = sprintf "%02d", $_[0];
+	my $speed = sprintf "%02d", $_[1];	
 
 
+	
+	$m->load({
+		charts => [
+			{file => 'exp-fcfs-TB='.$tbSZ.'-RvV='.$speed.'/fcfs-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',	value => 'FCFS'},
+			{file => 'exp-gtsp-TB='.$tbSZ.'-RvV='.$speed.'/gtsp-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',	value => 'G-TSP'},
+			{file => 'exp-nn-TB='.$tbSZ.'-RvV='.$speed.'/nn-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',		value => 'NN'},
+		],
+		X_ignore => [0.005],
+		X => 0,	X_label => 'Arrival rate \\lambda',
+		Y => 2,	Y_label => 'Mean delivered speed E[v^D]',
+		ML_FIG_LABEL => 'Mean delivered speed with increasing arrival rate',
+		ML_PREFIX => 'FIG_5_'.$tbSZ.'_'.$speed,
+	});
+	
+	$m->saveAsCsv($dstDir.'/mds-TB_'.$tbSZ.'-RvV_'.$speed.'.csv');
+	$m->saveAsMatlab($dstDir.'/mds-TB_'.$tbSZ.'-RvV_'.$speed.'.m');
+	
+	
+	
+	$m->load({
+		charts => [
+			{file => 'exp-fcfs-TB='.$tbSZ.'-RvV='.$speed.'/fcfs-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',	value => 'FCFS'},
+			{file => 'exp-gtsp-TB='.$tbSZ.'-RvV='.$speed.'/gtsp-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',	value => 'G-TSP'},
+			{file => 'exp-nn-TB='.$tbSZ.'-RvV='.$speed.'/nn-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',		value => 'NN'},
+		],
+		X_ignore => [0.005],
+		X => 0,	X_label => 'Arrival rate \\lambda',
+		Y => 3,	Y_label => 'P(delivered speed > virtual speed)',
+		ML_FIG_LABEL => 'Delivery ratio with increasing arrival rate',
+		ML_PREFIX => 'FIG_6_'.$tbSZ.'_'.$speed,
+	});
+	
+	$m->saveAsCsv($dstDir.'/delr-TB_'.$tbSZ.'-RvV_'.$speed.'.csv');
+	$m->saveAsMatlab($dstDir.'/delr-TB_'.$tbSZ.'-RvV_'.$speed.'.m');
+	
+	
+	$m->load({
+		charts => [
+			{file => 'exp-fcfs-TB='.$tbSZ.'-RvV='.$speed.'/fcfs-TB='.$tbSZ.'-RvV='.$speed.'.ms.csv',	value => 'FCFS'},
+			{file => 'exp-gtsp-TB='.$tbSZ.'-RvV='.$speed.'/gtsp-TB='.$tbSZ.'-RvV='.$speed.'.ms.csv',	value => 'G-TSP'},
+			{file => 'exp-nn-TB='.$tbSZ.'-RvV='.$speed.'/nn-TB='.$tbSZ.'-RvV='.$speed.'.ms.csv',		value => 'NN'},
+		],
+		X_ignore => [0.005],
+		X => 1,	X_label => 'Arrival rate \\lambda',
+		Y => 4,	Y_label => 'E[T]',
+		ML_FIG_LABEL => 'Expectation of system time with increasing arrival rate',
+		ML_PREFIX => 'FIG_7_'.$tbSZ.'_'.$speed,
+	});
+	
+	$m->saveAsCsv($dstDir.'/syst-TB_'.$tbSZ.'-RvV_'.$speed.'.csv');
+	$m->saveAsMatlab($dstDir.'/syst-TB_'.$tbSZ.'-RvV_'.$speed.'.m');
 
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=10/fcfs-TB=41-RvV=10.ds.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=10/gtsp-TB=41-RvV=10.ds.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=10/nn-TB=41-RvV=10.ds.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 0,	X_label => 'Arrival rate \\lambda',
-	Y => 2,	Y_label => 'P(delivered speed > virtual speed)',
-	ML_FIG_LABEL => 'Delivery ratio with increasing arrival rate',
-	ML_PREFIX => 'FIG_6_10',
-});
+	
+	$m->load({
+		charts => [
+			{file => 'exp-fcfs-TB='.$tbSZ.'-RvV='.$speed.'/fcfs-TB='.$tbSZ.'-RvV='.$speed.'.ms.csv',	value => 'FCFS'},
+			{file => 'exp-gtsp-TB='.$tbSZ.'-RvV='.$speed.'/gtsp-TB='.$tbSZ.'-RvV='.$speed.'.ms.csv',	value => 'G-TSP'},
+			{file => 'exp-nn-TB='.$tbSZ.'-RvV='.$speed.'/nn-TB='.$tbSZ.'-RvV='.$speed.'.ms.csv',		value => 'NN'},
+		],
+		X_ignore => [0.005],
+		X => 1,	X_label => 'Arrival rate \\lambda',
+		Y => 6,	Y_label => 'E[T]',
+		ML_FIG_LABEL => 'Expectation of system time with increasing arrival rate',
+		ML_PREFIX => 'FIG_8_'.$tbSZ.'_'.$speed,
+	});
+	
+	$m->saveAsCsv($dstDir.'/stdd-TB_'.$tbSZ.'-RvV_'.$speed.'.csv');
+	$m->saveAsMatlab($dstDir.'/stdd-TB_'.$tbSZ.'-RvV_'.$speed.'.m');
+}
 
-$m->saveAsCsv('results-20121021/delr-TB_41-RvV_10.csv');
-$m->saveAsMatlab('results-20121021/delr-TB_41-RvV_10.m');
+# meanDeliveredSpeed  7,  5;
+meanDeliveredSpeed  7, 10;
+# meanDeliveredSpeed  7, 15;
 
+# meanDeliveredSpeed 15,  5;
+meanDeliveredSpeed 15, 10;
+# meanDeliveredSpeed 15, 15;
 
+# meanDeliveredSpeed 30,  5;
+meanDeliveredSpeed 30, 10;
+# meanDeliveredSpeed 30, 15;
 
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=10/fcfs-TB=41-RvV=10.ms.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=10/gtsp-TB=41-RvV=10.ms.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=10/nn-TB=41-RvV=10.ms.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 1,	X_label => 'Arrival rate \\lambda',
-	Y => 4,	Y_label => 'E[T]',
-	ML_FIG_LABEL => 'Expectation of system time with increasing arrival rate',
-	ML_PREFIX => 'FIG_7_10',
-});
-
-$m->saveAsCsv('results-20121021/syst-TB_41-RvV_10.csv');
-$m->saveAsMatlab('results-20121021/syst-TB_41-RvV_10.m');
-
-
-
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=10/fcfs-TB=41-RvV=10.ms.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=10/gtsp-TB=41-RvV=10.ms.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=10/nn-TB=41-RvV=10.ms.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 1,	X_label => 'Arrival rate \\lambda',
-	Y => 6,	Y_label => 'E[T]',
-	ML_FIG_LABEL => 'Expectation of system time with increasing arrival rate',
-	ML_PREFIX => 'FIG_8_10',
-});
-
-$m->saveAsCsv('results-20121021/stdd-TB_41-RvV_10.csv');
-$m->saveAsMatlab('results-20121021/stdd-TB_41-RvV_10.m');
+meanDeliveredSpeed 41,  5;
+meanDeliveredSpeed 41, 10;
+meanDeliveredSpeed 41, 15;
 
 
 
 ########################################################################
-# TB=41, RvV=15
+# TB=*, RvV=*: required vs. delivered speed
 ########################################################################
 
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=15/fcfs-TB=41-RvV=15.ds.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=15/gtsp-TB=41-RvV=15.ds.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=15/nn-TB=41-RvV=15.ds.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 0,	X_label => 'Arrival rate \\lambda',
-	Y => 1,	Y_label => 'Mean delivered speed E[v^D]',
-	ML_FIG_LABEL => 'Mean delivered speed with increasing arrival rate',
-	ML_PREFIX => 'FIG_5_15',
-});
+my $figNr = 100;
 
-$m->saveAsCsv('results-20121021/mds-TB_41-RvV_15.csv');
-$m->saveAsMatlab('results-20121021/mds-TB_41-RvV_15.m');
+my @dsrss = glob 'exp-*/*.dsrs.csv';
 
-
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=15/fcfs-TB=41-RvV=15.ds.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=15/gtsp-TB=41-RvV=15.ds.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=15/nn-TB=41-RvV=15.ds.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 0,	X_label => 'Arrival rate \\lambda',
-	Y => 2,	Y_label => 'P(delivered speed > virtual speed)',
-	ML_FIG_LABEL => 'Delivery ratio with increasing arrival rate',
-	ML_PREFIX => 'FIG_6_15',
-});
-
-$m->saveAsCsv('results-20121021/delr-TB_41-RvV_15.csv');
-$m->saveAsMatlab('results-20121021/delr-TB_41-RvV_15.m');
+foreach my $f (sort @dsrss) {
+	$f =~ m/(.*)\.csv/;
+	my $dst = $1.".m";
+	
+	$m->load({
+		charts => [{file => $f, value => 'E[v^D]'}],
+		X_ignore => [0.005],
+		X => 2,	X_label => 'E[v^{Rn}]',
+		Y => 3, Y_label => 'E[v^D]',
+		ML_FIG_LABEL => 'Expectation of delivered speed vs. required speed from customer.',
+		ML_PREFIX => sprintf ('FIG_%03d', ++$figNr)
+	});
+	
+	$m->saveAsMatlab($dst);
+}
 
 
+########################################################################
+# TB=*, RvV=*: rho vs. required speed
+########################################################################
 
 
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=15/fcfs-TB=41-RvV=15.ms.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=15/gtsp-TB=41-RvV=15.ms.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=15/nn-TB=41-RvV=15.ms.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 1,	X_label => 'Arrival rate \\lambda',
-	Y => 4,	Y_label => 'E[T]',
-	ML_FIG_LABEL => 'Expectation of system time with increasing arrival rate',
-	ML_PREFIX => 'FIG_7_15',
-});
+$figNr = 200;
 
-$m->saveAsCsv('results-20121021/syst-TB_41-RvV_15.csv');
-$m->saveAsMatlab('results-20121021/syst-TB_41-RvV_15.m');
+@dsrss = glob 'exp-*/*.dsrs.csv';
 
-
-
-
-$m->load({
-	charts => [
-		{file => 'exp-fcfs-TB=41-RvV=15/fcfs-TB=41-RvV=15.ms.csv',	value => 'FCFS'},
-		{file => 'exp-gtsp-TB=41-RvV=15/gtsp-TB=41-RvV=15.ms.csv',	value => 'G-TSP'},
-		{file => 'exp-nn-TB=41-RvV=15/nn-TB=41-RvV=15.ms.csv',		value => 'NN'},
-	],
-	X_ignore => [0.005],
-	X => 1,	X_label => 'Arrival rate \\lambda',
-	Y => 6,	Y_label => 'E[T]',
-	ML_FIG_LABEL => 'Expectation of system time with increasing arrival rate',
-	ML_PREFIX => 'FIG_8_15',
-});
-
-$m->saveAsCsv('results-20121021/stdd-TB_41-RvV_15.csv');
-$m->saveAsMatlab('results-20121021/stdd-TB_41-RvV_15.m');
+foreach my $f (sort @dsrss) {
+	$f =~ m/(.*)\.csv/;
+	my $dst = $1.".m";
+	$dst =~ s/dsrs/rhoRs/;
+	
+	$m->load({
+		charts => [{file => $f, value => 'E[v^{Rn}]'}],
+		X_ignore => [0.005],
+		X => 1,	X_label => '\rho',
+		Y => 2, Y_label => 'E[v^{Rn}]',
+		ML_FIG_LABEL => 'Expectation of \rho vs. required speed from customer.',
+		ML_PREFIX => sprintf ('FIG_%03d', ++$figNr)
+	});
+	
+	$m->saveAsMatlab($dst);
+}
 
 
+########################################################################
+# TB=*, RvV=*: rho vs. delivered speed
+########################################################################
 
+$figNr = 200;
 
+@dsrss = glob 'exp-*/*.dsrs.csv';
 
-
-
-
-
-
-
-
-
+foreach my $f (sort @dsrss) {
+	$f =~ m/(.*)\.csv/;
+	my $dst = $1.".m";
+	$dst =~ s/dsrs/rhoDs/;
+	
+	$m->load({
+		charts => [{file => $f, value => 'E[v^D]'}],
+		X_ignore => [0.005],
+		X => 1,	X_label => '\rho',
+		Y => 3, Y_label => 'E[v^D]',
+		ML_FIG_LABEL => 'Expectation of \rho vs. delivered speed.',
+		ML_PREFIX => sprintf ('FIG_%03d', ++$figNr)
+	});
+	
+	$m->saveAsMatlab($dst);
+}
 
 
 0;
-
-
 
 
 ###############################################################################
@@ -308,6 +239,7 @@ sub saveAsCsv {
 			$hdrx{$v} = 1;
 		}
 	}
+	@hdr = sort @hdr;
 	
 	print OUT join(';', $me->{PARAMS}->{X_label}, @hdr), "\n";
 	

@@ -18,7 +18,7 @@ my %res = ();
 my $lambda = undef;
 my $nrTasks = 20;
 
-print "lambda;E[v_D];P(delivered speed > virtual speed)\n";
+print "lambda;E[v_Rn];E[v_D];P(delivered speed > required speed);r_v\n";
 
 foreach my $f (@ARGV) {
  	print STDERR "Processing file $f\n";
@@ -47,17 +47,25 @@ foreach my $f (@ARGV) {
 	close IN;
 
 	my $stDeliveredSpeed = new Statistics;
+	my $stRequiredSpeed = new Statistics;
 	my $stDeliveryRatio = new Statistics;
 	my $buggerIt = 0;
+	my $violations = 0;
+	my $totalNumberOfTasks = 0;
 	
 	foreach my $vv (sort keys %res) {
 		my $t = [];
-		foreach my $task (keys %{$res{$vv}}) {
+		foreach my $task (sort keys %{$res{$vv}}) {
 			push @$t, [$task, $res{$vv}->{$task}->{COMPLETED_TIME}];
+			
+			my $g = $res{$vv}->{$task}->{gamma};
+			my $nb = $res{$vv}->{$task}->{nb};		# nb after task
+			my $sz = $res{$vv}->{$task}->{TBsz};
+			2*$g + $nb > $sz and ++$violations;
 		}
  
 		if (@$t != $nrTasks) {
-			printf "VV $vv has %2d tasks, but should have %2d tasks. Ignoring VV $vv\n", ~~@$t, $nrTasks;
+			printf STDERR "VV $vv has %2d tasks, but should have %2d tasks. Ignoring VV $vv\n", ~~@$t, $nrTasks;
 			next;
 		}
 		
@@ -70,13 +78,15 @@ foreach my $f (@ARGV) {
 		my $prevCompletedTime;
 		my $sumL_i = 0;
 		my $sumT_i_ex = 0;
-		my $mu_V = 0;
+		my $sumT_i_req = 0;
+		
+#		my $mu_V = 0;
 #		foreach my $task (sort {$a<=>$b} keys %{$res{$vv}}) {
 		foreach my $task (map{$_->[0]}@sortedTasks) {
 	#		printf "%s %d\n", $vv, $task;
-			
+
 			if ($task > 0) {
-				$res{$vv}->{$task}->{COMPLETED_TIME} < $prevCompletedTime and ++$buggerIt, print "$lambda $vv $task\n";
+				$res{$vv}->{$task}->{COMPLETED_TIME} < $prevCompletedTime and ++$buggerIt, print STDERR "$lambda $vv $task\n";
 				
 				$sumL_i += $res{$vv}->{$task}->{DISTANCE};
 				
@@ -86,18 +96,30 @@ foreach my $f (@ARGV) {
 				my $T_ci = $res{$vv}->{$task}->{taskSize} / $res{$vv}->{$task}->{mu_V}; 		
 				$sumT_i_ex += $T_si - $T_ci;
 				
-				$mu_V = $res{$vv}->{$task}->{mu_V};
+#				$mu_V = $res{$vv}->{$task}->{mu_V};
+
+				$sumT_i_req += $res{$vv}->{$task}->{ARRIVAL_DIFFERENCE} - $T_ci;
 			}
 	
 			$prevCompletedTime = $res{$vv}->{$task}->{COMPLETED_TIME};
+			
+#			$res{$vv}->{$task}->{BUCKET_DELAY} > 0 and ++$violations;
+			++$totalNumberOfTasks;
 		}
-		my $speed = $sumL_i / $sumT_i_ex;
-		$stDeliveredSpeed->add($speed);
-		$stDeliveryRatio->add($speed <= 0 || $speed >= $mu_V ? 1 : 0);
+		my $delSpeed = $sumL_i / $sumT_i_ex;
+		$stDeliveredSpeed->add($delSpeed);
+		
+		my $reqSpeed = $sumL_i / $sumT_i_req;
+		$stRequiredSpeed->add($reqSpeed);
+		
+#		$stDeliveryRatio->add($delSpeed <= 0 || $delSpeed >= $mu_V ? 1 : 0);
+		$stDeliveryRatio->add($delSpeed <= 0 || $delSpeed >= $reqSpeed ? 1 : 0);
 		
 	}
 	
-	printf "%.5f;%.3f;%.3f\n", $lambda, $stDeliveredSpeed->mean(), $stDeliveryRatio->mean();
+
+	
+	printf "%.5f;%.5f;%.5f;%.5f;%.5f\n", $lambda, $stRequiredSpeed->mean(), $stDeliveredSpeed->mean(), $stDeliveryRatio->mean(), $violations/$totalNumberOfTasks;
 
 	$buggerIt and warn "buggerit! $lambda";
 }

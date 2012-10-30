@@ -40,7 +40,7 @@ my $cfg = {
 	tokenBucket_active => 1,
 	tokenBucket_fillRate => 1,
 #	tokenBucket_size => 100000,
-	tokenBucket_size => 41,
+	tokenBucket_size => 30,
 #	tokenBucket_size => 7,
 #	tokenBucket_size => 15,
 #	tokenBucket_size => 30,
@@ -53,7 +53,7 @@ my $cfg = {
 # TB=7, FCFS	0.005 0.008 0.010 0.012 0.014
 # TB=30, FCFS	0.005 0.010 0.014
 # TB=15, FCFS	0.001 0.005 0.008 0.010 0.012 0.014
-	lambdaAPs => 0.004,
+	lambdaAPs => 0.008,
 	simulationStart => $startTime,
 	arrivalTime => $startTime,
 	vehicleCount => 1,
@@ -68,7 +68,8 @@ sub buggerit {
 	my $counter = shift;
 	
 #	my $gen = new GeneratorFullDistribution($cfg);
-	my $gen = new GeneratorSmallTB($cfg);
+#	my $gen = new GeneratorSmallTB($cfg);
+	my $gen = new GeneratorSmallTB2($cfg);
 	my $vv = new VirtualVehicle ($cfg, $gen);
 	my $id = sprintf "%04d", $counter;
 	print "Creating virtual vehicle $id\n";
@@ -318,6 +319,67 @@ sub generate {
 
 
 ################################################################################
+package GeneratorSmallTB2;
+use strict;
+use Math::Trig;
+
+sub new {
+        my $classname = shift;
+        my $self = bless { POS => undef }, $classname;
+        $self->{CFG} = shift;
+        return $self;
+}
+
+sub disk {
+        my $distance = shift;
+        my $theta = 2.0 * pi * rand();
+        my $x = $distance * cos($theta);
+        my $y = $distance * sin($theta);
+
+        ($x, $y);
+}
+
+sub rnd {
+        my $a = shift;
+        my $b = shift;
+        $a + ($b-$a)*rand();
+}
+
+sub generate {
+        my $self = shift;
+        my $nb = shift;
+
+        my ($lat, $lon);
+
+        my $mts = $nb * $self->{CFG}->{mu_V};
+        $mts > $self->{CFG}->{max_TaskSize} and $mts = $self->{CFG}->{max_TaskSize};
+
+        my $taskSize = rnd(0, $mts);
+
+        if (defined $self->{POS}) {
+                my $pos = $self->{POS};
+                my $maxDistance = ($nb - $taskSize / $self->{CFG}->{mu_V}) * $self->{CFG}->{v_V};
+                my ($x, $y) = disk $maxDistance;
+                my $c = Vector::walk($pos->[0], $pos->[1], 0, $x, $y, 0);
+                ($lat, $lon) = ($c->{'lat'}, $c->{'lon'});
+        } else {
+                $lat = rnd($self->{CFG}->{minLat}, $self->{CFG}->{maxLat});
+                $lon = rnd($self->{CFG}->{minLon}, $self->{CFG}->{maxLon});
+        }
+
+        $lat < $self->{CFG}->{minLat} and $lat = $self->{CFG}->{minLat};
+        $lat > $self->{CFG}->{maxLat} and $lat = $self->{CFG}->{maxLat};
+
+        $lon < $self->{CFG}->{minLon} and $lon = $self->{CFG}->{minLon};
+        $lon > $self->{CFG}->{maxLon} and $lon = $self->{CFG}->{maxLon};
+
+        @{$self->{POS} = [$lat, $lon, $taskSize]};
+}
+
+1;
+
+
+################################################################################
 package VirtualVehicle;
 use strict;
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
@@ -364,7 +426,7 @@ sub calculateTokenBucketPassedTime {
 		my $dt = $arrivalTime - $self->{TB_previousArrivalTime};
 		$self->{TB_nb} += $dt * $self->{TB_fillRate};
 		$self->{TB_nb} > $self->{TB_size} and $self->{TB_nb} = $self->{TB_size};
-		
+
 		$distance = Vector::calculateDistance ($lat, $lon, $alt, $self->{TB_previousLat}, $self->{TB_previousLon}, $self->{TB_previousAlt});
 		$gamma = $taskSize / $self->{CFG}->{mu_V} + $distance / $self->{CFG}->{v_V};
 		$self->{TB_active} or $gamma = 0;
@@ -372,8 +434,9 @@ sub calculateTokenBucketPassedTime {
 		$self->{TB_nb} = ($arrivalTime-$self->{CFG}->{simulationStart}) * $self->{TB_fillRate};
 		$self->{TB_nb} > $self->{TB_size} and $self->{TB_nb} = $self->{TB_size};
 	}
-	
-	$gamma >= $self->{TB_size} and die "Illegal arrival rate gamma=".$gamma.", TB_size=".$self->{TB_size};
+
+	$gamma > $self->{TB_size} and warn "Illegal arrival rate gamma=".$gamma.", TB_size=".$self->{TB_size};
+
 	if ($gamma <= $self->{TB_nb}) {
 		$self->{TB_nb} -= $gamma;
 #		$tokenBucketPassedTime = $arrivalTime;

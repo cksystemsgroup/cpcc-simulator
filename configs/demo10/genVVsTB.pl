@@ -5,6 +5,7 @@ use Time::HiRes qw(usleep);
 use threads;
 
 my $argsId = $ARGV[0];
+$argsId ||= 1;
 
 my $startTime = $ARGV[1];
 $startTime ||= time() + 30;
@@ -40,20 +41,14 @@ my $cfg = {
 	tokenBucket_active => 1,
 	tokenBucket_fillRate => 1,
 #	tokenBucket_size => 100000,
-	tokenBucket_size => 30,
-#	tokenBucket_size => 7,
+#	tokenBucket_size => 30,
+	tokenBucket_size => 7,
 #	tokenBucket_size => 15,
 #	tokenBucket_size => 30,
 
 	sensors => [qw {Temperature}],
 	lambdaVVs => 0,
-# NN			0.001, 0.002, 0.004, 0.006, 0.008, 0.010, 0.011, 0.012, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 
-# FCFS			0.002, 0.004, 0.006, 0.008, 0.010, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019
-# TB=15, NN	0.001 0.004 0.008 0.010 0.012 0.014
-# TB=7, FCFS	0.005 0.008 0.010 0.012 0.014
-# TB=30, FCFS	0.005 0.010 0.014
-# TB=15, FCFS	0.001 0.005 0.008 0.010 0.012 0.014
-	lambdaAPs => 0.008,
+	lambdaAPs => 0.019,
 	simulationStart => $startTime,
 	arrivalTime => $startTime,
 	vehicleCount => 1,
@@ -69,7 +64,8 @@ sub buggerit {
 	
 #	my $gen = new GeneratorFullDistribution($cfg);
 #	my $gen = new GeneratorSmallTB($cfg);
-	my $gen = new GeneratorSmallTB2($cfg);
+#	my $gen = new GeneratorSmallTB2($cfg);
+	my $gen = new GeneratorSaturation($cfg);
 	my $vv = new VirtualVehicle ($cfg, $gen);
 	my $id = sprintf "%04d", $counter;
 	print "Creating virtual vehicle $id\n";
@@ -380,6 +376,77 @@ sub generate {
 
 
 ################################################################################
+package GeneratorSaturation;
+use strict;
+use Math::Trig;
+
+sub new {
+        my $classname = shift;
+        my $self = bless { POS => undef }, $classname;
+        $self->{CFG} = shift;
+        return $self;
+}
+
+sub disk {
+        my $distance = shift;
+        my $theta = 2.0 * pi * rand();
+        my $x = $distance * cos($theta);
+        my $y = $distance * sin($theta);
+
+        ($x, $y);
+}
+
+sub rnd {
+        my $a = shift;
+        my $b = shift;
+        $a + ($b-$a)*rand();
+}
+
+sub generate {
+        my $self = shift;
+        my $nb = shift;
+
+        my ($lat, $lon);
+
+        my $mts = $nb * $self->{CFG}->{mu_V};
+        $mts > $self->{CFG}->{max_TaskSize} and $mts = $self->{CFG}->{max_TaskSize};
+
+        my $taskSize = rnd(0, $mts);
+
+        if (defined $self->{POS}) {
+                my $pos = $self->{POS};
+                my $maxDistance = ($nb - $taskSize / $self->{CFG}->{mu_V}) * $self->{CFG}->{v_V};
+                my ($x, $y) = disk $maxDistance;
+                
+                my $c = Vector::walk($pos->[0], $pos->[1], 0, $x, $y, 0);
+                ($lat, $lon) = ($c->{'lat'}, $c->{'lon'});
+                
+                my $again = undef;                
+		        $lat < $self->{CFG}->{minLat} || $lat > $self->{CFG}->{maxLat} and $x = -$x, $again = 1;
+        		$lon < $self->{CFG}->{minLon} || $lon > $self->{CFG}->{maxLon} and $y = -$y, $again = 1;  
+                
+                $c = Vector::walk($pos->[0], $pos->[1], 0, $x, $y, 0);
+                ($lat, $lon) = ($c->{'lat'}, $c->{'lon'});
+                                
+		        $lat < $self->{CFG}->{minLat}  and  die "Bugger 1! $lat, $lon, $x, $y";   
+        		$lat > $self->{CFG}->{maxLat}  and  die "Bugger 2! $lat, $lon, $x, $y";
+
+        		$lon < $self->{CFG}->{minLon}  and  die "Bugger 3! $lat, $lon, $x, $y";
+        		$lon > $self->{CFG}->{maxLon}  and  die "Bugger 4! $lat, $lon, $x, $y";
+                
+        } else {
+                $lat = rnd($self->{CFG}->{minLat}, $self->{CFG}->{maxLat});
+                $lon = rnd($self->{CFG}->{minLon}, $self->{CFG}->{maxLon});
+        }
+
+
+        @{$self->{POS} = [$lat, $lon, $taskSize]};
+}
+
+1;
+
+
+################################################################################
 package VirtualVehicle;
 use strict;
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
@@ -418,7 +485,6 @@ sub calculateTokenBucketPassedTime {
 	my $tokenBucketPassedTime = undef;
 	my $distance = '';
 	my $gamma = 0;
-#	my $dt = 0;
 
 	my $prev = $taskId ? $self->{TB_previousTokenBucketPassedTime} : $arrivalTime;
 	
@@ -439,14 +505,7 @@ sub calculateTokenBucketPassedTime {
 
 	if ($gamma <= $self->{TB_nb}) {
 		$self->{TB_nb} -= $gamma;
-#		$tokenBucketPassedTime = $arrivalTime;
 		$tokenBucketPassedTime = $prev < $arrivalTime ? $arrivalTime : $prev;
-#		$prev > $arrivalTime and $self->{TB_nb} += ($prev - $arrivalTime) * $self->{TB_fillRate};
-#		if ($taskId) {
-#			my $dt = $self->{TB_previousTokenBucketPassedTime} - $tokenBucketPassedTime;
-#			$self->{TB_nb} += $dt * $self->{TB_fillRate};
-#			$self->{TB_nb} > $self->{TB_size} and $self->{TB_nb} = $self->{TB_size};
-#		}
 	} else {
 		my $waitTime = ($gamma - $self->{TB_nb}) / $self->{TB_fillRate};
 		$self->{TB_nb} = 0;

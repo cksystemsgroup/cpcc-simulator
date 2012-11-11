@@ -326,13 +326,12 @@ public class Mapper extends Thread implements IMapperThread, IMapper {
 			long start = System.nanoTime();
 			String ret = HttpQueryUtils.simpleQuery(migrationUrl);
 			if ("OK".equals(ret)) {
-				long migrationTime = 0;
+				long migrationTime = System.nanoTime() - start;
 				synchronized (statLock) {
 					++migrationsOk;
-					migrationTime = System.nanoTime() - start;
-					migrationTimeAvg = (migrationTimeAvg * (migrationsOk - 1.0) + migrationTime/1000.0) / migrationsOk;
+					migrationTimeAvg = (migrationTimeAvg * (migrationsOk - 1.0) + migrationTime/1000000.0) / migrationsOk;
 				}
-				LOG.info("Migration succeeded. " + migrationUrl + ", " + ret + ", migrationTime=" + (migrationTime/1000.0) + "ms");
+				LOG.info("Migration succeeded. " + migrationUrl + ", " + ret + ", migrationTime=" + (migrationTime/1000000.0) + "ms");
 			} else {
 				LOG.error("Migration failed. " + migrationUrl + ", " + ret);
 				++migrationsFailed;

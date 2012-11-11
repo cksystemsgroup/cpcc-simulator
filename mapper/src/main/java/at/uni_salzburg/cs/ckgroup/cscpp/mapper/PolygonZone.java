@@ -20,6 +20,7 @@
  */
 package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
 import org.json.simple.JSONArray;
@@ -123,21 +124,40 @@ public class PolygonZone extends AbstractZone {
 		return left % 2 == 1;
 	}
 	
+//	public PolarCoordinate getCenterOfGravity () {
+//		double x = 0, y = 0;
+//		double doubleArea = 0;
+//		
+//		for (int k=0, l=vertices.length-1; k < l; ++k) {
+//			TwoTuple a = vertices[k];
+//			TwoTuple b = vertices[k+1];
+//			double t = (a.x * b.y - b.x * a.y);
+//			x += (a.x + b.x) * t;
+//			y += (a.y + b.y) * t;
+//			doubleArea += (a.x * b.y - b.x * a.y);
+//		}
+//		
+//		double sixTimesArea = 3.0 * doubleArea;
+//		return new PolarCoordinate(x/sixTimesArea, y/sixTimesArea, 0);
+//	}
+	
 	public PolarCoordinate getCenterOfGravity () {
-		double x = 0, y = 0;
-		double doubleArea = 0;
+		BigDecimal x = new BigDecimal(0), y = new BigDecimal(0);
+		BigDecimal doubleArea = new BigDecimal(0);
 		
 		for (int k=0, l=vertices.length-1; k < l; ++k) {
-			TwoTuple a = vertices[k];
-			TwoTuple b = vertices[k+1];
-			double t = (a.x * b.y - b.x * a.y);
-			x += (a.x + b.x) * t;
-			y += (a.y + b.y) * t;
-			doubleArea += (a.x * b.y - b.x * a.y);
+			BigDecimal ax = new BigDecimal(vertices[k].x);
+			BigDecimal ay = new BigDecimal(vertices[k].y);
+			BigDecimal bx = new BigDecimal(vertices[k+1].x);
+			BigDecimal by = new BigDecimal(vertices[k+1].y);
+			BigDecimal t = ax.multiply(by).subtract(bx.multiply(ay));
+			x = x.add(ax.add(bx).multiply(t));
+			y = y.add(ay.add(by).multiply(t));
+			doubleArea = doubleArea.add(ax.multiply(by).subtract(bx.multiply(ay)));
 		}
 		
-		double sixTimesArea = 3.0 * doubleArea;
-		return new PolarCoordinate(x/sixTimesArea, y/sixTimesArea, 0);
+		double sixTimesArea = 3.0 * doubleArea.doubleValue();
+		return new PolarCoordinate(x.doubleValue()/sixTimesArea, y.doubleValue()/sixTimesArea, 0);
 	}
 	
 	@Override

@@ -218,8 +218,8 @@ public class PolygonZoneTestCase {
 		PolygonZone pz = new PolygonZone(v);
 
 		PolarCoordinate cog = pz.getDepotPosition();
-		Assert.assertEquals(47.82193751800164, cog.getLatitude(), 1E-9);
-		Assert.assertEquals(13.04178658337083, cog.getLongitude(), 1E-9);
+		Assert.assertEquals(47.82193634361729, cog.getLatitude(), 1E-9);
+		Assert.assertEquals(13.041786263143168, cog.getLongitude(), 1E-9);
 
 		Assert.assertTrue(pz.isInside(v[0]));
 		Assert.assertTrue(pz.isInside(v[1]));
@@ -256,8 +256,8 @@ public class PolygonZoneTestCase {
 		PolygonZone pz = new PolygonZone(v);
 
 		PolarCoordinate cog = pz.getDepotPosition();
-		Assert.assertEquals(47.82193751800164, cog.getLatitude(), 1E-9);
-		Assert.assertEquals(13.04178658337083, cog.getLongitude(), 1E-9);
+		Assert.assertEquals(47.82193634361729, cog.getLatitude(), 1E-9);
+		Assert.assertEquals(13.041786263143168, cog.getLongitude(), 1E-9);
 		
 		Assert.assertTrue(pz.isInside(v[0]));
 		Assert.assertTrue(pz.isInside(v[1]));
@@ -279,4 +279,25 @@ public class PolygonZoneTestCase {
 		Assert.assertFalse(pz.isInside(new PolarCoordinate(47.82229320,13.04157516,0.00)));
 		Assert.assertTrue (pz.isInside(new PolarCoordinate(47.82209510,13.04137766,0.00)));
 	}
+	
+	@Test
+	public void testCase09 () {
+		
+//		(47.69220779, 13.38500920), (47.69220779, 13.38514266), (47.69229762, 13.38514266), (47.69229762, 13.38500920), (47.69220779, 13.38500920)
+//		zone.11.engine = http://localhost:9150/engmap_000
+//		zone.11.group = local
+//		# depot position is (47.69225270694317°, 13.385075928563177°, 0.0m)
+		PolarCoordinate[] v = new PolarCoordinate[5];
+		v[0] = new PolarCoordinate(47.69220779, 13.38500920, 0.00);
+		v[1] = new PolarCoordinate(47.69220779, 13.38514266, 0.00);
+		v[2] = new PolarCoordinate(47.69229762, 13.38514266, 0.00);
+		v[3] = new PolarCoordinate(47.69229762, 13.38500920, 0.00);
+		v[4] = new PolarCoordinate(47.69220779, 13.38500920, 0.00);
+		
+		PolygonZone pz = new PolygonZone(v);
+		PolarCoordinate cog = pz.getDepotPosition();
+		Assert.assertEquals(47.692252705, cog.getLatitude(), 1E-9);
+		Assert.assertEquals(13.385075930000001, cog.getLongitude(), 1E-9);
+	}
+	
 }

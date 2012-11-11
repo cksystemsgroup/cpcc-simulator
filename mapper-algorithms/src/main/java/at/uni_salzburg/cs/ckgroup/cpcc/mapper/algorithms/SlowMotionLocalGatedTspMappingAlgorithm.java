@@ -1,5 +1,5 @@
 /*
- * @(#) LocalFCFSMappingAlgorithm.java
+ * @(#) SlowMotionLocalGatedTspMappingAlgorithm.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -38,21 +38,19 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRVCommand;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy;
-import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus.Status;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone.Group;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandFlyTo;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandGoAuto;
-import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandHover;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
 
-public class LocalFCFSMappingAlgorithm implements IMappingAlgorithm {
+public class SlowMotionLocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(LocalFCFSMappingAlgorithm.class);
+	private static final Logger LOG = Logger.getLogger(SlowMotionLocalGatedTspMappingAlgorithm.class);
 	
-	private static final double RV_SPEED = 10;
+	private static final double RV_SPEED = 3;
 	private static final double RV_PRECISION = 2;
 	
 	private static final int NTHREADS = 10;
@@ -82,6 +80,9 @@ public class LocalFCFSMappingAlgorithm implements IMappingAlgorithm {
 	private IGeodeticSystem geodeticSystem = new WGS84();
 
 	
+	private AcoTsp tspSolver = new AcoTsp(geodeticSystem);
+	
+
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm#execute(at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper)
 	 */
@@ -230,37 +231,40 @@ public class LocalFCFSMappingAlgorithm implements IMappingAlgorithm {
 				continue;
 			}
 			
-			ITask task = null;
-			long arrivalTime = Long.MAX_VALUE;
-			
+			List<PolarCoordinate> wayPoints = new ArrayList<PolarCoordinate>();
+			if (currentPosition != null) {
+				wayPoints.add(currentPosition);
+			} else {
+//				LOG.error("Current position is null!");
+				continue;
+			}
+			wayPoints.add(depotPosition);
 			for (IVirtualVehicleInfo e : rvInfo.vehicleList) {
-				Status status = e.getVehicleStatus().getState();
-				ITask t = e.getVehicleStatus().getCurrentTask();
-
-				if (status != Status.ACTIVE || t == null || t.getPosition() == null || t.getArrivalTime() > System.currentTimeMillis()) {
+				PolarCoordinate p = e.getVehicleStatus().getPosition();
+				if (p != null) {
+					wayPoints.add(p);
+				} else {
+//					LOG.error("Current position of VV " + e.getVehicleName() + " is null!");
 					continue;
-				}
-				
-				if (t.getArrivalTime() < arrivalTime) {
-					arrivalTime = t.getArrivalTime();
-					task = t;
 				}
 			}
 			
 //			LOG.info("Current position of " + engineUrl + " is " + (currentPosition != null ? currentPosition.toString() : "null"));
-			
-			if (task != null)  { 
-				PolarCoordinate wayPoint = task.getPosition();
-				LOG.debug("Engine " + engineUrl + " flies to " + wayPoint.toString());
-				
-				if (wayPoint.getAltitude() < 0.5) {
-					wayPoint = new PolarCoordinate(wayPoint.getLatitude(), wayPoint.getLongitude(), 0.5);
-				}
 
-				courseCommandList.add(new RVCommandFlyTo(wayPoint, RV_PRECISION, RV_SPEED));
-				if (task.getDelayTime() > 500) {
-					courseCommandList.add(new RVCommandHover((long)(0.5 + task.getDelayTime() / 1000)));
+			if (wayPoints.size() > 2)  {
+				LOG.info("Waypoint list of " + engineUrl + " has " + wayPoints.size() + " entries.");
+				
+				wayPoints = tspSolver.calculateBestPathWithDepot(wayPoints);
+				wayPoints.remove(0); // remove current position
+				wayPoints.remove(wayPoints.size()-1);	// remove depot
+				
+				for (PolarCoordinate wp : wayPoints) {
+					if (wp.getAltitude() < 0.5) {
+						wp.setAltitude(0.5);
+					}
+					courseCommandList.add(new RVCommandFlyTo(wp, RV_PRECISION, RV_SPEED));
 				}
+				
 				rvInfo.occupied = true;
 				rvInfo.flyingToDepot = false;
 				

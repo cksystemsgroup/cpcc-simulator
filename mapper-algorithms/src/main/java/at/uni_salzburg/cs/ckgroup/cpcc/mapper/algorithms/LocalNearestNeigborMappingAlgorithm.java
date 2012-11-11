@@ -1,5 +1,5 @@
 /*
- * @(#) LocalFCFSMappingAlgorithm.java
+ * @(#) LocalNearestNeigborMappingAlgorithm.java
  *
  * This code is part of the CPCC project.
  * Copyright (c) 2012  Clemens Krainer
@@ -48,9 +48,9 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandGoAuto;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandHover;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
 
-public class LocalFCFSMappingAlgorithm implements IMappingAlgorithm {
+public class LocalNearestNeigborMappingAlgorithm implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(LocalFCFSMappingAlgorithm.class);
+	private static final Logger LOG = Logger.getLogger(LocalNearestNeigborMappingAlgorithm.class);
 	
 	private static final double RV_SPEED = 10;
 	private static final double RV_PRECISION = 2;
@@ -230,8 +230,14 @@ public class LocalFCFSMappingAlgorithm implements IMappingAlgorithm {
 				continue;
 			}
 			
+			if (currentPosition == null) {
+				continue;
+			}
+			
+			CartesianCoordinate currentCartesian = geodeticSystem.polarToRectangularCoordinates(currentPosition);
+			
 			ITask task = null;
-			long arrivalTime = Long.MAX_VALUE;
+			double distance = Double.MAX_VALUE;
 			
 			for (IVirtualVehicleInfo e : rvInfo.vehicleList) {
 				Status status = e.getVehicleStatus().getState();
@@ -241,8 +247,12 @@ public class LocalFCFSMappingAlgorithm implements IMappingAlgorithm {
 					continue;
 				}
 				
-				if (t.getArrivalTime() < arrivalTime) {
-					arrivalTime = t.getArrivalTime();
+				CartesianCoordinate taskCartesian = geodeticSystem.polarToRectangularCoordinates(t.getPosition());
+				
+				double d = taskCartesian.subtract(currentCartesian).norm();
+				
+				if (d < distance) {
+					distance = d;
 					task = t;
 				}
 			}

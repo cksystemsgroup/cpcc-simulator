@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 
 
 public interface IVirtualVehicle {
@@ -101,7 +101,7 @@ public interface IVirtualVehicle {
 	/**
 	 * @return the virtual vehicle tasks as a list of strings.
 	 */
-	List<Task> getTaskList();
+	List<ITask> getTaskList();
 
 	/**
 	 * @return the index of the current task in the task list.
@@ -111,7 +111,7 @@ public interface IVirtualVehicle {
 	/**
 	 * @return the currently executing task.
 	 */
-	Task getCurrentTask();
+	ITask getCurrentTask();
 	
 	/**
 	 * @return the current program is corrupted.

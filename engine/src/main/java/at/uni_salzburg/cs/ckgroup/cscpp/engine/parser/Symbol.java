@@ -50,6 +50,8 @@ public enum Symbol {
 	ACTIVATION	("activation"),		// action point activation time (optional)
 	DELAY		("delay"),			// action point delay time (optional)
 	LIFETIME	("lifetime"),		// action point lifetime (optional)
+	PROCESS		("process"),		// action point processing
+	COMPLETE	("complete"),		// action point processing complete
 
 	AIRPRESSURE	("airPressure"),	// air pressure sensor
 	ALTITUDE	("altitude"),		// altitude sensor

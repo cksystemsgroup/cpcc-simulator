@@ -34,7 +34,11 @@ public interface ITask {
 	
 	public long getActivationTime();
 	
+	public void setActivationTime(long now);
+
 	public long getDelayTime();
+
+	public void setDelayTime(long l);
 	
 	public long getLifeTime();
 	
@@ -45,4 +49,5 @@ public interface ITask {
 	public boolean isComplete();
 	
 	public void execute(ISensorProxy sprox);
+	
 }

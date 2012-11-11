@@ -68,6 +68,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 	private static final String PROP_ZONE_VERTICES_POSTFIX = ".vertices";
 	private static final String PROP_ZONE_POSITION_POSTFIX = ".position";
 	private static final String PROP_ZONE_RADIUS_POSTFIX = ".radius";
+	private static final String PROP_ZONE_DEPOT_POSTFIX = ".depot";
 	
 	private static final String PROP_CENTRAL_ENGINES = "mapper.central.engines";
 	
@@ -225,7 +226,7 @@ public class Configuration extends ConfigurationParser implements IConfiguration
                 }
 
                 zone = new PolygonZone(vertices.toArray(new PolarCoordinate[0]));
-				
+                
 			} else if ("circle".equals(type)) {
 				String propPosition = PROP_ZONE_PREFIX + name + PROP_ZONE_POSITION_POSTFIX;
 				String propRadius = PROP_ZONE_PREFIX + name + PROP_ZONE_RADIUS_POSTFIX;
@@ -259,6 +260,28 @@ public class Configuration extends ConfigurationParser implements IConfiguration
 			}
 			
 			if (zone != null) {
+	            String propDepot = PROP_ZONE_PREFIX + name + PROP_ZONE_DEPOT_POSTFIX;
+	            String depotString = parseString(propDepot);
+				if (depotString != null) {
+					pars.add(new String[] {propDepot});
+					
+					if (!depotString.matches("\\s*\\(\\s*\\d+.\\d+\\s*,\\s*\\d+.\\d+\\,\\s*\\d+.\\d+\\)\\s*")) {
+	            		configErrors.put(propDepot, ERROR_MESSAGE_INVALID_VALUE);
+	            		setConfigOk(false);
+					}
+	            
+					String[] ll = depotString.trim().replaceAll("\\(\\s*", "").replaceAll("\\s*\\)", "").split("\\s*,\\s*");
+	            	if (ll.length != 3) {
+	            		configErrors.put(propDepot, ERROR_MESSAGE_INVALID_VALUE);
+	            		setConfigOk(false);
+	            	}
+	            	
+	            	double latitude = Double.parseDouble(ll[0]);
+	            	double longitude = Double.parseDouble(ll[1]);
+	            	double altitude = Double.parseDouble(ll[2]);
+	            	zone.setDepotPosition(new PolarCoordinate(latitude, longitude, altitude));
+				}
+			
 				zone.setZoneEngineUrl(engine);
 				zone.setZoneGroup(IZone.Group.valueOf(group.toUpperCase()));
 				zoneSet.add(zone);

@@ -38,7 +38,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.log4j.Logger;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ISensorProxy;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 
 public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnable {
@@ -433,7 +433,7 @@ public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnabl
 		synchronized (lock) {
 			try {
 				PrintWriter pw = new PrintWriter(vehicleStatusTxt);
-				for (Task task : getTaskList()) {
+				for (ITask task : getTaskList()) {
 					pw.println(task.toString());
 				}
 				pw.close();

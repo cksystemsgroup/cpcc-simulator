@@ -37,10 +37,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.config.IConfiguration;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.ParseException;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.TaskListBuilder;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.VehicleStorage;
@@ -315,7 +315,7 @@ public class VehicleService extends DefaultService {
 		} else if (ACTION_VEHICLE_TASK.equals(action)) {
 			if (cmd.length > 4) {
 				IVirtualVehicle v = getVehicle(config, cmd[4]);
-				Task currentTask = v.getCurrentTask();
+				ITask currentTask = v.getCurrentTask();
 				String currentTaskString = currentTask != null ? currentTask.toString() : "";
 				emitByteArray(response, "text/plain", currentTaskString.getBytes());
 				return;
@@ -327,9 +327,9 @@ public class VehicleService extends DefaultService {
 		} else if (ACTION_VEHICLE_ADD_TASK.equals(action)) {
 			if (cmd.length > 4) {
 				IVirtualVehicle v = getVehicle(config, cmd[4]);
-				List<Task> taskList = v.getTaskList();
+				List<ITask> taskList = v.getTaskList();
 				
-				List<Task> newTasks = null;
+				List<ITask> newTasks = null;
 				try {
 					InputStream inStream = request.getInputStream();
 					ByteArrayOutputStream outStream = new ByteArrayOutputStream();

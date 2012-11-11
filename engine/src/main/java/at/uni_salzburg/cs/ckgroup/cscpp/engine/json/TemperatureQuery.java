@@ -28,8 +28,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Temperature;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -52,9 +52,9 @@ public class TemperatureQuery implements IQuery {
 				continue;
 			}
 			
-			List<Task> cmdList = vehicle.getTaskList();
+			List<ITask> cmdList = vehicle.getTaskList();
 			
-			for (Task cmd : cmdList) {
+			for (ITask cmd : cmdList) {
 				for (IAction action : cmd.getActionList()) {
 					if (action instanceof Temperature && action.isComplete()) {
 						Temperature actionTemp = (Temperature)action;

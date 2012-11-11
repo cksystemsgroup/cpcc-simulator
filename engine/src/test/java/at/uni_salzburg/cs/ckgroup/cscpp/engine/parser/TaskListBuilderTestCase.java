@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.AbstractAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.AirPressure;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Picture;
@@ -28,6 +29,8 @@ public class TaskListBuilderTestCase {
 	private static final String TEST_01_PROGRAM = PREFIX + "ScannerTest01.txt";
 	private static final String TEST_02_PROGRAM = PREFIX + "ScannerTest02.txt";
 	private static final String TEST_03_PROGRAM = PREFIX + "ScannerTest03.txt";
+	private static final String TEST_04_PROGRAM = PREFIX + "ScannerTest04.txt";
+	
 	
 	private File dataDir;
 
@@ -51,10 +54,10 @@ public class TaskListBuilderTestCase {
 		
 		TaskListBuilder builder = new TaskListBuilder(dataDir);
 		
-		List<Task> taskList = builder.build(scanner);
+		List<ITask> taskList = builder.build(scanner);
 		assertEquals(3, taskList.size());
 		
-		Task task = taskList.get(0);
+		ITask task = taskList.get(0);
 		assertEquals(123.45, task.getPosition().getLatitude(), 1E-9);
 		assertEquals(2134234.345, task.getPosition().getLongitude(), 1E-9);
 		assertEquals(34, task.getPosition().getAltitude(), 1E-9);
@@ -112,11 +115,11 @@ public class TaskListBuilderTestCase {
 		
 		TaskListBuilder builder = new TaskListBuilder(dataDir);
 		
-		List<Task> taskList = builder.build(scanner);
+		List<ITask> taskList = builder.build(scanner);
 		assertEquals(3, taskList.size());
 		
 		// first task
-		Task task = taskList.get(0);
+		ITask task = taskList.get(0);
 		assertEquals(47.69292705, task.getPosition().getLatitude(), 1E-9);
 		assertEquals(13.38507593, task.getPosition().getLongitude(), 1E-9);
 		assertEquals(-20.000, task.getPosition().getAltitude(), 1E-9);
@@ -209,11 +212,11 @@ public class TaskListBuilderTestCase {
 		
 		TaskListBuilder builder = new TaskListBuilder(dataDir);
 		
-		List<Task> taskList = builder.build(scanner);
+		List<ITask> taskList = builder.build(scanner);
 		assertEquals(3, taskList.size());
 		
 		// first task
-		Task task = taskList.get(0);
+		ITask task = taskList.get(0);
 		assertEquals(47.69292705, task.getPosition().getLatitude(), 1E-9);
 		assertEquals(13.38507593, task.getPosition().getLongitude(), 1E-9);
 		assertEquals(-20.000, task.getPosition().getAltitude(), 1E-9);
@@ -275,6 +278,99 @@ public class TaskListBuilderTestCase {
 		assertTrue(action instanceof AirPressure);
 		assertEquals(1084.7, ((AirPressure)action).getAirPressure(), 1E-9);
 		
+		
+		// third task
+		task = taskList.get(2);
+		assertEquals(47.69294511, task.getPosition().getLatitude(), 1E-9);
+		assertEquals(-13.38582999, task.getPosition().getLongitude(), 1E-9);
+		assertEquals(20.000, task.getPosition().getAltitude(), 1E-9);
+		assertEquals(5.0, task.getTolerance(), 1E-9);
+		assertEquals(1342217933770L, task.getArrivalTime());
+		assertNotNull(task.getDelayTime());
+		assertEquals(4000, task.getDelayTime());
+		assertNotNull(task.getLifeTime());
+		assertEquals(86400, task.getLifeTime());
+		
+		assertEquals(3, task.getActionList().size());
+		
+		action = (AbstractAction)task.getActionList().get(0);
+		assertTrue(action.isComplete());
+		assertEquals(1342217933771L, action.getTimestamp());
+		assertTrue(action instanceof Picture);
+		assertEquals("img963661589640754782.png", ((Picture)action).getFilename());
+		
+		action = (AbstractAction)task.getActionList().get(1);
+		assertTrue(action.isComplete());
+		assertEquals(1342217933774L, action.getTimestamp());
+		assertTrue(action instanceof Temperature);
+		assertEquals(30.0, ((Temperature)action).getTemperature(), 1E-9);
+		
+		action = (AbstractAction)task.getActionList().get(2);
+		assertTrue(action.isComplete());
+		assertEquals(1342217933777L, action.getTimestamp());
+		assertTrue(action instanceof AirPressure);
+		assertEquals(1094.0, ((AirPressure)action).getAirPressure(), 1E-9);
+	}
+	
+	@Test
+	public void testCase04() throws IOException, ParseException {
+		
+		InputStream inStream = getClass().getClassLoader().getResourceAsStream(TEST_04_PROGRAM);
+		assertNotNull(inStream);
+		
+		Scanner scanner = new Scanner(inStream);
+		
+		TaskListBuilder builder = new TaskListBuilder(dataDir);
+		
+		List<ITask> taskList = builder.build(scanner);
+		assertEquals(3, taskList.size());
+		
+		// first task
+		ITask task = taskList.get(0);
+		assertEquals(47.69292705, task.getPosition().getLatitude(), 1E-9);
+		assertEquals(13.38507593, task.getPosition().getLongitude(), 1E-9);
+		assertEquals(-20.000, task.getPosition().getAltitude(), 1E-9);
+		assertEquals(5.0, task.getTolerance(), 1E-9);
+		assertEquals(1342217901293L, task.getArrivalTime());
+		assertEquals(0, task.getActivationTime());
+		assertEquals(-1, task.getDelayTime());
+		assertEquals(0, task.getLifeTime());
+		
+		assertEquals(3, task.getActionList().size());
+		
+		AbstractAction action = (AbstractAction)task.getActionList().get(0);
+		assertTrue(action.isComplete());
+		assertEquals(1342217901294L, action.getTimestamp());
+		assertTrue(action instanceof Picture);
+		assertEquals("img1241582018627917693.png", ((Picture)action).getFilename());
+		
+		action = (AbstractAction)task.getActionList().get(1);
+		assertTrue(action.isComplete());
+		assertEquals(1342217901297L, action.getTimestamp());
+		assertTrue(action instanceof Temperature);
+		assertEquals(-12.3, ((Temperature)action).getTemperature(), 1E-9);
+		
+		action = (AbstractAction)task.getActionList().get(2);
+		assertTrue(action.isComplete());
+		assertEquals(1342217901300L, action.getTimestamp());
+		assertTrue(action instanceof AirPressure);
+		assertEquals(1094.8, ((AirPressure)action).getAirPressure(), 1E-9);
+		
+		
+		// second task
+		task = taskList.get(1);
+		assertEquals(-47.69291983, task.getPosition().getLatitude(), 1E-9);
+		assertEquals(13.38562846, task.getPosition().getLongitude(), 1E-9);
+		assertEquals(20.000, task.getPosition().getAltitude(), 1E-9);
+		assertEquals(5.0, task.getTolerance(), 1E-9);
+		assertEquals(1342217919833L, task.getArrivalTime());
+		assertNotNull(task.getDelayTime());
+		assertEquals(3000, task.getDelayTime());
+		assertEquals(0, task.getLifeTime());
+		
+		assertTrue(task instanceof ComputationTask);
+		assertNull(task.getActionList());
+
 		
 		// third task
 		task = taskList.get(2);

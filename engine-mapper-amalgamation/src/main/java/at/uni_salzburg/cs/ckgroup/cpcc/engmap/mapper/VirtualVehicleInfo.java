@@ -27,9 +27,9 @@ import java.util.Set;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 
 public class VirtualVehicleInfo implements IVirtualVehicleInfo {
@@ -123,7 +123,7 @@ public class VirtualVehicleInfo implements IVirtualVehicleInfo {
 			return actions;
 		}
 		
-		public Task getCurrentTask() {
+		public ITask getCurrentTask() {
 			return vehicle.getCurrentTask();
 		}
 	}

@@ -32,8 +32,8 @@ import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Scanner;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.TaskListBuilder;
 
 
@@ -43,8 +43,8 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	
 	private boolean programCorrupted = true;
         
-	private List<Task> taskList;
-    private Task currentTask;
+	private List<ITask> taskList;
+    private ITask currentTask;
     private int currentIndex;
 
     private IGeodeticSystem geodeticSystem = new WGS84();
@@ -72,7 +72,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			taskList = builder.build(scanner);
 			
 			currentTask = null;
-			for (Task task : taskList) {
+			for (ITask task : taskList) {
 				if (!task.isComplete()) {
 					currentTask = task;
 					break;
@@ -107,7 +107,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 		Double altitudeOverGround = sensorProxy.getAltitudeOverGround();
 		if (!isCompleted() && currentTask == null) {
 			currentIndex = 0;
-			for (Task task : taskList) {
+			for (ITask task : taskList) {
 				if (!task.isComplete()) {
 					currentTask = task;
 					break;
@@ -149,7 +149,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 			ITaskDelayAlgorithm delayAlgorithm = getDelayAlgorithm();
 			
 			if (delayAlgorithm != null && currentIndex > 0) {
-				Task oldTask = taskList.get(currentIndex-1);
+				ITask oldTask = taskList.get(currentIndex-1);
 				PolarCoordinate oldTaskPosition = oldTask.getPosition();
 				CartesianCoordinate oldTaskPosCartesian = geodeticSystem.polarToRectangularCoordinates(oldTaskPosition);
 				
@@ -197,7 +197,7 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getTaskList()
 	 */
 	@Override
-	public List<Task> getTaskList() {
+	public List<ITask> getTaskList() {
 		return taskList;
 	}
 	
@@ -213,19 +213,19 @@ public class VirtualVehicle extends AbstractVirtualVehicle {
 	 * @see at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle#getCurrentTask()
 	 */
 	@Override
-	public Task getCurrentTask() {
-		Task ct = currentTask;
+	public ITask getCurrentTask() {
+		ITask ct = currentTask;
 		
 		if (ct == null) {
 			return null;
 		}
 
-		long now = System.currentTimeMillis();
-		long delay = ct.getDelayTime() < 0 ? 0 : ct.getDelayTime();
-		
-		if (ct.getArrivalTime() + delay >= now) {
-			return null;
-		}
+//		long now = System.currentTimeMillis();
+//		long delay = ct.getDelayTime() < 0 ? 0 : ct.getDelayTime();
+//		
+//		if (ct.getArrivalTime() + delay >= now) {
+//			return null;
+//		}
 		
 		return ct;
 	}

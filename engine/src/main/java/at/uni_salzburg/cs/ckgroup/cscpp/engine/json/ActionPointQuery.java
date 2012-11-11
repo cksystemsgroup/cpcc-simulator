@@ -28,7 +28,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -91,7 +91,7 @@ public class ActionPointQuery implements IQuery {
 			props.put(PROP_VEHICLE_STATE, "suspended");
 		}
 		
-		Task cmd = vehicle.getTaskList().get(actionPointIndex);
+		ITask cmd = vehicle.getTaskList().get(actionPointIndex);
 			
 		props.put(PROP_VEHICLE_ACTION_POINT, cmd.getPosition());
 		props.put(PROP_VEHICLE_TOLERANCE, cmd.getTolerance());

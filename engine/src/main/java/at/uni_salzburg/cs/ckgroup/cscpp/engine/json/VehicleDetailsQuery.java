@@ -28,7 +28,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -80,7 +80,7 @@ public class VehicleDetailsQuery implements IQuery {
 		}
 		
 		JSONArray tasks = new JSONArray();
-		for (Task cmd : vehicle.getTaskList()) {
+		for (ITask cmd : vehicle.getTaskList()) {
 			tasks.add(cmd);
 		}
 		

@@ -30,6 +30,7 @@ import java.util.Set;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.AbstractAction;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.AirPressure;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.actions.Altitude;
@@ -60,9 +61,9 @@ public class TaskListBuilder {
 		this.dataDir = dataDir;
 	}
 
-	public List<Task> build (Scanner scanner) throws IOException, ParseException {
+	public List<ITask> build (Scanner scanner) throws IOException, ParseException {
 		
-		List<Task> taskList = new ArrayList<Task>();
+		List<ITask> taskList = new ArrayList<ITask>();
 		
 		Token token = scanner.next();
 		while (token.getSymbol() != Symbol.END ) {
@@ -72,12 +73,20 @@ public class TaskListBuilder {
 		return taskList;
 	}
 
-	private Task parseTask(Scanner scanner, Token token) throws IOException, ParseException {
+	private ITask parseTask(Scanner scanner, Token token) throws IOException, ParseException {
 		
-		if (Symbol.POINT != token.getSymbol()) {
+		Symbol symbol = token.getSymbol();
+		if (Symbol.POINT == symbol) {
+			return parseActionPoint(scanner, token);
+		} else if (Symbol.PROCESS == symbol) {
+			return parseProcess(scanner, token);
+		} else {
 			throw new ParseException(Symbol.POINT, scanner, token);
 		}
-		
+	}
+	
+	private Task parseActionPoint(Scanner scanner, Token token) throws IOException, ParseException {
+			
 		Token latitude = parseSignedNumber(scanner);
 		Token longitude = parseSignedNumber(scanner);
 		Token altitude = parseSignedNumber(scanner);
@@ -127,6 +136,62 @@ public class TaskListBuilder {
 		task.setDelayTime(delayTime != null ? delayTime.getNumber().longValue() : -1);
 		task.setLifeTime(lifeTime != null ? lifeTime.getNumber().longValue() : 0);
 		task.setActionList(actionList);
+		return task;
+	}
+
+	private ComputationTask parseProcess(Scanner scanner, Token token) throws IOException, ParseException {
+		
+		Token latitude = parseSignedNumber(scanner);
+		Token longitude = parseSignedNumber(scanner);
+		Token altitude = parseSignedNumber(scanner);
+		
+		if (Symbol.TOLERANCE != token.copyFields(scanner.next()).getSymbol()) {
+			throw new ParseException(Symbol.TOLERANCE, scanner, token);
+		}
+		
+		Token tolerance = parseSignedNumber(scanner);
+		
+		Token arrivalTime = null;
+		Token activationTime = null;
+		Token delayTime = null;
+		Token lifeTime = null;
+		Token completedTime = null;
+		token.copyFields(scanner.next());
+		if (Symbol.ARRIVAL == token.getSymbol()) {
+			arrivalTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+		
+		if (Symbol.ACTIVATION == token.getSymbol()) {
+			activationTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+		
+		if (Symbol.DELAY == token.getSymbol()) {
+			delayTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+	
+		if (arrivalTime != null && Symbol.LIFETIME == token.getSymbol()) {
+			lifeTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+		
+		if (Symbol.COMPLETE == token.getSymbol()) {
+			completedTime = parseSignedNumber(scanner);
+			token.copyFields(scanner.next());
+		}
+		
+		ComputationTask task = new ComputationTask();
+		task.setPosition(new PolarCoordinate(latitude.getNumber().doubleValue(), longitude.getNumber().doubleValue(), altitude.getNumber().doubleValue()));
+		task.setTolerance(tolerance.getNumber().doubleValue());
+		task.setArrivalTime(arrivalTime != null ? arrivalTime.getNumber().longValue() : System.currentTimeMillis());
+		task.setActivationTime(activationTime != null ? activationTime.getNumber().longValue() : 0);
+		task.setDelayTime(delayTime != null ? delayTime.getNumber().longValue() : -1);
+		task.setLifeTime(lifeTime != null ? lifeTime.getNumber().longValue() : 0);
+		task.setCompletedTime(completedTime != null ? completedTime.getNumber().longValue() : 0);
+		task.setActionList(null);
+		
 		return task;
 	}
 

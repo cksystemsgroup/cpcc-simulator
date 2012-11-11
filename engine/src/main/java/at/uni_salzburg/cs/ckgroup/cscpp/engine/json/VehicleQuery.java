@@ -34,7 +34,7 @@ import org.json.simple.JSONObject;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IAction;
-import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.Task;
+import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
 import at.uni_salzburg.cs.ckgroup.cscpp.engine.vehicle.IVirtualVehicle;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IQuery;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -131,18 +131,21 @@ public class VehicleQuery implements IQuery {
 				props.put(PROP_VEHICLE_TOLERANCE, Double.valueOf(vehicle.getCurrentTask().getTolerance()));
 				
 				List<IAction> al = vehicle.getCurrentTask().getActionList();
-				JSONArray openActions = new JSONArray();
-				for (IAction action : al) {
-					if (!action.isComplete()) {
-						openActions.add(actionsMap.get(action.toString().toUpperCase()));	
+				if (al != null) {
+					JSONArray openActions = new JSONArray();
+					for (IAction action : al) {
+						if (!action.isComplete()) {
+							openActions.add(actionsMap.get(action.toString().toUpperCase()));	
+						}
 					}
+					props.put(PROP_VEHICLE_ACTIONS, openActions);
 				}
-				props.put(PROP_VEHICLE_ACTIONS, openActions);
+				
 			}
 			
 			if (sendAPs) {
 				JSONArray actionPoints = new JSONArray();
-				for (Task cmd : vehicle.getTaskList()) {
+				for (ITask cmd : vehicle.getTaskList()) {
 					JSONObject p = new JSONObject();
 					p.put("latitude", cmd.getPosition().getLatitude());
 					p.put("longitude", cmd.getPosition().getLongitude());

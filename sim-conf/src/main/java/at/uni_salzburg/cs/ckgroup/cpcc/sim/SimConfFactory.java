@@ -246,7 +246,7 @@ public class SimConfFactory {
 				PolarCoordinate b = gs.walk(a, 0, width, 0);
 				PolarCoordinate c = gs.walk(a, -height, width, 0);
 				PolarCoordinate d = gs.walk(a, -height, 0, 0);
-				PolarCoordinate depot = gs.walk(a, -height/2.0, width/2.0, 0);
+				PolarCoordinate depot = gs.walk(a, -height/2.0, width/2.0, 1.0);
 				ZoneInfo zInfo = new ZoneInfo();
 				zInfo.setVertices(verticesToString(new PolarCoordinate[]{a,b,c,d,a}));
 				zInfo.setDepotPosition(depot);

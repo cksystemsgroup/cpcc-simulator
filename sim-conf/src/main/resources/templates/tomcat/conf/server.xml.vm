@@ -25,11 +25,11 @@
 
   <Service name="Catalina">
     <Connector port="${httpConnectorPort}" URIEncoding="UTF-8" connectionTimeout="30000" keepAliveTimeout="30000" />
-
+<!--
     <Connector port="${httpsConnectorPort}" URIEncoding="UTF-8" connectionTimeout="30000" keepAliveTimeout="30000" secure="true" />
 
     <Connector port="${ajpConnectorPort}" URIEncoding="UTF-8" connectionTimeout="30000" keepAliveTimeout="30000" protocol="AJP/1.3" />
-
+-->
     <Engine name="Catalina" defaultHost="localhost">
       <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
              resourceName="UserDatabase" />

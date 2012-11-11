@@ -6,7 +6,7 @@
 
 [ "$CPCC_SIM_HOME" = "" ] && export CPCC_SIM_HOME=$HOME
 
-export JAVA_HOME=$CPCC_SIM_HOME/.jdk/jdk1.6.0_33-x64
+export JAVA_HOME=$CPCC_SIM_HOME/.jdk/jdk1.7.0_07-i586
 export JAVA_ROOT=$JAVA_HOME
 export JDK_HOME=$JAVA_HOME
 export JRE_HOME=$JAVA_HOME/jre
@@ -14,8 +14,8 @@ export SDK_HOME=$JAVA_HOME
 
 export LANG=en_US
 export CATALINA_BASE=$CPCC_SIM_HOME/$tcDir
-export CATALINA_HOME=$CPCC_SIM_HOME/.opt/apache-tomcat-7.0.29
-export CATALINA_OPTS="-XX:MaxPermSize=128m -Xmx8192m -Xss256k"
+export CATALINA_HOME=$CPCC_SIM_HOME/.opt/apache-tomcat-7.0.30
+export CATALINA_OPTS="-XX:MaxPermSize=128m -Xmx1024m -Xss256k"
 export CATALINA_OPTS="$CATALINA_OPTS -Duser.timezone=CET -Dfile.encoding=UTF-8 -Djava.awt.headless=true"
 #export CATALINA_OPTS="$CATALINA_OPTS -Dhttp.proxySet=true -Dhttp.proxyHost=141.201.80.7 -Dhttp.proxyPort=3128 -D'http.nonProxyHosts=beta|beta.cs.uni-salzburg.at|localhost|141.201.106.16|cs.uni-salzburg.at'"
 export CATALINA_OPTS="$CATALINA_OPTS -Dgoogle.maps.api.key=";
@@ -24,7 +24,7 @@ export CATALINA_TMPDIR="/tmp"
 export JAVA_OPTS=-Dserver.id=$tcName 
 export JAVA_OPTS="$JAVA_OPTS -Denvironment=$(hostname)";
 export JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote"
-export JAVA_OPTS="$JAVA_OPTS -Djava.security.egd=file:/dev/./urandom"
+export JAVA_OPTS="$JAVA_OPTS -Djava.security.egd=file:/dev/urandom"
 
 export DISABLE_JAVADUMP=true
 

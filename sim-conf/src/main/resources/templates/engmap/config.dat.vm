@@ -45,12 +45,15 @@ zone.${n}.vertices=$zone.getVertices()
 zone.${n}.engine = $zone.getWebAppInfo().getBaseUrl()
 #if( $zone.getWebAppInfo().getBaseUrl().equals("http://localhost:${httpConnectorPort}/$context") )
 zone.${n}.group = local
+zone.${n}.depot = ($zone.getDepotPosition().getLatitude(), $zone.getDepotPosition().getLongitude(), $zone.getDepotPosition().getAltitude())
 #else
 zone.${n}.group = foreign
 #end
 #else
 zone.${n}.group = local
+zone.${n}.depot = ($zone.getDepotPosition().getLatitude(), $zone.getDepotPosition().getLongitude(), $zone.getDepotPosition().getAltitude())
 #end
+
 
 #set( $n = $n + 1 )
 #end

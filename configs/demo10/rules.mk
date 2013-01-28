@@ -17,4 +17,4 @@ SRC = $(shell ls rep-*.bz2)
 	../getDeliveredAndRequiredSpeed.pl $(SRC) > $@;
 
 clean:
-	$(RM) $(TARGETS)
+	$(RM) $(TARGETS) *.m

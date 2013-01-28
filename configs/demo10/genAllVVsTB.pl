@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 use strict;
 
-my $script = './genVVsTB.pl';
-my $nrVVs = 250;
+my $script = './genVVsTB-alt.pl';
+# my $nrVVs = 250;
+my $nrVVs = 50;
 
 my $startTime = time() + 80;
 

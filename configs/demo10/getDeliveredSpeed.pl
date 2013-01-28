@@ -15,14 +15,18 @@ my $res = [];
 @ARGV or @ARGV = ('/home/clem/new-jnavigator-workspace/cpcc-project/configs/demo10/n');
 
 my %res = ();
-my $lambda = undef;
+my ($lambda, $TBsz, $RV_V) = undef;
 my $nrTasks = 20;
+my $a1 = 50;
+my $m = 5;
+my $nrRVs = $m * $m;
 
-print "lambda;E[v_Rn];E[v_D];P(delivered speed > required speed);r_v\n";
+print "lambda;postB_lambda;E[v_Rn];E[v_D];P(delivered speed > required speed);r_v;TBsz;RV_V;TotalDistance;TimeRV;TimeCPCC;Gain\n";
 
 foreach my $f (@ARGV) {
  	print STDERR "Processing file $f\n";
- 	$f =~ m/.*(0\.\d+).*/ and $lambda  =$1;
+ 	$f =~ m/.*(0\.\d+)-TB=(\d+)-RvV=(\d+).*/  and  $lambda = $1, $TBsz = $2, $RV_V = $3;
+	print STDERR "$lambda, $TBsz, $RV_V\n";
  	
 	my $cmd = "< $f";
 	$cmd =~ m/\.bz2/ and $cmd = "bzip2 -cd $f |";
@@ -49,14 +53,34 @@ foreach my $f (@ARGV) {
 	my $stDeliveredSpeed = new Statistics;
 	my $stRequiredSpeed = new Statistics;
 	my $stDeliveryRatio = new Statistics;
+	my $stArrivalDiff = new Statistics;
+	my $stBucketPassedDiff = new Statistics;
 	my $buggerIt = 0;
 	my $violations = 0;
 	my $totalNumberOfTasks = 0;
+	my $totalDistance = 0;
+	my $totalExecutionTime = 0;
+	my $totalNumberVVs = 0;
+	my $minArrivalTime = 1000000;
+	my $maxCompletedTime = 0;
+	my $cpccTime = 0;
+	my $totalComputationTime = 0;
 	
 	foreach my $vv (sort keys %res) {
 		my $t = [];
-		foreach my $task (sort keys %{$res{$vv}}) {
+		my $prevBucketPassedTime;
+		my $prevArrivalTime;
+		foreach my $task (sort {$a<=>$b} keys %{$res{$vv}}) {
 			push @$t, [$task, $res{$vv}->{$task}->{COMPLETED_TIME}];
+			if ($task > 0) {
+				my $newDiff = $res{$vv}->{$task}->{ARRIVAL_TIME} - $prevArrivalTime;
+				$res{$vv}->{$task}->{ARRIVAL_DIFFERENCE} or $res{$vv}->{$task}->{ARRIVAL_DIFFERENCE} = $newDiff;
+				$stArrivalDiff->add($res{$vv}->{$task}->{ARRIVAL_DIFFERENCE});				
+				$stBucketPassedDiff->add($res{$vv}->{$task}->{BUCKET_PASSED_TIME} - $prevBucketPassedTime);
+			}
+			
+			$prevArrivalTime = $res{$vv}->{$task}->{ARRIVAL_TIME};
+			$prevBucketPassedTime = $res{$vv}->{$task}->{BUCKET_PASSED_TIME};
 			
 			my $g = $res{$vv}->{$task}->{gamma};
 			my $nb = $res{$vv}->{$task}->{nb};		# nb after task
@@ -68,6 +92,11 @@ foreach my $f (@ARGV) {
 			printf STDERR "VV $vv has %2d tasks, but should have %2d tasks. Ignoring VV $vv\n", ~~@$t, $nrTasks;
 			next;
 		}
+		
+		++$totalNumberVVs;
+
+
+
 		
 		my @sortedTasks = sort {$a->[1]<=>$b->[1]} @$t;
 		
@@ -85,6 +114,12 @@ foreach my $f (@ARGV) {
 		foreach my $task (map{$_->[0]}@sortedTasks) {
 	#		printf "%s %d\n", $vv, $task;
 
+			$minArrivalTime > $res{$vv}->{$task}->{ARRIVAL_TIME} and
+				$minArrivalTime = $res{$vv}->{$task}->{ARRIVAL_TIME};
+			
+			$maxCompletedTime < $res{$vv}->{$task}->{COMPLETED_TIME} and
+				$maxCompletedTime = $res{$vv}->{$task}->{COMPLETED_TIME};
+
 			if ($task > 0) {
 				$res{$vv}->{$task}->{COMPLETED_TIME} < $prevCompletedTime and ++$buggerIt, print STDERR "$lambda $vv $task\n";
 				
@@ -99,8 +134,12 @@ foreach my $f (@ARGV) {
 #				$mu_V = $res{$vv}->{$task}->{mu_V};
 
 				$sumT_i_req += $res{$vv}->{$task}->{ARRIVAL_DIFFERENCE} - $T_ci;
+				
+				$cpccTime += $T_si;
+				$totalComputationTime += $T_ci;
+				
 			}
-	
+			
 			$prevCompletedTime = $res{$vv}->{$task}->{COMPLETED_TIME};
 			
 #			$res{$vv}->{$task}->{BUCKET_DELAY} > 0 and ++$violations;
@@ -115,11 +154,19 @@ foreach my $f (@ARGV) {
 #		$stDeliveryRatio->add($delSpeed <= 0 || $delSpeed >= $mu_V ? 1 : 0);
 		$stDeliveryRatio->add($delSpeed <= 0 || $delSpeed >= $reqSpeed ? 1 : 0);
 		
+		$totalDistance += $sumL_i;
 	}
 	
 
+	my $timeRV = $totalDistance/($RV_V * $nrRVs) + (0.52 * $a1 * $totalNumberVVs) / ($RV_V * $nrRVs) + $totalComputationTime / $nrRVs;
+#	my $cpccTime = $maxCompletedTime - $minArrivalTime;
+	$cpccTime /= $nrRVs;
 	
-	printf "%.5f;%.5f;%.5f;%.5f;%.5f\n", $lambda, $stRequiredSpeed->mean(), $stDeliveredSpeed->mean(), $stDeliveryRatio->mean(), $violations/$totalNumberOfTasks;
+	printf "%.5f;%.5f;%.5f;%.5f;%.5f;%.5f;%.5f;%.5f;%.2f;%.2f;%.5f;%.5f\n",
+		$lambda, 1/$stBucketPassedDiff->mean(),
+		$stRequiredSpeed->mean(), $stDeliveredSpeed->mean(),
+		$stDeliveryRatio->mean(), $violations/$totalNumberOfTasks,
+		$TBsz, $RV_V, $totalDistance, $timeRV, $cpccTime, $timeRV / $cpccTime;
 
 	$buggerIt and warn "buggerit! $lambda";
 }

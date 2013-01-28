@@ -10,6 +10,51 @@ my $dstDir = sprintf "results-%04d%02d%02d", @t;
 !-d $dstDir and mkdir($dstDir), printf "Folder $dstDir created.";
 -d $dstDir or die "Can not create folder $dstDir";
 
+########################################################################
+########################################################################
+
+sub paperVisuals {
+	my $tbSZ = sprintf "%02d", $_[0];
+	my $speed = sprintf "%02d", $_[1];	
+	
+	$m->load({
+		charts => [
+			{file => 'exp-fcfs-TB='.$tbSZ.'-RvV='.$speed.'/fcfs-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',	value => 'FCFS: b=26'},
+			{file => 'exp-gtsp-TB='.$tbSZ.'-RvV='.$speed.'/gtsp-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',	value => 'G-TSP: b=26'},
+			{file => 'exp-nn-TB='.$tbSZ.'-RvV='.$speed.'/nn-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',		value => 'NN: b=26'},
+		],
+		X => 2,	X_label => 'Mean required speed E[v^R]',
+		Y => 3,	Y_label => 'Mean delivered speed E[v^D]',
+		ML_FIG_LABEL => '#VV=250, v^V=10, c=7, #RV=25, v=5, a=250',
+		ML_PREFIX => 'FIG_DELIVERED_V1_'.$tbSZ.'_'.$speed,
+	});
+	
+	$m->saveAsCsv($dstDir.'/fig_DeliveredV1-TB_'.$tbSZ.'-RvV_'.$speed.'.csv');
+	$m->saveAsMatlab($dstDir.'/fig_DeliveredV1-TB_'.$tbSZ.'-RvV_'.$speed.'.m');
+	
+	
+	$m->load({
+		charts => [
+			{file => 'exp-fcfs-TB='.$tbSZ.'-RvV='.$speed.'/fcfs-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',	value => 'FCFS: b=26'},
+			{file => 'exp-gtsp-TB='.$tbSZ.'-RvV='.$speed.'/gtsp-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',	value => 'G-TSP: b=26'},
+			{file => 'exp-nn-TB='.$tbSZ.'-RvV='.$speed.'/nn-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',		value => 'NN: b=26'},
+		],
+		X => 2,	X_label => 'Mean required speed E[v^D]',
+		Y => 4,	Y_label => 'P(v^D_i \geq v^R_i)',
+		ML_FIG_LABEL => '#VV=250, v^V=10, c=7, #RV=25, v=5, a=250',
+		ML_PREFIX => 'FIG_DELIVERY_R1_'.$tbSZ.'_'.$speed,
+	});
+	
+	$m->saveAsCsv($dstDir.'/fig_DelivereyR1-TB_'.$tbSZ.'-RvV_'.$speed.'.csv');
+	$m->saveAsMatlab($dstDir.'/fig_DelivereyR1-TB_'.$tbSZ.'-RvV_'.$speed.'.m');
+	
+}
+
+
+paperVisuals  7, 10;
+#paperVisuals 41, 10;
+
+
 
 ########################################################################
 ########################################################################
@@ -26,8 +71,8 @@ sub meanDeliveredSpeed {
 			{file => 'exp-nn-TB='.$tbSZ.'-RvV='.$speed.'/nn-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',		value => 'NN'},
 		],
 		X_ignore => [0.005],
-		X => 0,	X_label => 'Arrival rate \\lambda',
-		Y => 2,	Y_label => 'Mean delivered speed E[v^D]',
+		X => 1,	X_label => 'Post arrival rate \\lambda',
+		Y => 3,	Y_label => 'Mean delivered speed E[v^D]',
 		ML_FIG_LABEL => 'Mean delivered speed with increasing arrival rate',
 		ML_PREFIX => 'FIG_5_'.$tbSZ.'_'.$speed,
 	});
@@ -44,8 +89,8 @@ sub meanDeliveredSpeed {
 			{file => 'exp-nn-TB='.$tbSZ.'-RvV='.$speed.'/nn-TB='.$tbSZ.'-RvV='.$speed.'.ds.csv',		value => 'NN'},
 		],
 		X_ignore => [0.005],
-		X => 0,	X_label => 'Arrival rate \\lambda',
-		Y => 3,	Y_label => 'P(delivered speed > virtual speed)',
+		X => 1,	X_label => 'Post arrival rate \\lambda',
+		Y => 4,	Y_label => 'P(delivered speed > virtual speed)',
 		ML_FIG_LABEL => 'Delivery ratio with increasing arrival rate',
 		ML_PREFIX => 'FIG_6_'.$tbSZ.'_'.$speed,
 	});
@@ -88,7 +133,7 @@ sub meanDeliveredSpeed {
 	$m->saveAsMatlab($dstDir.'/stdd-TB_'.$tbSZ.'-RvV_'.$speed.'.m');
 }
 
-# meanDeliveredSpeed  7,  5;
+meanDeliveredSpeed  7,  5;
 meanDeliveredSpeed  7, 10;
 # meanDeliveredSpeed  7, 15;
 
@@ -300,7 +345,7 @@ sub saveAsMatlab {
 	}
 	
 	print OUT "hold off\n";
-	print OUT "legend('FCFS','G-TSP','NN')\n";
+	print OUT "legend('FCFS: b=26','GTSP: b=26','NN: b=26')\n";
 	print OUT "xlabel('",$me->{PARAMS}->{X_label},"', 'FontSize',20)\n";
 	print OUT "ylabel('",$me->{PARAMS}->{Y_label},"', 'FontSize',20)\n";
 	print OUT "%title('",$me->{PARAMS}->{ML_FIG_LABEL},"', 'FontSize',20)\n";

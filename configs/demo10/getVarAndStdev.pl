@@ -77,11 +77,13 @@ sub add {
 sub variance {
 	my $me = shift;
 #	printf "X=%.3f, X^2=%.3f\n", $me->{SUM_X}, $me->{SUM_X2};
+	$me->{N} == 0 and return undef;
 	($me->{SUM_X2} - $me->{SUM_X} * $me->{SUM_X} / $me->{N}) / ($me->{N} - 1);
 }
 
 sub mean {
 	my $me = shift;
+	$me->{N} == 0 and return undef;
 	$me->{SUM_X} / $me->{N};
 }
 

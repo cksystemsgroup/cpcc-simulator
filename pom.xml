@@ -50,8 +50,8 @@
 	</modules>
 
 	<scm>
-		<connection>scm:svn:http://zoot.site/jnavigator/svn-cpcc/ESEP/trunk</connection>
-		<developerConnection>scm:svn:http://zoot.site/jnavigator/svn-cpcc/ESEP/trunk</developerConnection>
+		<connection>scm:git:https://github.com/cksystemsgroup/CPCC.git</connection>
+		<developerConnection>scm:git:https://github.com/cksystemsgroup/CPCC.git</developerConnection>
 	</scm>
 
 	<dependencyManagement>

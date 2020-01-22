@@ -37,9 +37,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
@@ -51,7 +52,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 
 public class SimConfFactory {
 	
-	private static final Logger LOG = Logger.getLogger(SimConfFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SimConfFactory.class);
 
 	private SimConfParameters parameters;
 	private IConfiguration configuration;

@@ -40,11 +40,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
@@ -57,7 +58,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
 
 public class RandomTaskGenerator implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(RandomTaskGenerator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RandomTaskGenerator.class);
 	
 	private Map<String, VirtualVehicleInfo> vvInfo = new HashMap<String, RandomTaskGenerator.VirtualVehicleInfo>();
 

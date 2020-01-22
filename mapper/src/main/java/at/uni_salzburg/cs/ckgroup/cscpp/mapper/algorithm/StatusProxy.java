@@ -31,10 +31,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRVCommand;
@@ -47,7 +48,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
 
 public class StatusProxy implements IStatusProxy {
 	
-	Logger LOG = Logger.getLogger(StatusProxy.class);
+	Logger LOG = LoggerFactory.getLogger(StatusProxy.class);
 
 	private String statusUrl;
 	

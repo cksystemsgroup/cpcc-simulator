@@ -29,10 +29,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
@@ -47,7 +48,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
 public class Mapper extends Thread implements IMapperThread, IMapper {
 
-	private static final Logger LOG = Logger.getLogger(Mapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Mapper.class);
 	
 	private static final Object statLock = new Object[0];
 	

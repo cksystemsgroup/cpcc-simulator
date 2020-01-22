@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -23,7 +20,7 @@ public class TemperatureQuery implements IJsonQuery {
     private static DecimalFormat df = new DecimalFormat();
     private static DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 	
-	private static final Logger LOG = Logger.getLogger(TemperatureQuery.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TemperatureQuery.class);
 	
 	private IMapperProxy mapperProxy;
 	private JSONParser parser = new JSONParser();

@@ -28,13 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigurationParser;
 
 public class Configuration extends ConfigurationParser implements IConfiguration {
 
-	Logger LOG = Logger.getLogger(Configuration.class);
+	Logger LOG = LoggerFactory.getLogger(Configuration.class);
 	
 	public static final String PROP_MAPPER_URL = "mapper.url";
 	

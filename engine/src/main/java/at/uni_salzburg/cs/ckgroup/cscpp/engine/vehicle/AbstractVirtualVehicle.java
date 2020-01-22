@@ -35,7 +35,8 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ISensorProxy;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ITask;
@@ -43,7 +44,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 
 public abstract class AbstractVirtualVehicle implements IVirtualVehicle, Runnable {
 	
-	private static final Logger LOG = Logger.getLogger(AbstractVirtualVehicle.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractVirtualVehicle.class);
 	
 	public static final String PROGRAM_PATH = "vehicle.prg";
 	public static final String LOG_PATH = "vehicle.log";

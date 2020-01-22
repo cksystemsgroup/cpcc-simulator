@@ -38,7 +38,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
@@ -55,7 +56,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 @SuppressWarnings("serial")
 public class MapperServlet extends HttpServlet implements IRegistry, IServletConfig {
 	
-	Logger LOG = Logger.getLogger(MapperServlet.class);
+	Logger LOG = LoggerFactory.getLogger(MapperServlet.class);
 	
 	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
 	public static final String PROP_PATH_NAME = "mapper.properties";

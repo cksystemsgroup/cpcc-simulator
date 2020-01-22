@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
@@ -44,7 +45,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
  */
 public class SetCourseChangingMappingAlgorithm implements IMappingAlgorithm {
 
-	private static final Logger LOG = Logger.getLogger(SetCourseChangingMappingAlgorithm.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SetCourseChangingMappingAlgorithm.class);
 	
 	/**
 	 * This constant defines the number of execute() invocations needed to attempt a random migration.

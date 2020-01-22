@@ -22,7 +22,8 @@ package at.uni_salzburg.cs.ckgroup.cscpp.mapper;
 
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
@@ -30,7 +31,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
 @Deprecated
 public class ZoneFactory {
 	
-	private static final Logger LOG = Logger.getLogger(ZoneFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ZoneFactory.class);
 	
 	private static final PolarCoordinate[][] ZONES = {
 		{

@@ -27,7 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
@@ -46,7 +47,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
 
 public class GatedTspMappingAlgorithmNew implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(GatedTspMappingAlgorithmNew.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GatedTspMappingAlgorithmNew.class);
 
 	private class RealVehicleInfo {
 		

@@ -28,9 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IWayPoint;
@@ -39,7 +40,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.mapper.course.WayPoint;
 
 public class RegData implements IRegistrationData {
     
-	private static final Logger LOG = Logger.getLogger(RegData.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RegData.class);
 	
 	private static final int MAX_ACCESS_ERRORS = 5;
 	

@@ -27,7 +27,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
@@ -48,7 +49,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandTakeOff;
 
 public class SlowMotionLocalGatedTspMappingAlgorithm implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(SlowMotionLocalGatedTspMappingAlgorithm.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SlowMotionLocalGatedTspMappingAlgorithm.class);
 	
 	private static final double RV_SPEED = 3;
 	private static final double RV_PRECISION = 2;

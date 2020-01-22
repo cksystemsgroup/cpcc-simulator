@@ -32,7 +32,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
@@ -45,7 +46,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigurationParser;
 
 public class Configuration extends ConfigurationParser implements IConfiguration {
 	
-	Logger LOG = Logger.getLogger(Configuration.class);
+	Logger LOG = LoggerFactory.getLogger(Configuration.class);
 	
 	private static final String PROP_MAPPER_ALGORITHM = "mapper.algorithm";
 	

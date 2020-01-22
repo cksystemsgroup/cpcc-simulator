@@ -1,23 +1,23 @@
-/*
- * @(#) Mapper.java
- *
- * This code is part of the CPCC project.
- * Copyright (c) 2012  Clemens Krainer
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+//
+// @(#) QueryService.java
+//
+// This code is part of the JNavigator project.
+// Copyright (c) 2012 Clemens Krainer
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth F//or, Boston, MA 02110-1301, USA.
+//
 package at.uni_salzburg.cs.ckgroup.cpcc.engmap.mapper;
 
 import java.io.IOException;
@@ -31,7 +31,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
@@ -44,356 +45,437 @@ import at.uni_salzburg.cs.ckgroup.cscpp.mapper.IMapperThread;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.StatusProxy;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 
-public class Mapper extends Thread implements IMapperThread, IMapper {
+public class Mapper extends Thread implements IMapperThread, IMapper
+{
+    private static final Logger LOG = LoggerFactory.getLogger(Mapper.class);
 
-	private static final Logger LOG = Logger.getLogger(Mapper.class);
-	
-	private static final Object statLock = new Object[0];
-	
-	private boolean running = false;
+    private static final Object statLock = new Object[0];
 
-	private boolean paused = false;
+    private boolean running = false;
 
-	private long cycleTime = 1000;
+    private boolean paused = false;
 
-	private long executionTime = 0;
-	private long executionTimeMax = 0;
-	private long executionTimeMin = 0;
-	private double executionTimeAvg = 0;
-	private long executions = 0;
-	
-	private double migrationTimeAvg = 0;
-	private long migrationsOk = 0;
-	private long migrationsFailed = 0;
-	
-	private Map<String,Long> vvStatistics = null;
+    private long cycleTime = 1000;
 
-	private Map<String, IStatusProxy> statusProxyMap = new HashMap<String, IStatusProxy>();
-	// private List<IVirtualVehicleInfo> virtualVehicleList = new
-	// ArrayList<IVirtualVehicleInfo>();
-	private Map<String, IRegistrationData> registrationData;
-	private Set<String> centralEngines = new HashSet<String>();
-	private Set<String> registeredCentralEngines = new HashSet<String>();
-	private Set<IZone> zones;
-	private Set<IZone> neighborZones;
-	private List<IMappingAlgorithm> mappingAlgorithms;
+    private long executionTime = 0;
+    private long executionTimeMax = 0;
+    private long executionTimeMin = 0;
+    private double executionTimeAvg = 0;
+    private long executions = 0;
 
-	private Map<String, IVirtualVehicle> vehicleMap;
+    private double migrationTimeAvg = 0;
+    private long migrationsOk = 0;
+    private long migrationsFailed = 0;
 
-	private URI localEngineUrl;
-	
+    private Map<String, Long> vvStatistics = null;
 
-	public void setVehicleMap(Map<String, IVirtualVehicle> vehicleMap) {
-		this.vehicleMap = vehicleMap;
-	}
+    private Map<String, IStatusProxy> statusProxyMap = new HashMap<>();
+    private Map<String, IRegistrationData> registrationData;
+    private Set<String> centralEngines = new HashSet<>();
+    private Set<String> registeredCentralEngines = new HashSet<>();
+    private Set<IZone> zones;
+    private Set<IZone> neighborZones;
+    private List<IMappingAlgorithm> mappingAlgorithms;
 
-	public void setLocalEngineUrl(URI localEngineUrl) {
-		this.localEngineUrl = localEngineUrl;
-	}
+    private Map<String, IVirtualVehicle> vehicleMap;
 
-	public void setRegistrationData(
-			Map<String, IRegistrationData> registrationData) {
-		this.registrationData = registrationData;
-	}
+    private URI localEngineUrl;
 
-	public void setMappingAlgorithms(List<IMappingAlgorithm> mappingAlgorithm) {
-		this.mappingAlgorithms = mappingAlgorithm;
-	}
+    public void setVehicleMap(Map<String, IVirtualVehicle> vehicleMap)
+    {
+        this.vehicleMap = vehicleMap;
+    }
 
-	public List<IMappingAlgorithm> getMappingAlgorithm() {
-		return mappingAlgorithms;
-	}
+    public void setLocalEngineUrl(URI localEngineUrl)
+    {
+        this.localEngineUrl = localEngineUrl;
+    }
 
-	@Override
-	public boolean isRunning() {
-		return running;
-	}
+    public void setRegistrationData(
+        Map<String, IRegistrationData> registrationData)
+    {
+        this.registrationData = registrationData;
+    }
 
-	@Override
-	public boolean isPaused() {
-		return paused;
-	}
+    public void setMappingAlgorithms(List<IMappingAlgorithm> mappingAlgorithm)
+    {
+        this.mappingAlgorithms = mappingAlgorithm;
+    }
 
-	@Override
-	public void terminate() {
-		running = false;
-		this.interrupt();
-	}
+    public List<IMappingAlgorithm> getMappingAlgorithm()
+    {
+        return mappingAlgorithms;
+    }
 
-	@Override
-	public void cease() {
-		paused = true;
-	}
+    @Override
+    public boolean isRunning()
+    {
+        return running;
+    }
 
-	@Override
-	public void proceed() {
-		paused = false;
-	}
+    @Override
+    public boolean isPaused()
+    {
+        return paused;
+    }
 
-	public long getExecutionTime() {
-		return executionTime;
-	}
+    @Override
+    public void terminate()
+    {
+        running = false;
+        this.interrupt();
+    }
 
-	public long getExecutionTimeMin() {
-		return executionTimeMin;
-	}
+    @Override
+    public void cease()
+    {
+        paused = true;
+    }
 
-	public long getExecutionTimeMax() {
-		return executionTimeMax;
-	}
+    @Override
+    public void proceed()
+    {
+        paused = false;
+    }
 
-	public long getExecutionTimeAvg() {
-		return (long) (executionTimeAvg + 0.5);
-	}
+    public long getExecutionTime()
+    {
+        return executionTime;
+    }
 
-	public long getExecutions() {
-		return executions;
-	}
-	
-	public long getMigrationsFailed() {
-		return migrationsFailed;
-	}
-	
-	public long getMigrationsOk() {
-		return migrationsOk;
-	}
-	
-	public long getMigrationTimeAvg() {
-		return (long) migrationTimeAvg;
-	}
-	
-	public Map<String, Long> getVvStatistics() {
-		return vvStatistics;
-	}
+    public long getExecutionTimeMin()
+    {
+        return executionTimeMin;
+    }
 
-	@Override
-	public void run() {
-		if (registrationData == null)
-			throw new NullPointerException("Registration data not available!");
+    public long getExecutionTimeMax()
+    {
+        return executionTimeMax;
+    }
 
-		running = true;
-		proceed();
-		while (running) {
-			if (!paused) {
-				step();
-			}
+    public long getExecutionTimeAvg()
+    {
+        return (long) (executionTimeAvg + 0.5);
+    }
 
-			try {
-				Thread.sleep(cycleTime);
-			} catch (InterruptedException e) {
-			}
-		}
-	}
+    public long getExecutions()
+    {
+        return executions;
+    }
 
-	private void calculateStatistics() {
+    public long getMigrationsFailed()
+    {
+        return migrationsFailed;
+    }
 
-		synchronized (statLock) {
-			++executions;
-	
-			if (executionTime > executionTimeMax) {
-				executionTimeMax = executionTime;
-			}
-	
-			if (executionTime != 0 && executionTime < executionTimeMin) {
-				executionTimeMin = executionTime;
-			}
-	
-			if (executions == 1) {
-				executionTimeAvg = executionTime;
-			} else {
-				executionTimeAvg = (executionTimeAvg * (executions - 1.0) + executionTime)
-						/ executions;
-			}
-		}
+    public long getMigrationsOk()
+    {
+        return migrationsOk;
+    }
 
-		long active, completed, corrupt, frozen, total;
-		active = completed = corrupt = frozen = total = 0;
-		for (IVirtualVehicle v : vehicleMap.values()) {
-			if (v.isActive()) {
-				++active;
-			}
-			if (v.isCompleted()) {
-				++completed;
-			}
-			if (v.isFrozen()) {
-				++frozen;
-			}
-			if (v.isProgramCorrupted()) {
-				++corrupt;
-			}
-			++total;
-		}
-		
-		Map<String,Long> stats = new TreeMap<String, Long>();
-		stats.put("Active", active);
-		stats.put("Completed", completed);
-		stats.put("Corrupt", corrupt);
-		stats.put("Frozen", frozen);
-		stats.put("Total", total);
-		vvStatistics = stats;
-	}
+    public long getMigrationTimeAvg()
+    {
+        return (long) migrationTimeAvg;
+    }
 
-	@Override
-	public void singleStep() {
-		if (paused) {
-			step();
-		}
-	}
-	
-	@Override
-	public void resetStatistics() {
-		synchronized (statLock) {
-			executionTime = 0;
-			executionTimeMax = 0;
-			executionTimeMin = 0;
-			executionTimeAvg = 0;
-			executions = 0;
-			
-			migrationTimeAvg = 0;
-			migrationsOk = 0;
-			migrationsFailed = 0;
-		}
-	}
+    public Map<String, Long> getVvStatistics()
+    {
+        return vvStatistics;
+    }
 
-	private void step() {
+    @Override
+    public void run()
+    {
+        if (registrationData == null)
+        {
+            throw new NullPointerException("Registration data not available!");
+        }
 
-		renewStatusProxyMap();
-		
-		getPilotStatii();
-		
-		long start = System.currentTimeMillis();
+        running = true;
+        proceed();
+        while (running)
+        {
+            if (!paused)
+            {
+                step();
+            }
 
-		if (mappingAlgorithms != null) {
-			for (IMappingAlgorithm algorithm : mappingAlgorithms) {
-				try {
-					algorithm.execute(this);
-				} catch (Throwable e) {
-					LOG.error(e);
-				}
-			}
-		} else {
-			LOG.error("No mapping algorithm found. Mapping stopped.");
-			cease();
-		}
+            try
+            {
+                Thread.sleep(cycleTime);
+            }
+            catch (InterruptedException e)
+            {
+                // Intentional empty.
+            }
+        }
+    }
 
-		executionTime = System.currentTimeMillis() - start;
-		calculateStatistics();
-	}
+    private void calculateStatistics()
+    {
+        synchronized (statLock)
+        {
+            ++executions;
 
-	private void renewStatusProxyMap() {
-		for (IRegistrationData rd : registrationData.values()) {
-			if (!statusProxyMap.containsKey(rd.getEngineUrl()) && rd.getPilotUrl() != null) {
-				statusProxyMap.put(rd.getEngineUrl(), new StatusProxy(rd.getPilotUrl()));
-			}
-			if (rd.isCentralEngine()) {
-				centralEngines.add(rd.getEngineUrl());
-			}
-		}
-		
-		for (String key : statusProxyMap.keySet()) {
-			if (!registrationData.containsKey(key)) {
-				statusProxyMap.remove(key);
-				centralEngines.remove(key);
-			}
-		}
-		
-		centralEngines.addAll(registeredCentralEngines);	
-	}
+            if (executionTime > executionTimeMax)
+            {
+                executionTimeMax = executionTime;
+            }
 
-	private void getPilotStatii() {
-		for (at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy proxy : statusProxyMap.values()) {
-			((at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.IStatusProxy)proxy).fetchCurrentStatus();
-		}
-	}
-	
-	@Override
-	public void migrate(String sourceEngineUrl, String vehicleName,
-			String targetEngineUrl) {
+            if (executionTime != 0 && executionTime < executionTimeMin)
+            {
+                executionTimeMin = executionTime;
+            }
 
-		if (sourceEngineUrl.equals(targetEngineUrl)) {
-			LOG.debug("Migration cancelled, because source engine is target engine: "
-					+ targetEngineUrl);
-			return;
-		}
+            if (executions == 1)
+            {
+                executionTimeAvg = executionTime;
+            }
+            else
+            {
+                executionTimeAvg = (executionTimeAvg * (executions - 1.0) + executionTime)
+                    / executions;
+            }
+        }
 
-		String migrationUrl = sourceEngineUrl
-				+ "/vehicle/text/vehicleMigration?vehicleIDs=" + vehicleName
-				+ "&vehicleDst=" + targetEngineUrl
-				+ "/vehicle/text/vehicleUpload";
-		LOG.info("Migration: " + migrationUrl);
+        long active = 0;
+        long completed = 0;
+        long corrupt = 0;
+        long frozen = 0;
+        long total = 0;
 
-		try {
-			long start = System.nanoTime();
-			String ret = HttpQueryUtils.simpleQuery(migrationUrl);
-			if ("OK".equals(ret)) {
-				long migrationTime = System.nanoTime() - start;
-				synchronized (statLock) {
-					++migrationsOk;
-					migrationTimeAvg = (migrationTimeAvg * (migrationsOk - 1.0) + migrationTime/1000000.0) / migrationsOk;
-				}
-				LOG.info("Migration succeeded. " + migrationUrl + ", " + ret + ", migrationTime=" + (migrationTime/1000000.0) + "ms");
-			} else {
-				LOG.error("Migration failed. " + migrationUrl + ", " + ret);
-				++migrationsFailed;
-			}
-		} catch (IOException ex) {
-			LOG.error("Migration failed. " + migrationUrl, ex);
-			++migrationsFailed;
-		}
+        for (IVirtualVehicle v : vehicleMap.values())
+        {
+            if (v.isActive())
+            {
+                ++active;
+            }
+            if (v.isCompleted())
+            {
+                ++completed;
+            }
+            if (v.isFrozen())
+            {
+                ++frozen;
+            }
+            if (v.isProgramCorrupted())
+            {
+                ++corrupt;
+            }
+            ++total;
+        }
 
-	}
+        Map<String, Long> stats = new TreeMap<>();
+        stats.put("Active", active);
+        stats.put("Completed", completed);
+        stats.put("Corrupt", corrupt);
+        stats.put("Frozen", frozen);
+        stats.put("Total", total);
+        vvStatistics = stats;
+    }
 
-	@Override
-	public Map<String, IStatusProxy> getStatusProxyMap() {
-		return statusProxyMap;
-	}
+    @Override
+    public void singleStep()
+    {
+        if (paused)
+        {
+            step();
+        }
+    }
 
-	@Override
-	public List<IVirtualVehicleInfo> getVirtualVehicleList() {
-		List<IVirtualVehicleInfo> virtualVehicleList = new ArrayList<IVirtualVehicleInfo>();
+    @Override
+    public void resetStatistics()
+    {
+        synchronized (statLock)
+        {
+            executionTime = 0;
+            executionTimeMax = 0;
+            executionTimeMin = 0;
+            executionTimeAvg = 0;
+            executions = 0;
 
-		for (Entry<String, IVirtualVehicle> entry : vehicleMap.entrySet()) {
-			String name = entry.getKey();
-			IVirtualVehicle vehicle = entry.getValue();
-			if (vehicle.isFrozen() || vehicle.isProgramCorrupted()) {
-				continue;
-			}
-			virtualVehicleList.add(new VirtualVehicleInfo(name, localEngineUrl.toASCIIString(), vehicle));
-		}
-		
-		return virtualVehicleList;
-	}
+            migrationTimeAvg = 0;
+            migrationsOk = 0;
+            migrationsFailed = 0;
+        }
+    }
 
-	@Override
-	public Map<String, IRegistrationData> getRegistrationData() {
-		return registrationData;
-	}
+    private void step()
+    {
 
-	@Override
-	public Set<String> getCentralEngines() {
-		return centralEngines;
-	}
+        renewStatusProxyMap();
 
-	public void setRegisteredCentralEngines(Set<String> registeredCentralEngines) {
-		this.registeredCentralEngines = registeredCentralEngines;
-	}
+        getPilotStatii();
 
-	@Override
-	public Set<IZone> getZones() {
-		return zones;
-	}
+        long start = System.currentTimeMillis();
 
-	public void setZones(Set<IZone> zones) {
-		this.zones = zones;
-	}
+        if (mappingAlgorithms != null)
+        {
+            for (IMappingAlgorithm algorithm : mappingAlgorithms)
+            {
+                try
+                {
+                    algorithm.execute(this);
+                }
+                catch (Throwable e)
+                {
+                    LOG.error("Algorithm execution failed!", e);
+                }
+            }
+        }
+        else
+        {
+            LOG.error("No mapping algorithm found. Mapping stopped.");
+            cease();
+        }
 
-	@Override
-	public Set<IZone> getNeighborZones() {
-		return neighborZones;
-	}
+        executionTime = System.currentTimeMillis() - start;
+        calculateStatistics();
+    }
 
-	public void setNeighborZones(Set<IZone> neighborZones) {
-		this.neighborZones = neighborZones;
-	}
+    private void renewStatusProxyMap()
+    {
+        for (IRegistrationData rd : registrationData.values())
+        {
+            if (!statusProxyMap.containsKey(rd.getEngineUrl()) && rd.getPilotUrl() != null)
+            {
+                statusProxyMap.put(rd.getEngineUrl(), new StatusProxy(rd.getPilotUrl()));
+            }
+            if (rd.isCentralEngine())
+            {
+                centralEngines.add(rd.getEngineUrl());
+            }
+        }
+
+        for (String key : statusProxyMap.keySet())
+        {
+            if (!registrationData.containsKey(key))
+            {
+                statusProxyMap.remove(key);
+                centralEngines.remove(key);
+            }
+        }
+
+        centralEngines.addAll(registeredCentralEngines);
+    }
+
+    private void getPilotStatii()
+    {
+        for (at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IStatusProxy proxy : statusProxyMap.values())
+        {
+            ((at.uni_salzburg.cs.ckgroup.cscpp.mapper.algorithm.IStatusProxy) proxy).fetchCurrentStatus();
+        }
+    }
+
+    @Override
+    public void migrate(String sourceEngineUrl, String vehicleName,
+        String targetEngineUrl)
+    {
+
+        if (sourceEngineUrl.equals(targetEngineUrl))
+        {
+            LOG.debug("Migration cancelled, because source engine is target engine: {}", targetEngineUrl);
+            return;
+        }
+
+        String migrationUrl = sourceEngineUrl
+            + "/vehicle/text/vehicleMigration?vehicleIDs=" + vehicleName
+            + "&vehicleDst=" + targetEngineUrl
+            + "/vehicle/text/vehicleUpload";
+        LOG.info("Migration: {}", migrationUrl);
+
+        try
+        {
+            long start = System.nanoTime();
+            String ret = HttpQueryUtils.simpleQuery(migrationUrl);
+            if ("OK".equals(ret))
+            {
+                long migrationTime = System.nanoTime() - start;
+                synchronized (statLock)
+                {
+                    ++migrationsOk;
+                    migrationTimeAvg =
+                        (migrationTimeAvg * (migrationsOk - 1.0) + migrationTime / 1000000.0) / migrationsOk;
+                }
+                LOG.info("Migration succeeded. {}, {}, migrationTime={} ms",
+                    migrationUrl, ret, (migrationTime / 1000000.0));
+            }
+            else
+            {
+                LOG.error("Migration failed. {}, {}", migrationUrl, ret);
+                ++migrationsFailed;
+            }
+        }
+        catch (IOException ex)
+        {
+            LOG.error("Migration failed. {}", migrationUrl, ex);
+            ++migrationsFailed;
+        }
+
+    }
+
+    @Override
+    public Map<String, IStatusProxy> getStatusProxyMap()
+    {
+        return statusProxyMap;
+    }
+
+    @Override
+    public List<IVirtualVehicleInfo> getVirtualVehicleList()
+    {
+        List<IVirtualVehicleInfo> virtualVehicleList = new ArrayList<>();
+
+        for (Entry<String, IVirtualVehicle> entry : vehicleMap.entrySet())
+        {
+            String name = entry.getKey();
+            IVirtualVehicle vehicle = entry.getValue();
+            if (vehicle.isFrozen() || vehicle.isProgramCorrupted())
+            {
+                continue;
+            }
+            virtualVehicleList.add(new VirtualVehicleInfo(name, localEngineUrl.toASCIIString(), vehicle));
+        }
+
+        return virtualVehicleList;
+    }
+
+    @Override
+    public Map<String, IRegistrationData> getRegistrationData()
+    {
+        return registrationData;
+    }
+
+    @Override
+    public Set<String> getCentralEngines()
+    {
+        return centralEngines;
+    }
+
+    public void setRegisteredCentralEngines(Set<String> registeredCentralEngines)
+    {
+        this.registeredCentralEngines = registeredCentralEngines;
+    }
+
+    @Override
+    public Set<IZone> getZones()
+    {
+        return zones;
+    }
+
+    public void setZones(Set<IZone> zones)
+    {
+        this.zones = zones;
+    }
+
+    @Override
+    public Set<IZone> getNeighborZones()
+    {
+        return neighborZones;
+    }
+
+    public void setNeighborZones(Set<IZone> neighborZones)
+    {
+        this.neighborZones = neighborZones;
+    }
 
 }

@@ -31,8 +31,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IWayPoint;
@@ -48,7 +49,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 
 public class RegistryService extends DefaultService {
 
-    Logger LOG = Logger.getLogger(RegistryService.class);
+    Logger LOG = LoggerFactory.getLogger(RegistryService.class);
     
     public static final String ACTION_ENGINE_REGISTRATION = "engineRegistration";
     

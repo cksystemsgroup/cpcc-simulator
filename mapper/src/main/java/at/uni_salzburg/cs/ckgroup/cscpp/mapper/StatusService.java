@@ -27,14 +27,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
 
 public class StatusService extends DefaultService {
 	
-	private static final Logger LOG = Logger.getLogger(RegistryService.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RegistryService.class);
 	
 	public static final String ACTION_MAPPER_SUSPEND = "mapperSuspend";
 	public static final String ACTION_MAPPER_RESUME = "mapperResume";

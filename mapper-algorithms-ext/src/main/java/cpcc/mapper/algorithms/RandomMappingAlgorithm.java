@@ -20,7 +20,8 @@
  */
 package cpcc.mapper.algorithms;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
@@ -33,7 +34,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
  */
 public class RandomMappingAlgorithm implements IMappingAlgorithm {
 
-	private static final Logger LOG = Logger.getLogger(RandomMappingAlgorithm.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RandomMappingAlgorithm.class);
 	
 	/**
 	 * This constant defines the number of execute() invocations needed to attempt a random migration.

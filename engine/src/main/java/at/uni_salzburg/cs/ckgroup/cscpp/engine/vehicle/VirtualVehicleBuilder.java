@@ -27,7 +27,8 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
@@ -35,7 +36,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.SensorProxy;
 
 public class VirtualVehicleBuilder {
 
-	Logger LOG = Logger.getLogger(VirtualVehicleBuilder.class);
+	Logger LOG = LoggerFactory.getLogger(VirtualVehicleBuilder.class);
 	
 	private SensorProxy sensorProxy = null;
 
@@ -85,6 +86,7 @@ public class VirtualVehicleBuilder {
 					fOut.write(tmp, 0, l);
 				}
 				f.setLastModified(time);
+				fOut.close();
 			}
 		}
 		

@@ -271,6 +271,7 @@ public class TaskListBuilder {
 		case SONAR:			action = new Sonar(); break;
 		case SPEED:			action = new Speed(); break;
 		case TEMPERATURE:	action = new Temperature(); break;
+		default: break;
 		}
 		
 		if (timeStamp == null) {
@@ -306,6 +307,7 @@ public class TaskListBuilder {
 		case TEMPERATURE:
 			((Temperature)action).setTemperature(value.getNumber().doubleValue());
 			break;
+		default: break;
 		}
 		
 		if (action != null) {

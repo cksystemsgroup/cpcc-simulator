@@ -35,9 +35,10 @@ import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
@@ -51,7 +52,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.VariableReplacer;
 
 public class SimConfFactoryOld {
 	
-	private static final Logger LOG = Logger.getLogger(SimConfFactoryOld.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SimConfFactoryOld.class);
 
 	private static final String PROP_WEB_APP_CONTEXT = "webapp.context";
 	private static final String PROP_WEB_APP_MASTER_CONTEXT = "webapp.master.context";

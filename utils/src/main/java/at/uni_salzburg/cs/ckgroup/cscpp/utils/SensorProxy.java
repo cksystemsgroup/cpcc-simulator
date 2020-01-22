@@ -36,17 +36,18 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.ISensorProxy;
 
 public class SensorProxy extends Thread implements ISensorProxy {
 	
-	private static final Logger LOG = Logger.getLogger(SensorProxy.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SensorProxy.class);
 	
 	private String pilotUrl;
 	

@@ -25,9 +25,10 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.HttpQueryUtils;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.IServletConfig;
@@ -36,7 +37,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.viewer.IMapperProxy;
 
 public class PositionQuery implements IJsonQuery {
 
-	private static final Logger LOG = Logger.getLogger(PositionQuery.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PositionQuery.class);
 	
 	private IMapperProxy mapperProxy;
 	private JSONParser parser = new JSONParser();

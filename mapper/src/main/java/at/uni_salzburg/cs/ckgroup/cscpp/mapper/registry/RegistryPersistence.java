@@ -27,11 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IRegistrationData;
 import at.uni_salzburg.cs.ckgroup.cscpp.mapper.RegData;
@@ -39,7 +40,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 
 public class RegistryPersistence {
 	
-	private static final Logger LOG = Logger.getLogger(RegistryPersistence.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RegistryPersistence.class);
 	
 	private static final Object lock = new Object();
 	private static final JSONParser parser = new JSONParser();

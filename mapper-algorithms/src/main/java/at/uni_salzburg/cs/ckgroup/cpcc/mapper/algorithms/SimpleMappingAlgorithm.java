@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
@@ -63,7 +64,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleStatus;
  */
 public class SimpleMappingAlgorithm implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(SimpleMappingAlgorithm.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SimpleMappingAlgorithm.class);
 	
 	/**
 	 * The geodetic system to be used for coordinate transformations.

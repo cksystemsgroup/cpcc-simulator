@@ -25,7 +25,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
@@ -44,7 +45,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IZone;
  */
 public class CentralMappingAlgorithm implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(CentralMappingAlgorithm.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CentralMappingAlgorithm.class);
 	
 	private static final int NTHREADS = 10;
 	

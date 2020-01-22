@@ -23,16 +23,17 @@ package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.PolarCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.WGS84;
 
 public class AcoTspTestCase {
 	
-	private static final Logger LOG = Logger.getLogger(AcoTspTestCase.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AcoTspTestCase.class);
 
 	private final static double[][] path_01 = {
 		{ 47.82202216, 13.04082111 },	// start

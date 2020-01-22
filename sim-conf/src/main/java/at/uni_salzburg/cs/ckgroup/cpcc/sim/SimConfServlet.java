@@ -33,7 +33,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.sim.config.Configuration;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
@@ -44,7 +45,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.utils.ServiceEntry;
 @SuppressWarnings("serial")
 public class SimConfServlet extends HttpServlet implements IServletConfig {
 	
-	Logger LOG = Logger.getLogger(SimConfServlet.class);
+	Logger LOG = LoggerFactory.getLogger(SimConfServlet.class);
 	
 	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
 	private static final String PROP_PATH_NAME = "simconf.properties";

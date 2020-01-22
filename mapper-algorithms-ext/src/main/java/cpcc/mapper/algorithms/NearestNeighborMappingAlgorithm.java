@@ -27,7 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
@@ -48,7 +49,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.RVCommandFlyTo;
  */
 public class NearestNeighborMappingAlgorithm extends SimpleMappingAlgorithm implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(NearestNeighborMappingAlgorithm.class);
+	private static final Logger LOG = LoggerFactory.getLogger(NearestNeighborMappingAlgorithm.class);
 	
 	/**
 	 * The current Real Vehicle courses.

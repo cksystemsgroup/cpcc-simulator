@@ -20,13 +20,14 @@
  */
 package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
 
 public class MigrationRunnable implements Runnable {
 	
-	private static final Logger LOG = Logger.getLogger(MigrationRunnable.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MigrationRunnable.class);
 	
 	
 	private IMapper mapper;

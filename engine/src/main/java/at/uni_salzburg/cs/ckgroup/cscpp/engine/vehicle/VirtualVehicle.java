@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.course.CartesianCoordinate;
 import at.uni_salzburg.cs.ckgroup.course.IGeodeticSystem;
@@ -39,7 +40,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.engine.parser.TaskListBuilder;
 
 public class VirtualVehicle extends AbstractVirtualVehicle {
 
-	Logger LOG = Logger.getLogger(VirtualVehicle.class);
+	Logger LOG = LoggerFactory.getLogger(VirtualVehicle.class);
 	
 	private boolean programCorrupted = true;
         

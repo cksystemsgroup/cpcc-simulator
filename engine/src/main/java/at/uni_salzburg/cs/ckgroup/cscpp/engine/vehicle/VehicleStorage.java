@@ -25,13 +25,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.FileUtils;
 
 public class VehicleStorage {
 	
-	private static final Logger LOG = Logger.getLogger(VehicleStorage.class);
+	private static final Logger LOG = LoggerFactory.getLogger(VehicleStorage.class);
 	
 	private static final String VEHICLE_FILE_FILTER = "vehicle\\d+";
 	

@@ -32,7 +32,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.ConfigService;
 import at.uni_salzburg.cs.ckgroup.cscpp.utils.DefaultService;
@@ -44,7 +45,7 @@ import at.uni_salzburg.cs.ckgroup.cscpp.viewer.config.Configuration;
 @SuppressWarnings("serial")
 public class ViewerServlet extends HttpServlet implements IServletConfig {
 	
-	private static final Logger LOG = Logger.getLogger(ViewerServlet.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ViewerServlet.class);
 	
 	public static final String CONTEXT_TEMP_DIR = "javax.servlet.context.tempdir";
 	private static final String PROP_PATH_NAME = "google-map-viewer.properties";

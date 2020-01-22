@@ -12,10 +12,6 @@
 	<description>Cyber Physical Cloud Computing - Virtual Vehicle Mapper Algorithms Extension Module</description>
 	<dependencies>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>at.uni-salzburg.cs.cpcc.mapper</groupId>
 			<artifactId>mapper-api</artifactId>
 			<version>${project.parent.version}</version>

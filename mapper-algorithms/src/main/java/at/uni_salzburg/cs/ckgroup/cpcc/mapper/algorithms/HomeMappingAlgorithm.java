@@ -23,7 +23,8 @@ package at.uni_salzburg.cs.ckgroup.cpcc.mapper.algorithms;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper;
 import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm;
@@ -40,7 +41,7 @@ import at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IVirtualVehicleInfo;
  */
 public class HomeMappingAlgorithm implements IMappingAlgorithm {
 	
-	private static final Logger LOG = Logger.getLogger(HomeMappingAlgorithm.class);
+	private static final Logger LOG = LoggerFactory.getLogger(HomeMappingAlgorithm.class);
 	
 	/* (non-Javadoc)
 	 * @see at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMappingAlgorithm#execute(at.uni_salzburg.cs.ckgroup.cpcc.mapper.api.IMapper)
